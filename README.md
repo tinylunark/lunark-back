@@ -1,4 +1,4 @@
-# lunark-android
+# lunark-back
 ## Team members
 | Role | Name | Id 
 ---|---|---
