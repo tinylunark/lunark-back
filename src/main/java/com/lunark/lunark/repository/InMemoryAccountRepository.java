@@ -2,6 +2,7 @@ package com.lunark.lunark.repository;
 
 import com.fasterxml.jackson.datatype.jdk8.OptionalDoubleSerializer;
 import com.lunark.lunark.model.Account;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Repository
 public class InMemoryAccountRepository implements AccountRepository{
     private static AtomicLong counter = new AtomicLong();
 
