@@ -30,7 +30,6 @@ public class AccountController {
     @Autowired
     VerificationService verificationService;
 
-
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> getAccount(@PathVariable("id") Long id) {
         Optional<Account> account = accountService.find(id);
@@ -49,9 +48,7 @@ public class AccountController {
 
     @GetMapping(value = "/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AccountDto>> getNonAdmins(SpringDataWebProperties.Pageable pageable) {
-        List<Account> nonAdmins = new ArrayList<>();
-        nonAdmins.add(new Account(null, "guest@example.com", "pass", "Branko", "Kvalitetic", "Trg Dositeja Obradovica 6, Novi Sad", "021555555", true, AccountRole.GUEST, true, false));
-        nonAdmins.add(new Account(null, "host@example.com", "pass", "Mirna", "Studsluzbic", "Trg Dositeja Obradovica 6, Novi Sad", "021555555", true, AccountRole.HOST, true, false));
+        List<Account> nonAdmins = accountService.findAll().stream().filter(account -> account.getRole() != AccountRole.ADMIN).collect(Collectors.toList());
 
         List<AccountDto> accountDtos = nonAdmins.stream().map(AccountDtoMapper::fromAccountToDTO).collect(Collectors.toList());
         return new ResponseEntity<>(accountDtos, HttpStatus.OK);
