@@ -53,4 +53,10 @@ public class AccountController {
         List<AccountDto> accountDtos = nonAdmins.stream().map(AccountDtoMapper::fromAccountToDTO).collect(Collectors.toList());
         return new ResponseEntity<>(accountDtos, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Account> deleteAccount(@PathVariable("id") Long id) {
+        accountService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
