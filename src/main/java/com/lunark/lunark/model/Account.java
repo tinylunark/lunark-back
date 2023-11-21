@@ -3,7 +3,7 @@ package com.lunark.lunark.model;
 import jdk.jshell.spi.ExecutionControl;
 
 public class Account {
-    private int id;
+    private Long id;
     private String email;
     private String password;
     private String name;
@@ -13,12 +13,13 @@ public class Account {
     private boolean verified;
     private AccountRole role;
     private boolean notificationsEnabled;
+    private boolean blocked;
 
     public Account() {
 
     }
 
-    public Account(int id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled) {
+    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -34,8 +35,19 @@ public class Account {
     public void verify() {
         verified = true;
     }
-    public boolean canLogIn() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Not implemented yet.");
+    public boolean canLogIn() {
+        return verified && !blocked;
     }
 
+    public boolean credentialsMatch(String email, String password) {
+        return this.email.equals(email) && this.email.equals(password);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
