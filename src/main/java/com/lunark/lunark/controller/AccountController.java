@@ -59,4 +59,18 @@ public class AccountController {
         accountService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Account> updateAccount(@RequestBody AccountDto accountDto, @PathVariable("id") Long id) {
+        Optional<Account> accountOptional = accountService.find(id);
+        if(accountOptional.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Account account = accountDto.toAccount();
+        account.setId(id);
+        accountService.update(account);
+
+        return new ResponseEntity<>(account, HttpStatus.OK);
+    }
 }
