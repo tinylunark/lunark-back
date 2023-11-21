@@ -1,18 +1,25 @@
 package com.lunark.lunark.controller;
 
 import com.lunark.lunark.dto.AccountDto;
+import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
+import com.lunark.lunark.model.AccountRole;
 import com.lunark.lunark.repository.AccountRepository;
 import com.lunark.lunark.service.AccountService;
 import com.lunark.lunark.service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -38,5 +45,15 @@ public class AccountController {
     public ResponseEntity<Account> createAccount(@RequestBody AccountDto accountDto) {
         Account account = accountService.create(accountDto.toAccount());
         return new ResponseEntity<>(account, HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AccountDto>> getNonAdmins(SpringDataWebProperties.Pageable pageable) {
+        List<Account> nonAdmins = new ArrayList<>();
+        nonAdmins.add(new Account(null, "guest@example.com", "pass", "Branko", "Kvalitetic", "Trg Dositeja Obradovica 6, Novi Sad", "021555555", true, AccountRole.GUEST, true, false));
+        nonAdmins.add(new Account(null, "host@example.com", "pass", "Mirna", "Studsluzbic", "Trg Dositeja Obradovica 6, Novi Sad", "021555555", true, AccountRole.HOST, true, false));
+
+        List<AccountDto> accountDtos = nonAdmins.stream().map(AccountDtoMapper::fromAccountToDTO).collect(Collectors.toList());
+        return new ResponseEntity<>(accountDtos, HttpStatus.OK);
     }
 }
