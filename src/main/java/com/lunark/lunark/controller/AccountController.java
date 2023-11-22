@@ -1,23 +1,18 @@
 package com.lunark.lunark.controller;
 
 import com.lunark.lunark.dto.AccountDto;
-import com.lunark.lunark.dto.AccountLoginDto;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
-import com.lunark.lunark.repository.AccountRepository;
 import com.lunark.lunark.service.AccountService;
 import com.lunark.lunark.service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,21 +27,21 @@ public class AccountController {
     VerificationService verificationService;
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Account> getAccount(@PathVariable("id") Long id) {
+    public ResponseEntity<AccountDto> getAccount(@PathVariable("id") Long id) {
         Optional<Account> account = accountService.find(id);
         if (account.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(account.get(), HttpStatus.OK);
+        return new ResponseEntity<>(new AccountDto(account.get()), HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Account> createAccount(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
         Account newAccount = accountDto.toAccount();
         newAccount.verify();
         Account account = accountService.create(newAccount);
-        return new ResponseEntity<>(account, HttpStatus.CREATED);
+        return new ResponseEntity<>(new AccountDto(account), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +59,7 @@ public class AccountController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Account> updateAccount(@RequestBody AccountDto accountDto, @PathVariable("id") Long id) {
+    public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountDto accountDto, @PathVariable("id") Long id) {
         Optional<Account> accountOptional = accountService.find(id);
         if(accountOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -74,7 +69,7 @@ public class AccountController {
         account.setId(id);
         accountService.update(account);
 
-        return new ResponseEntity<>(account, HttpStatus.OK);
+        return new ResponseEntity<>(new AccountDto(account), HttpStatus.OK);
     }
 
     @PostMapping(value = "/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)

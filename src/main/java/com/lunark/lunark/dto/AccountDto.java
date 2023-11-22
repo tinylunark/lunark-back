@@ -2,7 +2,6 @@ package com.lunark.lunark.dto;
 
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
-import org.springframework.context.annotation.Bean;
 
 public class AccountDto {
     private String email;
@@ -17,10 +16,24 @@ public class AccountDto {
 
     }
 
+    public AccountDto(String email, String password, String name, String surname, String address, String phoneNumber, String role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
+
     public AccountDto(Account account) {
         this.email = account.getEmail();
+        this.password = account.getPassword();
+        this.name = account.getName();
+        this.surname = account.getSurname();
+        this.address = account.getAddress();
+        this.phoneNumber = account.getPhoneNumber();
         this.role = account.getRole().toString();
-
     }
 
     public String getEmail() {
