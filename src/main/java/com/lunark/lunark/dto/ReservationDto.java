@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 public class ReservationDto {
     private Long id;
+    private Long propertyId;
     private String propertyName;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -15,8 +16,9 @@ public class ReservationDto {
     private String status;
     private int cancellationCount;
 
-    public ReservationDto(Long id, String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId, int numberOfGuests, String status, int cancellationCount) {
+    public ReservationDto(Long id, Long propertyId, String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId, int numberOfGuests, String status, int cancellationCount) {
         this.id = id;
+        this.propertyId = propertyId;
         this.propertyName = propertyName;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -29,6 +31,7 @@ public class ReservationDto {
 
     public ReservationDto(Reservation reservation) {
         this.id = reservation.getId();
+        this.propertyId = reservation.getProperty().getId();
         this.propertyName = reservation.getProperty().getName();
         this.startDate = reservation.getStartDate();
         this.endDate = reservation.getEndDate();
@@ -37,6 +40,14 @@ public class ReservationDto {
         this.numberOfGuests = reservation.getNumberOfGuests();
         this.status = reservation.getStatus().toString();
         this.cancellationCount = 0;
+    }
+
+    public Long getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(Long propertyId) {
+        this.propertyId = propertyId;
     }
 
     public String getPropertyName() {
