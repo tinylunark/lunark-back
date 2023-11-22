@@ -23,7 +23,7 @@ public class ReservationController {
 
     @GetMapping(value = "/{reservation_id}")
     public ResponseEntity<ReservationDto> getReservation(@RequestHeader("x-access-token") String token, @PathVariable("reservation_id") Long Id) {
-        ReservationDto reservationDto = new ReservationDto("Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3);
+        ReservationDto reservationDto = new ReservationDto(2L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "accepted", 0);
         return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
@@ -51,7 +51,7 @@ public class ReservationController {
     @GetMapping(value="")
     public ResponseEntity<Collection<ReservationDto>> getReservations(@RequestHeader("x-access-token") String token, @RequestParam(value = "propertyName", required = false) String propertyName, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam(value = "status", required = false) String status){
         ArrayList<ReservationDto> reservationDtos = new ArrayList<>();
-        reservationDtos.add(new ReservationDto("Hotel Oderberger", LocalDate.of(2024, 7, 14), LocalDate.of(2023, 7, 16), 15000, 1L, 1));
+        reservationDtos.add(new ReservationDto(1L, "Hotel Oderberger", LocalDate.of(2024, 7, 14), LocalDate.of(2023, 7, 16), 15000, 1L, 1, "canceled", 1));
 
         return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
     }
