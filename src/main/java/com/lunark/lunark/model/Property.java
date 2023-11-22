@@ -18,10 +18,11 @@ public class Property {
     private PricingMode pricingMode;
     private int cancellationDeadline;
     private boolean autoApproveEnabled;
+    private Collection<Review> reviews;
 
     public Property() {}
 
-    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled) {
+    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews) {
         this.id = id;
         this.name = name;
         this.minGuests = minGuests;
@@ -35,6 +36,7 @@ public class Property {
         this.pricingMode = pricingMode;
         this.cancellationDeadline = cancellationDeadline;
         this.autoApproveEnabled = autoApproveEnabled;
+        this.reviews = reviews;
     }
 
     public Long getId() {
@@ -141,23 +143,33 @@ public class Property {
         this.autoApproveEnabled = autoApproveEnabled;
     }
 
+
+    public Collection<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Collection<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Property property = (Property) o;
-        return minGuests == property.minGuests && maxGuests == property.maxGuests && Double.compare(latitude, property.latitude) == 0 && Double.compare(longitude, property.longitude) == 0 && approved == property.approved && cancellationDeadline == property.cancellationDeadline && autoApproveEnabled == property.autoApproveEnabled && Objects.equals(name, property.name) && Objects.equals(description, property.description) && Objects.equals(address, property.address) && Objects.equals(photos, property.photos) && pricingMode == property.pricingMode;
+        return getMinGuests() == property.getMinGuests() && getMaxGuests() == property.getMaxGuests() && Double.compare(getLatitude(), property.getLatitude()) == 0 && Double.compare(getLongitude(), property.getLongitude()) == 0 && isApproved() == property.isApproved() && getCancellationDeadline() == property.getCancellationDeadline() && isAutoApproveEnabled() == property.isAutoApproveEnabled() && Objects.equals(getId(), property.getId()) && Objects.equals(getName(), property.getName()) && Objects.equals(getDescription(), property.getDescription()) && Objects.equals(getAddress(), property.getAddress()) && Objects.equals(getPhotos(), property.getPhotos()) && getPricingMode() == property.getPricingMode() && Objects.equals(getReviews(), property.getReviews());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, minGuests, maxGuests, description, latitude, longitude, address, photos, approved, pricingMode, cancellationDeadline, autoApproveEnabled);
+        return Objects.hash(getId(), getName(), getMinGuests(), getMaxGuests(), getDescription(), getLatitude(), getLongitude(), getAddress(), getPhotos(), isApproved(), getPricingMode(), getCancellationDeadline(), isAutoApproveEnabled(), getReviews());
     }
 
     @Override
     public String toString() {
         return "Property{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", minGuests=" + minGuests +
                 ", maxGuests=" + maxGuests +
                 ", description='" + description + '\'' +
@@ -169,6 +181,7 @@ public class Property {
                 ", pricingMode=" + pricingMode +
                 ", cancellationDeadline=" + cancellationDeadline +
                 ", autoApproveEnabled=" + autoApproveEnabled +
+                ", reviews=" + reviews +
                 '}';
     }
 }
