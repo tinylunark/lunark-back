@@ -1,9 +1,8 @@
 package com.lunark.lunark.dto;
 
 import com.lunark.lunark.model.Account;
-import com.lunark.lunark.model.AccountRole;
 
-public class AccountDto {
+public class AccountVerifiedDto {
     private Long id;
     private String email;
     private String password;
@@ -12,13 +11,13 @@ public class AccountDto {
     private String address;
     private String phoneNumber;
     private String role;
+    private boolean verified;
 
-    public AccountDto() {
+    public AccountVerifiedDto() {
 
     }
-
-    public AccountDto(String email, String password, String name, String surname, String address, String phoneNumber, String role) {
-        this.id = null;
+    public AccountVerifiedDto(Long id, String email, String password, String name, String surname, String address, String phoneNumber, String role, boolean verified) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -26,9 +25,9 @@ public class AccountDto {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.verified = verified;
     }
-
-    public AccountDto(Account account) {
+    public AccountVerifiedDto(Account account) {
         this.id = account.getId();
         this.email = account.getEmail();
         this.password = account.getPassword();
@@ -37,6 +36,15 @@ public class AccountDto {
         this.address = account.getAddress();
         this.phoneNumber = account.getPhoneNumber();
         this.role = account.getRole().toString();
+        this.verified = account.isVerified();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -95,16 +103,11 @@ public class AccountDto {
         this.role = role;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isVerified() {
+        return verified;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Account toAccount() {
-        AccountRole role = AccountRole.fromString(this.role);
-        return new Account(null, email, password, name, surname, address, phoneNumber, false, role, false, false);
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }
