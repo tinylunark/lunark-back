@@ -2,6 +2,8 @@ package com.lunark.lunark.model;
 
 import jdk.jshell.spi.ExecutionControl;
 
+import java.util.Collection;
+
 public class Account {
     private Long id;
     private String email;
@@ -14,12 +16,15 @@ public class Account {
     private AccountRole role;
     private boolean notificationsEnabled;
     private boolean blocked;
+    private Collection<Review> reviews;
 
     public Account() {
 
     }
 
-    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked) {
+
+
+    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -31,6 +36,7 @@ public class Account {
         this.role = role;
         this.notificationsEnabled = notificationsEnabled;
         this.blocked = blocked;
+        this.reviews = reviews;
     }
 
     public void verify() {
@@ -130,5 +136,13 @@ public class Account {
 
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
+    }
+
+    public Collection<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Collection<Review> reviews) {
+        this.reviews = reviews;
     }
 }
