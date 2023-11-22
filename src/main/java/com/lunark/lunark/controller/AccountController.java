@@ -76,4 +76,9 @@ public class AccountController {
 
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Account> createAccount(@PathVariable("verification_link_id") Long verifcationLinkId) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
