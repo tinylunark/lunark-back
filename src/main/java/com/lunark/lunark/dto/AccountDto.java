@@ -4,6 +4,7 @@ import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
 
 public class AccountDto {
+    private Long id;
     private String email;
     private String password;
     private String name;
@@ -17,6 +18,7 @@ public class AccountDto {
     }
 
     public AccountDto(String email, String password, String name, String surname, String address, String phoneNumber, String role) {
+        this.id = null;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -27,6 +29,7 @@ public class AccountDto {
     }
 
     public AccountDto(Account account) {
+        this.id = account.getId();
         this.email = account.getEmail();
         this.password = account.getPassword();
         this.name = account.getName();
@@ -90,6 +93,14 @@ public class AccountDto {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Account toAccount() {
