@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class Property {
+    private Long id;
     private String name;
     private int minGuests;
     private int maxGuests;
@@ -20,7 +21,8 @@ public class Property {
 
     public Property() {}
 
-    public Property(String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled) {
+    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled) {
+        this.id = id;
         this.name = name;
         this.minGuests = minGuests;
         this.maxGuests = maxGuests;
@@ -33,6 +35,14 @@ public class Property {
         this.pricingMode = pricingMode;
         this.cancellationDeadline = cancellationDeadline;
         this.autoApproveEnabled = autoApproveEnabled;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
