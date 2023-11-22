@@ -26,7 +26,7 @@ public class AccountController {
     @Autowired
     VerificationService verificationService;
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> getAccount(@PathVariable("id") Long id) {
         Optional<Account> account = accountService.find(id);
         if (account.isEmpty()) {
@@ -36,7 +36,7 @@ public class AccountController {
         return new ResponseEntity<>(new AccountDto(account.get()), HttpStatus.OK);
     }
 
-    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
         Account newAccount = accountDto.toAccount();
         newAccount.verify();
@@ -44,7 +44,7 @@ public class AccountController {
         return new ResponseEntity<>(new AccountDto(account), HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path="/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AccountDto>> getNonAdmins(SpringDataWebProperties.Pageable pageable) {
         List<Account> nonAdmins = accountService.findAll().stream().filter(account -> account.getRole() != AccountRole.ADMIN).collect(Collectors.toList());
 
@@ -52,13 +52,13 @@ public class AccountController {
         return new ResponseEntity<>(accountDtos, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(path="/{id}")
     public ResponseEntity<Account> deleteAccount(@PathVariable("id") Long id) {
         accountService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(path="/{id}")
     public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountDto accountDto, @PathVariable("id") Long id) {
         Optional<Account> accountOptional = accountService.find(id);
         if(accountOptional.isEmpty()) {
@@ -72,7 +72,7 @@ public class AccountController {
         return new ResponseEntity<>(new AccountDto(account), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> verifyAccount(@PathVariable("verification_link_id") Long verifcationLinkId) {
         return new ResponseEntity<>("Account verified", HttpStatus.OK);
     }

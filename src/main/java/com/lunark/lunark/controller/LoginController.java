@@ -19,7 +19,7 @@ public class LoginController {
     @Autowired
     AccountService accountService;
 
-    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationToken> login(@RequestBody AccountLoginDto accountLoginDto) {
         return new ResponseEntity<>(new AuthenticationToken("5VD74ska6lP5fxwX6lRy", "5VD74ska6lP5fxwX6lRy"), HttpStatus.OK);
     }
