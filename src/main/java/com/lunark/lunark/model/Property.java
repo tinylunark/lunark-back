@@ -19,7 +19,8 @@ public class Property {
     private int cancellationDeadline;
     private boolean autoApproveEnabled;
 
-    public Property() {}
+    public Property() {
+    }
 
     public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled) {
         this.id = id;
