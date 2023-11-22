@@ -30,6 +30,25 @@ public class ReviewController {
         return new ResponseEntity<>(review.get(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/host/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<Review>> getReviewForHost(@PathVariable("id") Long id) {
+        Collection<Review> reviews = reviewService.getAllReviewsForHost(id);
+        if(reviews.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/property/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<Review>> getReviewForProperty(@PathVariable("id") Long id) {
+        Collection<Review> reviews = reviewService.getALlReviewsForProperty(id);
+        if(reviews.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
+
     //reviews?type=property or ?type=host
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Review> createReview(@RequestBody ReviewDto reviewDto,
