@@ -1,14 +1,14 @@
 package com.lunark.lunark.model;
 
 public enum AccountRole {
-    GUEST(0),
-    HOST(1),
-    ADMIN(2);
+    GUEST("guest"),
+    HOST("host"),
+    ADMIN("admin");
 
-    private int value;
+    private String name;
 
-    AccountRole(int i) {
-        this.value = i;
+    AccountRole(String name) {
+        this.name = name;
     }
 
     public static AccountRole fromString(String value) {
@@ -25,14 +25,6 @@ public enum AccountRole {
 
     @Override
     public String toString() {
-        switch (this.value) {
-            case 0:
-                return "guest";
-            case 1:
-                return "host";
-            case 2:
-                return "admin";
-        }
-        return "";
+        return this.name;
     }
 }
