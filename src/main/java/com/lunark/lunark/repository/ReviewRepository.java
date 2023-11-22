@@ -1,6 +1,7 @@
 package com.lunark.lunark.repository;
 
 import com.lunark.lunark.model.Review;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Repository
 public class ReviewRepository implements IReviewRepository<Review> {
 
     private ConcurrentMap<Long, Review> reviews = new ConcurrentHashMap<Long, Review>();
