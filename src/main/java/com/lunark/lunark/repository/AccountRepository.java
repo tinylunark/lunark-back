@@ -9,7 +9,7 @@ public interface AccountRepository {
     Collection<Account> findAll();
     Account create(Account account);
     Optional<Account> find(Long id);
-    Optional<Account> find(String username, String password);
+    Optional<Account> find(String email, String password);
     Account update(Account account);
     void delete(Long id);
 

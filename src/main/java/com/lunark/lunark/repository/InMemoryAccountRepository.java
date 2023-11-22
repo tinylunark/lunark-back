@@ -39,9 +39,9 @@ public class InMemoryAccountRepository implements AccountRepository{
     }
 
     @Override
-    public Optional<Account> find(String username, String password) {
+    public Optional<Account> find(String email, String password) {
         for (Account account: this.accounts.values()) {
-            if (account.canLogIn() && account.credentialsMatch(username, password)) {
+            if (account.canLogIn() && account.credentialsMatch(email, password)) {
                 return Optional.of(account);
             }
         }

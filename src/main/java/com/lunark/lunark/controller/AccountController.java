@@ -1,6 +1,7 @@
 package com.lunark.lunark.controller;
 
 import com.lunark.lunark.dto.AccountDto;
+import com.lunark.lunark.dto.AccountLoginDto;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
@@ -42,7 +43,9 @@ public class AccountController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> createAccount(@RequestBody AccountDto accountDto) {
-        Account account = accountService.create(accountDto.toAccount());
+        Account newAccount = accountDto.toAccount();
+        newAccount.verify();
+        Account account = accountService.create(newAccount);
         return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 

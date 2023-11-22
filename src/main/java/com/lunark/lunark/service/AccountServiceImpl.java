@@ -30,8 +30,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<Account> find(String username, String password) {
-        return accountRepository.find(username, password);
+    public Optional<Account> find(String email, String password) {
+        return accountRepository.find(email, password);
     }
 
     @Override
