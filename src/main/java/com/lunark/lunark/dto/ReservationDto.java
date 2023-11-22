@@ -1,5 +1,7 @@
 package com.lunark.lunark.dto;
 
+import com.lunark.lunark.model.Reservation;
+
 import java.time.LocalDate;
 
 public class ReservationDto {
@@ -23,6 +25,18 @@ public class ReservationDto {
         this.numberOfGuests = numberOfGuests;
         this.status = status;
         this.cancellationCount = cancellationCount;
+    }
+
+    public ReservationDto(Reservation reservation) {
+        this.id = reservation.getId();
+        this.propertyName = reservation.getProperty().getName();
+        this.startDate = reservation.getStartDate();
+        this.endDate = reservation.getEndDate();
+        this.price = reservation.getPrice();
+        this.guestId = reservation.getGuest().getId();
+        this.numberOfGuests = reservation.getNumberOfGuests();
+        this.status = reservation.getStatus().toString();
+        this.cancellationCount = 0;
     }
 
     public String getPropertyName() {
