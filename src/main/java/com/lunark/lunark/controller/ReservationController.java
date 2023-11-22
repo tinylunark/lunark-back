@@ -43,6 +43,11 @@ public class ReservationController {
     }
 
 
+    @PostMapping(value = "/cancel/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> cancelReservation(@RequestHeader("x-access-token") String guest, @PathVariable("reservation_id") Long id) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping(value="")
     public ResponseEntity<Collection<ReservationDto>> getReservations(@RequestHeader("x-access-token") String token, @RequestParam(value = "propertyName", required = false) String propertyName, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam(value = "status", required = false) String status){
         ArrayList<ReservationDto> reservationDtos = new ArrayList<>();
