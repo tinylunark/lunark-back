@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -21,7 +23,7 @@ public class ReservationController {
 
     @GetMapping(value = "/{reservation_id}")
     public ResponseEntity<ReservationDto> getReservation(@PathVariable("reservation_id") Long Id) {
-        ReservationDto reservationDto = new ReservationDto("Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L);
+        ReservationDto reservationDto = new ReservationDto("Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3);
         return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
@@ -39,4 +41,14 @@ public class ReservationController {
     public ResponseEntity<String> rejectReservation(@PathVariable("reservation_id") Long id) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+    @GetMapping(value="")
+    public ResponseEntity<Collection<ReservationDto>> getReservations(@RequestHeader("Cookie") String cookie, @RequestParam(value = "propertyName", required = false) String propertyName, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam(value = "status", required = false) String status){
+        ArrayList<ReservationDto> reservationDtos = new ArrayList<>();
+        reservationDtos.add(new ReservationDto("Hotel Oderberger", LocalDate.of(2024, 7, 14), LocalDate.of(2023, 7, 16), 15000, 1L, 1));
+
+        return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
+    }
+
 }

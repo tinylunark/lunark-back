@@ -8,13 +8,15 @@ public class ReservationDto {
     private LocalDate endDate;
     private double price;
     private Long guestId;
+    private int numberOfGuests;
 
-    public ReservationDto(String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId) {
+    public ReservationDto(String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId, int numberOfGuests) {
         this.propertyName = propertyName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.price = price;
         this.guestId = guestId;
+        this.numberOfGuests = numberOfGuests;
     }
 
     public String getPropertyName() {
@@ -55,5 +57,13 @@ public class ReservationDto {
 
     public void setGuestId(Long guestId) {
         this.guestId = guestId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 }
