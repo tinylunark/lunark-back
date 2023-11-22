@@ -36,7 +36,7 @@ public class AccountController {
         return new ResponseEntity<>(new AccountDto(account.get()), HttpStatus.OK);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
         Account newAccount = accountDto.toAccount();
         newAccount.verify();
