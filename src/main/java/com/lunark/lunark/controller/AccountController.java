@@ -1,6 +1,7 @@
 package com.lunark.lunark.controller;
 
 import com.lunark.lunark.dto.AccountDto;
+import com.lunark.lunark.dto.AccountVerifiedDto;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
@@ -73,7 +74,14 @@ public class AccountController {
     }
 
     @PostMapping(path="/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> verifyAccount(@PathVariable("verification_link_id") Long verifcationLinkId) {
-        return new ResponseEntity<>("Account verified", HttpStatus.OK);
+    public ResponseEntity<AccountVerifiedDto> verifyAccount(@PathVariable("verification_link_id") Long verifcationLinkId) {
+        Optional<Account> account = accountService.find(verifcationLinkId);
+        if(account.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Account verifiedAccount = account.get();
+        verifiedAccount.verify();
+        return new ResponseEntity<>(new AccountVerifiedDto(accountService.update(verifiedAccount)), HttpStatus.OK);
     }
 }
