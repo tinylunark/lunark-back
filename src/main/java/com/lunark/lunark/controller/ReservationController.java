@@ -23,7 +23,7 @@ public class ReservationController {
 
     @GetMapping(path = "/{reservation_id}")
     public ResponseEntity<ReservationDto> getReservation(@RequestHeader("x-access-token") String token, @PathVariable("reservation_id") Long Id) {
-        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "accepted", 0);
+        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "pending", 0);
         return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
@@ -33,19 +33,22 @@ public class ReservationController {
     }
 
     @PostMapping(path = "/accept/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> acceptReservation(@RequestHeader("x-access-token") String hostToken, @PathVariable("reservation_id") Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ReservationDto> acceptReservation(@RequestHeader("x-access-token") String hostToken, @PathVariable("reservation_id") Long id) {
+        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "accepted", 0);
+        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
     @PostMapping(path = "/reject/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> rejectReservation(@RequestHeader("x-access-token") String hostToken, @PathVariable("reservation_id") Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ReservationDto> rejectReservation(@RequestHeader("x-access-token") String hostToken, @PathVariable("reservation_id") Long id) {
+        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "cancelled", 0);
+        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
 
     @PostMapping(path = "/cancel/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> cancelReservation(@RequestHeader("x-access-token") String guest, @PathVariable("reservation_id") Long id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ReservationDto> cancelReservation(@RequestHeader("x-access-token") String guest, @PathVariable("reservation_id") Long id) {
+        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "rejected", 0);
+        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
     @GetMapping(value="")

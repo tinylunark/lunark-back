@@ -3,7 +3,8 @@ package com.lunark.lunark.model;
 public enum ReservationStatus {
     PENDING("pending"),
     ACCEPTED("accepted"),
-    REJECTED("rejected");
+    REJECTED("rejected"),
+    CANCELLED("cancelled");
 
     private String name;
 
@@ -20,6 +21,8 @@ public enum ReservationStatus {
                 return ReservationStatus.ACCEPTED;
             case "rejected":
                 return ReservationStatus.REJECTED;
+            case "cancelled":
+                return ReservationStatus.CANCELLED;
         }
         throw new IllegalArgumentException("Invalid string in account role");
     }
