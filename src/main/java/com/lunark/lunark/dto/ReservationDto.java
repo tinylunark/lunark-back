@@ -14,9 +14,9 @@ public class ReservationDto {
     private Long guestId;
     private int numberOfGuests;
     private String status;
-    private int cancellationCount;
+    private int guestCancellationCount;
 
-    public ReservationDto(Long id, Long propertyId, String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId, int numberOfGuests, String status, int cancellationCount) {
+    public ReservationDto(Long id, Long propertyId, String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId, int numberOfGuests, String status, int guestCancellationCount) {
         this.id = id;
         this.propertyId = propertyId;
         this.propertyName = propertyName;
@@ -26,7 +26,7 @@ public class ReservationDto {
         this.guestId = guestId;
         this.numberOfGuests = numberOfGuests;
         this.status = status;
-        this.cancellationCount = cancellationCount;
+        this.guestCancellationCount = guestCancellationCount;
     }
 
     public ReservationDto(Reservation reservation) {
@@ -39,7 +39,7 @@ public class ReservationDto {
         this.guestId = reservation.getGuest().getId();
         this.numberOfGuests = reservation.getNumberOfGuests();
         this.status = reservation.getStatus().toString();
-        this.cancellationCount = 0;
+        this.guestCancellationCount = 0;
     }
 
     public Long getPropertyId() {
@@ -106,12 +106,12 @@ public class ReservationDto {
         this.status = status;
     }
 
-    public int getCancellationCount() {
-        return cancellationCount;
+    public int getGuestCancellationCount() {
+        return guestCancellationCount;
     }
 
-    public void setCancellationCount(int cancellationCount) {
-        this.cancellationCount = cancellationCount;
+    public void setGuestCancellationCount(int guestCancellationCount) {
+        this.guestCancellationCount = guestCancellationCount;
     }
 
     public Long getId() {
