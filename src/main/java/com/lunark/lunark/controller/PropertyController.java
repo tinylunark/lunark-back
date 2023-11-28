@@ -1,7 +1,7 @@
 package com.lunark.lunark.controller;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
-import com.lunark.lunark.dto.PropertyDto;
+import com.lunark.lunark.dto.PropertyRequestDto;
+import com.lunark.lunark.dto.PropertyResponseDto;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.service.PropertyService;
@@ -26,24 +26,24 @@ public class PropertyController {
     ModelMapper modelMapper;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PropertyDto>> getAll() {
-        List<PropertyDto> propertyDtos = propertyService.findAll()
+    public ResponseEntity<List<PropertyResponseDto>> getAll() {
+        List<PropertyResponseDto> propertyDtos = propertyService.findAll()
                 .stream()
-                .map(p -> modelMapper.map(p, PropertyDto.class))
+                .map(p -> modelMapper.map(p, PropertyResponseDto.class))
                 .toList();
 
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyDto> getProperty(@PathVariable("id") Long id) {
+    public ResponseEntity<PropertyResponseDto> getProperty(@PathVariable("id") Long id) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        PropertyDto propertyDto = modelMapper.map(property, PropertyDto.class);
+        PropertyResponseDto propertyDto = modelMapper.map(property, PropertyResponseDto.class);
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
     }
 
@@ -64,19 +64,19 @@ public class PropertyController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyDto> createProperty(@RequestBody PropertyDto propertyDto) {
+    public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
         // TODO: add service calls
-        return new ResponseEntity<>(new PropertyDto(), HttpStatus.CREATED);
+        return new ResponseEntity<>(new PropertyResponseDto(), HttpStatus.CREATED);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyDto> updateProperty(@RequestBody PropertyDto propertyDto) {
+    public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
         // TODO: add service calls
-        return new ResponseEntity<>(new PropertyDto(), HttpStatus.OK);
+        return new ResponseEntity<>(new PropertyResponseDto(), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<PropertyDto> deleteProperty(@PathVariable("id") Long id) {
+    public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
         // TODO: add service calls
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
