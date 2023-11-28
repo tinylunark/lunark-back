@@ -19,11 +19,12 @@ public class Property {
     private int cancellationDeadline;
     private boolean autoApproveEnabled;
     private Collection<Review> reviews;
+    private Collection<PropertyAvailabilityEntry> availabilityEntries;
 
     public Property() {
     }
 
-    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews) {
+    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews, Collection<PropertyAvailabilityEntry> availabilityEntries) {
         this.id = id;
         this.name = name;
         this.minGuests = minGuests;
@@ -38,6 +39,7 @@ public class Property {
         this.cancellationDeadline = cancellationDeadline;
         this.autoApproveEnabled = autoApproveEnabled;
         this.reviews = reviews;
+        this.availabilityEntries = availabilityEntries;
     }
 
     public Long getId() {
@@ -153,6 +155,14 @@ public class Property {
         this.reviews = reviews;
     }
 
+    public Collection<PropertyAvailabilityEntry> getAvailabilityEntries() {
+        return availabilityEntries;
+    }
+
+    public void setAvailabilityEntries(Collection<PropertyAvailabilityEntry> availabilityEntries) {
+        this.availabilityEntries = availabilityEntries;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -183,6 +193,7 @@ public class Property {
                 ", cancellationDeadline=" + cancellationDeadline +
                 ", autoApproveEnabled=" + autoApproveEnabled +
                 ", reviews=" + reviews +
+                ", availabilityEntries=" + availabilityEntries +
                 '}';
     }
 }
