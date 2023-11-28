@@ -1,7 +1,9 @@
 package com.lunark.lunark.controller;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.lunark.lunark.dto.PropertyDto;
 import com.lunark.lunark.model.Property;
+import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.service.PropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +45,22 @@ public class PropertyController {
 
         PropertyDto propertyDto = modelMapper.map(property, PropertyDto.class);
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<PropertyAvailabilityEntry>> getPricesAndAvailability(@PathVariable("id") Long id) {
+        Optional<Property> property = propertyService.find(id);
+
+        if (property.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(property.get().getAvailabilityEntries(), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<PropertyAvailabilityEntry>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<PropertyAvailabilityEntry> availabilityEntries) {
+        return new ResponseEntity<>(availabilityEntries, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -3,10 +3,13 @@ package com.lunark.lunark.model;
 import java.time.LocalDate;
 
 public class PropertyAvailabilityEntry {
-    private final LocalDate date;
+    private LocalDate date;
     private double price;
 
     private boolean isReserved = false;
+
+    public PropertyAvailabilityEntry() {
+    }
 
     public PropertyAvailabilityEntry(LocalDate date, double price) {
         this.date = date;
@@ -39,5 +42,13 @@ public class PropertyAvailabilityEntry {
 
     public void setReserved(boolean reserved) {
         isReserved = reserved;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

@@ -155,6 +155,14 @@ public class Property {
         this.reviews = reviews;
     }
 
+    public Collection<PropertyAvailabilityEntry> getAvailabilityEntries() {
+        return availabilityEntries;
+    }
+
+    public void setAvailabilityEntries(Collection<PropertyAvailabilityEntry> availabilityEntries) {
+        this.availabilityEntries = availabilityEntries;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
