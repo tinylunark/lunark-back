@@ -20,7 +20,7 @@ public class PropertyReportController {
        return ResponseEntity.ok("Dummy pdf.");
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<PropertyReportDto> sendRecordData(@RequestParam Long propertyId, @RequestParam String startDate, @RequestParam String endDate) {
         PropertyReportDto propertyReportDto = new PropertyReportDto(
                 120000.0,
