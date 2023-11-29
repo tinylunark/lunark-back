@@ -4,10 +4,8 @@ import com.lunark.lunark.dto.AmenityDto;
 import com.lunark.lunark.dto.PropertyAmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
-import com.lunark.lunark.model.Amenity;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
-import com.lunark.lunark.model.PropertyType;
 import com.lunark.lunark.service.PropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,7 @@ public class PropertyController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) List<AmenityDto> amenities,
-            @RequestParam(required = false) PropertyType type,
+            @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice
             ) {
