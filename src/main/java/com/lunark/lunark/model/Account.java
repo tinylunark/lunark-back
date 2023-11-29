@@ -1,9 +1,7 @@
 package com.lunark.lunark.model;
 
-import jdk.jshell.spi.ExecutionControl;
-
 import java.util.Collection;
-import java.util.Set;
+import java.util.HashSet;
 
 public class Account {
     private Long id;
@@ -18,14 +16,14 @@ public class Account {
     private boolean notificationsEnabled;
     private boolean blocked;
     private Collection<Review> reviews;
-    private Set<Property> favoriteProperties;
+    private HashSet<Property> favoriteProperties;
     public Account() {
 
     }
 
 
 
-    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews, Set<Property> favoriteProperties) {
+    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews, HashSet<Property> favoriteProperties) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -148,11 +146,11 @@ public class Account {
         this.reviews = reviews;
     }
 
-    public Set<Property> getFavoriteProperties() {
+    public HashSet<Property> getFavoriteProperties() {
         return favoriteProperties;
     }
 
-    public void setFavoriteProperties(Set<Property> favoriteProperties) {
+    public void setFavoriteProperties(HashSet<Property> favoriteProperties) {
         this.favoriteProperties = favoriteProperties;
     }
 
