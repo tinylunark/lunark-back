@@ -23,6 +23,7 @@ public class ReviewRepository implements IReviewRepository<Review> {
     @Override
     public Review create(Review review) {
         Long id = generateId(review.getId());
+        review.setId(id);
         save(id, review);
         return review;
     }
