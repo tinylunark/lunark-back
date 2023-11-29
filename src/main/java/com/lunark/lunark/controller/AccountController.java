@@ -6,6 +6,7 @@ import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
 import com.lunark.lunark.service.AccountService;
+import com.lunark.lunark.service.PropertyService;
 import com.lunark.lunark.service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -26,6 +27,9 @@ public class AccountController {
 
     @Autowired
     VerificationService verificationService;
+
+    @Autowired
+    PropertyService propertyService;
 
     @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> getAccount(@PathVariable("id") Long id) {
@@ -95,5 +99,16 @@ public class AccountController {
     @PostMapping(value = "/block/{id}")
     public ResponseEntity<?> blockAccount(@PathVariable("id") Long id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping(path="/{id}/add-favorite/{propertyId}")
+    public ResponseEntity<AccountDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
+        Optional<Account> accountOptional = accountService.find(accountId);
+        if(accountOptional.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Account account = accountOptional.get();
+        accountService.addToFavorites(accountId, propertyService.find(propertyId).orElse(null));
+        return new ResponseEntity<>(new AccountDto(account), HttpStatus.OK);
     }
 }

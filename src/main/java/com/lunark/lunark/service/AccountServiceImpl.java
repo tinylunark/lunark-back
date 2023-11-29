@@ -1,6 +1,7 @@
 package com.lunark.lunark.service;
 
 import com.lunark.lunark.model.Account;
+import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.Review;
 import com.lunark.lunark.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +62,13 @@ public class AccountServiceImpl implements AccountService {
         }
         double sum = reviewList.stream().mapToDouble(Review::getRating).sum();
         return sum / reviewList.size();
+    }
+
+    @Override
+    public void addToFavorites(Long id, Property property) {
+        this.find(id).ifPresent(account -> {
+            account.getFavoriteProperties().add(property);
+            update(account);
+        });
     }
 }

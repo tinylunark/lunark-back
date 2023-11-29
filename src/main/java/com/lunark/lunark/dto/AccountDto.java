@@ -2,8 +2,11 @@ package com.lunark.lunark.dto;
 
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
+import com.lunark.lunark.model.Property;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AccountDto {
     private Long id;
@@ -107,6 +110,7 @@ public class AccountDto {
 
     public Account toAccount() {
         AccountRole role = AccountRole.fromString(this.role);
-        return new Account(null, email, password, name, surname, address, phoneNumber, false, role, false, new ArrayList<>());
+        return new Account(null, email, password, name, surname, address, phoneNumber, false, role, false, false, new ArrayList<>(), new HashSet<Property>() {
+        });
     }
 }

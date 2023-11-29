@@ -1,6 +1,7 @@
 package com.lunark.lunark.service;
 
 import com.lunark.lunark.model.Account;
+import com.lunark.lunark.model.Property;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -12,5 +13,6 @@ public interface AccountService {
     Optional<Account> find(String username, String password);
     Account update(Account account);
     void delete(Long id);
+    void addToFavorites(Long id, Property property);
     Double getAverageGrade(Long id);
 }
