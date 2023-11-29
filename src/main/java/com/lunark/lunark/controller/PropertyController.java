@@ -52,7 +52,7 @@ public class PropertyController {
     @GetMapping(value = "/average/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Double> getAverageGrade(@PathVariable("id") Long id) {
         Double averageGrade = propertyService.getAverageGrade(id);
-        if (averageGrade < 0 ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (averageGrade == null ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(averageGrade, HttpStatus.OK);
     }
   
