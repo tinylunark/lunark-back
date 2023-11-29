@@ -13,7 +13,7 @@ import java.util.Arrays;
 @RequestMapping("/api/property-report")
 public class PropertyReportController {
 
-    @GetMapping(value = "/download", produces =  "application/json")
+    @GetMapping(value = "/download", produces =  "application/pdf")
     public ResponseEntity<String> downloadRecord(@RequestParam Long propertyId, @RequestParam String startDate, @RequestParam String endDate) {
         // TODO: Implementation
 
