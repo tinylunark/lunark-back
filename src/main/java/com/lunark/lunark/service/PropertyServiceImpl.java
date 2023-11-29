@@ -79,7 +79,7 @@ public class PropertyServiceImpl implements PropertyService {
     public Double getAverageGrade(Long id) {
         Optional<Property> property = this.find(id);
         if (property.isEmpty()){
-            return -1.0;
+            return null;
         }
         Property foundProperty = property.get();
         return calculateAverageGrade(foundProperty);
