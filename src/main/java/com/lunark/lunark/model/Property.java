@@ -1,6 +1,8 @@
 package com.lunark.lunark.model;
 
 import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -18,11 +20,16 @@ public class Property {
     private PricingMode pricingMode;
     private int cancellationDeadline;
     private boolean autoApproveEnabled;
-    private Collection<Review> reviews;
+    private Collection<Review> reviews = new ArrayList<>();
+    private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
+    private Collection<Amenity> amenities = Arrays.asList(new Amenity(1L, "Wi-Fi", null), new Amenity(2L, "Washing machine", null));
 
-    public Property() {}
 
-    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews) {
+
+    public Property() {
+    }
+
+    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews, Collection<PropertyAvailabilityEntry> availabilityEntries, Collection<Amenity> amenities) {
         this.id = id;
         this.name = name;
         this.minGuests = minGuests;
@@ -37,6 +44,8 @@ public class Property {
         this.cancellationDeadline = cancellationDeadline;
         this.autoApproveEnabled = autoApproveEnabled;
         this.reviews = reviews;
+        this.availabilityEntries = availabilityEntries;
+        this.amenities = amenities;
     }
 
     public Long getId() {
@@ -152,6 +161,22 @@ public class Property {
         this.reviews = reviews;
     }
 
+    public Collection<PropertyAvailabilityEntry> getAvailabilityEntries() {
+        return availabilityEntries;
+    }
+
+    public void setAvailabilityEntries(Collection<PropertyAvailabilityEntry> availabilityEntries) {
+        this.availabilityEntries = availabilityEntries;
+    }
+
+    public Collection<Amenity> getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(Collection<Amenity> amenities) {
+        this.amenities = amenities;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -182,6 +207,7 @@ public class Property {
                 ", cancellationDeadline=" + cancellationDeadline +
                 ", autoApproveEnabled=" + autoApproveEnabled +
                 ", reviews=" + reviews +
+                ", availabilityEntries=" + availabilityEntries +
                 '}';
     }
 }
