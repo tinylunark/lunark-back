@@ -1,5 +1,6 @@
 package com.lunark.lunark.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 public class RecordController {
 
     @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadRecord(@RequestParam Long recordId) {
-
+    public ResponseEntity<String> downloadRecord(@RequestParam Long recordId) {
+       return new ResponseEntity<>("Dummy string", HttpStatus.OK);
     }
 
     @GetMapping("/send")
