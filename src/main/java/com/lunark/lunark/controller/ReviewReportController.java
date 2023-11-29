@@ -19,7 +19,7 @@ public class ReviewReportController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewReportResponseDto> getReviewReport(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(new ReviewReportResponseDto(null, null, null), HttpStatus.OK);
+        return new ResponseEntity<>(new ReviewReportResponseDto(null, null, null, null), HttpStatus.OK);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -29,12 +29,12 @@ public class ReviewReportController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewReportResponseDto> createReviewReport(@RequestBody ReviewReportRequestDto dto) {
-        return new ResponseEntity<>(new ReviewReportResponseDto(null, null, null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ReviewReportResponseDto(null, null, null, null), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewReportResponseDto> updateReviewReport(@PathVariable Long id, @RequestBody ReviewReportRequestDto dto) {
-        return new ResponseEntity<>(new ReviewReportResponseDto(null, null, null), HttpStatus.OK);
+        return new ResponseEntity<>(new ReviewReportResponseDto(null, null, null, null), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
