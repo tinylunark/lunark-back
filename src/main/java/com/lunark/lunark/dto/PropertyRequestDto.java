@@ -21,4 +21,5 @@ public class PropertyRequestDto {
     PricingMode pricingMode;
     int cancellationDeadline;
     boolean autoApproveEnabled;
+    Collection<Long> amenities;
 }

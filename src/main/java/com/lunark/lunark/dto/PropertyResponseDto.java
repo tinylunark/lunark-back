@@ -22,4 +22,5 @@ public class PropertyResponseDto {
     PricingMode pricingMode;
     int cancellationDeadline;
     boolean autoApproveEnabled;
+    Collection<PropertyAmenityDto> amenities;
 }
