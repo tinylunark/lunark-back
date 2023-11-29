@@ -11,4 +11,5 @@ public interface PropertyService {
     Property create(Property property);
     Property update(Property property);
     void delete(Long id);
+    Double getAverageGrade(Long id);
 }

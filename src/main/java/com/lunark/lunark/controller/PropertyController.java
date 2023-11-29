@@ -49,6 +49,13 @@ public class PropertyController {
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/average/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Double> getAverageGrade(@PathVariable("id") Long id) {
+        Double averageGrade = propertyService.getAverageGrade(id);
+        if (averageGrade == null ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(averageGrade, HttpStatus.OK);
+    }
+  
     @GetMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<PropertyAvailabilityEntry>> getPricesAndAvailability(@PathVariable("id") Long id) {
         Optional<Property> property = propertyService.find(id);
