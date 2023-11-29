@@ -1,6 +1,7 @@
 package com.lunark.lunark.service;
 
 import com.lunark.lunark.model.Account;
+import com.lunark.lunark.model.Property;
 import com.lunark.lunark.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void delete(Long id) {
         accountRepository.delete(id);
+    }
+
+    @Override
+    public void addToFavorites(Long id, Property property) {
+        this.find(id).ifPresent(account -> {
+            account.getFavoriteProperties().add(property);
+            update(account);
+        });
     }
 }
