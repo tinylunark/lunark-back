@@ -1,16 +1,18 @@
 package com.lunark.lunark.controller;
 
+import org.modelmapper.internal.bytebuddy.implementation.Implementation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/records")
-public class RecordController {
+public class PropertyReportController {
 
-    @GetMapping("/download")
+    @GetMapping(value = "/download", produces =  "application/json")
     public ResponseEntity<String> downloadRecord(@RequestParam Long recordId) {
-       return new ResponseEntity<>("Dummy string", HttpStatus.OK);
+        // TODO: Implementation
+       return ResponseEntity.ok("Dummy string.");
     }
 
     @GetMapping("/send")
