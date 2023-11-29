@@ -6,16 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/records")
+@RequestMapping("/api/property-report")
 public class PropertyReportController {
 
     @GetMapping(value = "/download", produces =  "application/json")
-    public ResponseEntity<String> downloadRecord(@RequestParam Long recordId) {
+    public ResponseEntity<String> downloadRecord(@RequestParam Long propertyId, @RequestParam String startDate, @RequestParam String endDate) {
         // TODO: Implementation
        return ResponseEntity.ok("Dummy string.");
     }
 
-    @GetMapping("/send")
+    @GetMapping("/")
     public ResponseEntity<String> sendRecordData(@RequestParam Long propertyId, @RequestParam String startDate, @RequestParam String endDate) {
         String response = String.format("Record data received: PropertyId=%d, StartDate=%s, EndDate=%s",
                 propertyId, startDate, endDate);
