@@ -29,7 +29,7 @@ public class Property {
     public Property() {
     }
 
-    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews, Collection<PropertyAvailabilityEntry> availabilityEntries, ArrayList<Amenity> amenities) {
+    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<Image> photos, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews, Collection<PropertyAvailabilityEntry> availabilityEntries, Collection<Amenity> amenities) {
         this.id = id;
         this.name = name;
         this.minGuests = minGuests;
