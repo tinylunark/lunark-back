@@ -96,6 +96,11 @@ public class AccountController {
         return new ResponseEntity<>(new AccountVerifiedDto(accountService.update(verifiedAccount)), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/block/{id}")
+    public ResponseEntity<?> blockAccount(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PatchMapping(path="/{id}/add-favorite/{propertyId}")
     public ResponseEntity<AccountDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
         Optional<Account> accountOptional = accountService.find(accountId);

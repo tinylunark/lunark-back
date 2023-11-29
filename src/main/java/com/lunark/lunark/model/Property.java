@@ -210,4 +210,11 @@ public class Property {
                 ", availabilityEntries=" + availabilityEntries +
                 '}';
     }
+
+    public enum PropertyType {
+        DUPLEX,
+        APARTMENT,
+        COTTAGE,
+        HUT
+    }
 }

@@ -1,5 +1,6 @@
 package com.lunark.lunark.controller;
 
+import com.lunark.lunark.dto.AmenityDto;
 import com.lunark.lunark.dto.PropertyAmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
@@ -28,7 +29,16 @@ public class PropertyController {
     ModelMapper modelMapper;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PropertyResponseDto>> getAll() {
+    public ResponseEntity<List<PropertyResponseDto>> getAll(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Integer guestNumber,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) List<AmenityDto> amenities,
+            @RequestParam(required = false) Property.PropertyType type,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice
+            ) {
         List<PropertyResponseDto> propertyDtos = propertyService.findAll()
                 .stream()
                 .map(p -> modelMapper.map(p, PropertyResponseDto.class))
@@ -89,6 +99,11 @@ public class PropertyController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
         // TODO: add service calls
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(value = "/approve/{id}")
+    public ResponseEntity<?> approveProperty(@PathVariable("id") Long id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
