@@ -1,13 +1,11 @@
 package com.lunark.lunark.controller;
 
-import com.lunark.lunark.dto.AmenityDto;
+import com.lunark.lunark.dto.PropertyAmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
-import com.lunark.lunark.model.Amenity;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.service.PropertyService;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,7 +69,7 @@ public class PropertyController {
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
         // TODO: add service calls
         PropertyResponseDto response = modelMapper.map(propertyDto, PropertyResponseDto.class);
-        response.setAmenities(Arrays.asList(new AmenityDto("Wi-Fi", null), new AmenityDto("Washing machine", null)));
+        response.setAmenities(Arrays.asList(new PropertyAmenityDto("Wi-Fi", null), new PropertyAmenityDto("Washing machine", null)));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

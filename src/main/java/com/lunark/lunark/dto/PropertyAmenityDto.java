@@ -9,8 +9,7 @@ import java.awt.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AmenityDto {
-    private Long id;
+public class PropertyAmenityDto {
     private String name;
     private Image icon;
 }
