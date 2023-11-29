@@ -14,7 +14,6 @@ public class Account {
     private String phoneNumber;
     private boolean verified;
     private AccountRole role;
-    private boolean notificationsEnabled;
     private boolean blocked;
     private Collection<Review> reviews;
 
@@ -24,7 +23,7 @@ public class Account {
 
 
 
-    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews) {
+    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean blocked, Collection<Review> reviews) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -34,7 +33,6 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.verified = verified;
         this.role = role;
-        this.notificationsEnabled = notificationsEnabled;
         this.blocked = blocked;
         this.reviews = reviews;
     }
@@ -120,14 +118,6 @@ public class Account {
 
     public void setRole(AccountRole role) {
         this.role = role;
-    }
-
-    public boolean isNotificationsEnabled() {
-        return notificationsEnabled;
-    }
-
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
-        this.notificationsEnabled = notificationsEnabled;
     }
 
     public boolean isBlocked() {
