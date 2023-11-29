@@ -44,6 +44,13 @@ public class PropertyController {
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/average/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Double> getAverageGrade(@PathVariable("id") Long id) {
+        Double averageGrade = propertyService.getAverageGrade(id);
+        if (averageGrade < 0 ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(averageGrade, HttpStatus.OK);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyDto> createProperty(@RequestBody PropertyDto propertyDto) {
         // TODO: add service calls
