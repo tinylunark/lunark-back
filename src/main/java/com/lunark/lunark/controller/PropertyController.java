@@ -1,10 +1,13 @@
 package com.lunark.lunark.controller;
 
+import com.lunark.lunark.dto.AmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
+import com.lunark.lunark.model.Amenity;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.service.PropertyService;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +47,7 @@ public class PropertyController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        PropertyResponseDto propertyDto = modelMapper.map(property, PropertyResponseDto.class);
+        PropertyResponseDto propertyDto = modelMapper.map(property.get(), PropertyResponseDto.class);
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
     }
 
@@ -66,7 +70,9 @@ public class PropertyController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
         // TODO: add service calls
-        return new ResponseEntity<>(new PropertyResponseDto(), HttpStatus.CREATED);
+        PropertyResponseDto response = modelMapper.map(propertyDto, PropertyResponseDto.class);
+        response.setAmenities(Arrays.asList(new AmenityDto("Wi-Fi", null), new AmenityDto("Washing machine", null)));
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
