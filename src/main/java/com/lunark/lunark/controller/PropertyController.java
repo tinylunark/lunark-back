@@ -84,4 +84,9 @@ public class PropertyController {
         // TODO: add service calls
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping(value = "/approve/{id}")
+    public ResponseEntity<?> approveProperty(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
