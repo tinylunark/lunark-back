@@ -49,12 +49,14 @@ public class ReviewController {
     }
 
 
-    //reviews?type=property or ?type=host
+    //reviews?type=property&id=<property_id> or ?type=host&id=<host_id>
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Review> createReview(@RequestBody ReviewDto reviewDto,
-                                               @RequestParam(value = "type", defaultValue = "property") String reviewType) {
+                                               @RequestParam(value = "type", defaultValue = "property") String reviewType,
+                                               @RequestParam(value = "id") Long propertyOrHostId) {
         try {
             Review newReview = reviewService.create(reviewDto.toReview(reviewType));
+            // TODO: Add review to host or property
             return new ResponseEntity<>(newReview, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -13,6 +13,6 @@ public interface AccountService {
     Optional<Account> find(String username, String password);
     Account update(Account account);
     void delete(Long id);
-
     void addToFavorites(Long id, Property property);
+    Double getAverageGrade(Long id);
 }

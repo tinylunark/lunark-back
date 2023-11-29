@@ -2,9 +2,10 @@ package com.lunark.lunark.model;
 
 import java.time.LocalDateTime;
 
-public record ReviewReport(
+public record AcocuntReport(
         Long id,
         LocalDateTime date,
         Account reporter,
-        Review review
-) {}
+        Account reported
+) {
+}

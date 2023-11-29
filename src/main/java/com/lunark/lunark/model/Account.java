@@ -13,7 +13,6 @@ public class Account {
     private String phoneNumber;
     private boolean verified;
     private AccountRole role;
-    private boolean notificationsEnabled;
     private boolean blocked;
     private Collection<Review> reviews;
     private HashSet<Property> favoriteProperties;
@@ -33,7 +32,6 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.verified = verified;
         this.role = role;
-        this.notificationsEnabled = notificationsEnabled;
         this.blocked = blocked;
         this.reviews = reviews;
         this.favoriteProperties = favoriteProperties;
@@ -120,14 +118,6 @@ public class Account {
 
     public void setRole(AccountRole role) {
         this.role = role;
-    }
-
-    public boolean isNotificationsEnabled() {
-        return notificationsEnabled;
-    }
-
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
-        this.notificationsEnabled = notificationsEnabled;
     }
 
     public boolean isBlocked() {
