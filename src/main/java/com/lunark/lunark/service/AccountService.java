@@ -12,4 +12,5 @@ public interface AccountService {
     Optional<Account> find(String username, String password);
     Account update(Account account);
     void delete(Long id);
+    Double getAverageGrade(Long id);
 }

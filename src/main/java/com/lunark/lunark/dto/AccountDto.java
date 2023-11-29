@@ -107,6 +107,6 @@ public class AccountDto {
 
     public Account toAccount() {
         AccountRole role = AccountRole.fromString(this.role);
-        return new Account(null, email, password, name, surname, address, phoneNumber, false, role, false, false, new ArrayList<>());
+        return new Account(null, email, password, name, surname, address, phoneNumber, false, role, false, new ArrayList<>());
     }
 }
