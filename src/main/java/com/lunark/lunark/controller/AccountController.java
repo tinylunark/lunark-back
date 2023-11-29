@@ -84,4 +84,9 @@ public class AccountController {
         verifiedAccount.verify();
         return new ResponseEntity<>(new AccountVerifiedDto(accountService.update(verifiedAccount)), HttpStatus.OK);
     }
+
+    @PostMapping(value = "/block/{id}")
+    public ResponseEntity<?> blockAccount(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
