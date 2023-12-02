@@ -3,7 +3,6 @@ package com.lunark.lunark.service;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.Review;
-import com.lunark.lunark.repository.AccountRepository;
 import com.lunark.lunark.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class ReviewService implements IReviewService<Review> {
     ReviewRepository reviewRepository;
 
     @Autowired
-    AccountService accountService;
+    IAccountService accountService;
 
     @Autowired
     PropertyService propertyService;

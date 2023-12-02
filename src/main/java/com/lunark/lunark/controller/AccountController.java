@@ -5,7 +5,7 @@ import com.lunark.lunark.dto.AccountVerifiedDto;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
-import com.lunark.lunark.service.AccountService;
+import com.lunark.lunark.service.IAccountService;
 import com.lunark.lunark.service.PropertyService;
 import com.lunark.lunark.service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
-    AccountService accountService;
+    IAccountService accountService;
 
     @Autowired
     VerificationService verificationService;
