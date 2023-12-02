@@ -1,8 +1,16 @@
 package com.lunark.lunark.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 import java.time.LocalDate;
 
+@Entity
 public class PropertyAvailabilityEntry {
+    @Id
+    @ManyToOne
+    private Property property;
     private LocalDate date;
     private double price;
 

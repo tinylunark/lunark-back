@@ -24,25 +24,25 @@ public class AccountService implements IAccountService {
 
     @Override
     public Account create(Account account) {
-        return accountRepository.create(account);
+         return accountRepository.saveAndFlush(account);
     }
 
     @Override
     public Optional<Account> find(Long id) {
-        return accountRepository.find(id);
+        return accountRepository.findById(id);
     }
 
     @Override
     public Optional<Account> find(String email, String password) {
-        return accountRepository.find(email, password);
+        return accountRepository.findByEmailAndPassword(email, password);
     }
 
     @Override
     public Account update(Account account) {
-        return accountRepository.update(account);
+        return accountRepository.saveAndFlush(account);
     }
 
-    @Override public void delete(Long id) { accountRepository.delete(id); }
+    @Override public void delete(Long id) { accountRepository.deleteById(id); }
 
 
     @Override

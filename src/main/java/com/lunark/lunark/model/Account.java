@@ -1,10 +1,17 @@
 package com.lunark.lunark.model;
 
+import jakarta.persistence.*;
+
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
+@Entity
 public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "email", nullable = false)
     private String email;
     private String password;
     private String name;
@@ -14,8 +21,10 @@ public class Account {
     private boolean verified;
     private AccountRole role;
     private boolean blocked;
+    @OneToMany
     private Collection<Review> reviews;
-    private HashSet<Property> favoriteProperties;
+    @OneToMany
+    private Set<Property> favoriteProperties;
     public Account() {
 
     }
@@ -136,11 +145,11 @@ public class Account {
         this.reviews = reviews;
     }
 
-    public HashSet<Property> getFavoriteProperties() {
+    public Set<Property> getFavoriteProperties() {
         return favoriteProperties;
     }
 
-    public void setFavoriteProperties(HashSet<Property> favoriteProperties) {
+    public void setFavoriteProperties(Set<Property> favoriteProperties) {
         this.favoriteProperties = favoriteProperties;
     }
 
