@@ -24,7 +24,8 @@ public class AccountService implements IAccountService {
 
     @Override
     public Account create(Account account) {
-         return accountRepository.saveAndFlush(account);
+        account.setVerified(false);
+        return accountRepository.saveAndFlush(account);
     }
 
     @Override
@@ -39,10 +40,15 @@ public class AccountService implements IAccountService {
 
     @Override
     public Account update(Account account) {
+        if(accountRepository.findById(account.getId()).isEmpty()) {
+            return null;
+        }
         return accountRepository.saveAndFlush(account);
     }
 
-    @Override public void delete(Long id) { accountRepository.deleteById(id); }
+    @Override public void delete(Long id) {
+        accountRepository.deleteById(id);
+    }
 
 
     @Override
