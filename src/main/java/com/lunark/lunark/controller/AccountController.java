@@ -7,7 +7,7 @@ import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
 import com.lunark.lunark.service.IAccountService;
-import com.lunark.lunark.service.PropertyService;
+import com.lunark.lunark.service.IPropertyService;
 import com.lunark.lunark.service.VerificationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class AccountController {
     VerificationService verificationService;
 
     @Autowired
-    PropertyService propertyService;
+    IPropertyService propertyService;
 
     @Autowired
     ModelMapper modelMapper;

@@ -6,7 +6,7 @@ import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
-import com.lunark.lunark.service.PropertyService;
+import com.lunark.lunark.service.IPropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @RequestMapping("api/properties")
 public class PropertyController {
     @Autowired
-    PropertyService propertyService;
+    IPropertyService propertyService;
 
     @Autowired
     ModelMapper modelMapper;
