@@ -9,6 +9,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import com.lunark.lunark.repository.IPropertyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -96,6 +98,7 @@ public class PropertyService implements IPropertyService {
     @Override
     public void delete(Long id) {
         propertyRepository.deleteById(id);
+        propertyRepository.flush();
     }
 
     @Override

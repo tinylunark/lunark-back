@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/properties")
@@ -93,18 +94,24 @@ public class PropertyController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable("id") Long id, @RequestBody PropertyRequestDto propertyDto) {
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
+        // TODO: add service calls
         Property property = modelMapper.map(propertyDto, Property.class);
-        property.setId(id);
-        property = propertyService.update(property);
-        PropertyResponseDto response = modelMapper.map(property, PropertyResponseDto.class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        if (this.propertyService.find(property.getId()).isEmpty())  {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        property = this.propertyService.update(property);
+        return new ResponseEntity<>(modelMapper.map(property, PropertyResponseDto.class), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteProperty(@PathVariable("id") Long id) {
-        propertyService.delete(id);
+    public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
+        // TODO: add service calls
+        if (this.propertyService.find(id).isEmpty())  {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        this.propertyService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
