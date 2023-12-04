@@ -10,7 +10,6 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 public class PropertyRequestDto {
-    Long id;
     String name;
     int minGuests;
     int maxGuests;

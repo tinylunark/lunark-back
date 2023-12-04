@@ -84,21 +84,23 @@ public class PropertyController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
-        // TODO: add service calls
-        PropertyResponseDto response = modelMapper.map(propertyDto, PropertyResponseDto.class);
-        response.setAmenities(Arrays.asList(new PropertyAmenityDto("Wi-Fi", null), new PropertyAmenityDto("Washing machine", null)));
+        Property property = propertyService.create(modelMapper.map(propertyDto, Property.class));
+        PropertyResponseDto response = modelMapper.map(property, PropertyResponseDto.class);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
-        // TODO: add service calls
-        return new ResponseEntity<>(new PropertyResponseDto(), HttpStatus.OK);
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable("id") Long id, @RequestBody PropertyRequestDto propertyDto) {
+        Property property = modelMapper.map(propertyDto, Property.class);
+        property.setId(id);
+        property = propertyService.update(property);
+        PropertyResponseDto response = modelMapper.map(property, PropertyResponseDto.class);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
-        // TODO: add service calls
+    public ResponseEntity<?> deleteProperty(@PathVariable("id") Long id) {
+        propertyService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
