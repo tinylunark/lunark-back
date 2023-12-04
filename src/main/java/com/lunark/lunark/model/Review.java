@@ -1,17 +1,27 @@
 package com.lunark.lunark.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
-import java.util.Date;
 
+@Entity
 public class Review {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int rating;
-    private String desc;
+    private String description;
     private boolean approved;
 
     private LocalDateTime date;
     private ReviewType type;
+
+    public Review() {
+
+    }
 
     public enum ReviewType {
         HOST,
@@ -21,7 +31,7 @@ public class Review {
     public Review(Long id, int rating, String desc, boolean approved, LocalDateTime date, ReviewType type) {
         this.id = id;
         this.rating = rating;
-        this.desc = desc;
+        this.description = desc;
         this.approved = approved;
         this.date = date;
         this.type = type;
@@ -43,12 +53,12 @@ public class Review {
         this.rating = rating;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String desc) {
+        this.description = desc;
     }
 
     public boolean isApproved() {

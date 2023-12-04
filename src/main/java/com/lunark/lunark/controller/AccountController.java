@@ -1,13 +1,15 @@
 package com.lunark.lunark.controller;
 
 import com.lunark.lunark.dto.AccountDto;
+import com.lunark.lunark.dto.AccountSignUpDto;
 import com.lunark.lunark.dto.AccountVerifiedDto;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.model.Account;
 import com.lunark.lunark.model.AccountRole;
-import com.lunark.lunark.service.AccountService;
+import com.lunark.lunark.service.IAccountService;
 import com.lunark.lunark.service.PropertyService;
 import com.lunark.lunark.service.VerificationService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
@@ -23,13 +25,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
-    AccountService accountService;
+    IAccountService accountService;
 
     @Autowired
     VerificationService verificationService;
 
     @Autowired
     PropertyService propertyService;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> getAccount(@PathVariable("id") Long id) {
@@ -38,7 +43,7 @@ public class AccountController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new AccountDto(account.get()), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(account.get(), AccountDto.class), HttpStatus.OK);
     }
   
     @GetMapping(value ="/average/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,11 +54,11 @@ public class AccountController {
     }
 
     @PostMapping(path="", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountSignUpDto accountDto) {
         Account newAccount = accountDto.toAccount();
         newAccount.verify();
         Account account = accountService.create(newAccount);
-        return new ResponseEntity<>(new AccountDto(account), HttpStatus.CREATED);
+        return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.CREATED);
     }
 
     @GetMapping(path="/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,13 +70,16 @@ public class AccountController {
     }
 
     @DeleteMapping(path="/{id}")
-    public ResponseEntity<Account> deleteAccount(@PathVariable("id") Long id) {
+    public ResponseEntity<AccountDto> deleteAccount(@PathVariable("id") Long id) {
+        if(accountService.find(id).isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         accountService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping(path="/{id}")
-    public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountDto accountDto, @PathVariable("id") Long id) {
+    public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountSignUpDto accountDto, @PathVariable("id") Long id) {
         Optional<Account> accountOptional = accountService.find(id);
         if(accountOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -81,7 +89,7 @@ public class AccountController {
         account.setId(id);
         accountService.update(account);
 
-        return new ResponseEntity<>(new AccountDto(account), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.OK);
     }
 
     @PostMapping(path="/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -102,13 +110,13 @@ public class AccountController {
     }
 
     @PatchMapping(path="/{id}/add-favorite/{propertyId}")
-    public ResponseEntity<AccountDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
+    public ResponseEntity<AccountSignUpDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
         Optional<Account> accountOptional = accountService.find(accountId);
         if(accountOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Account account = accountOptional.get();
         accountService.addToFavorites(accountId, propertyService.find(propertyId).orElse(null));
-        return new ResponseEntity<>(new AccountDto(account), HttpStatus.OK);
+        return new ResponseEntity<>(new AccountSignUpDto(account), HttpStatus.OK);
     }
 }

@@ -1,12 +1,17 @@
 package com.lunark.lunark.model;
 
+import jakarta.persistence.*;
+
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+@Entity
 public class Property {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private int minGuests;
@@ -14,14 +19,20 @@ public class Property {
     private String description;
     private double latitude;
     private double longitude;
+    @OneToOne
     private Address address;
+    //TODO: Store images
+    @Transient
     private Collection<Image> photos;
     private boolean approved;
     private PricingMode pricingMode;
     private int cancellationDeadline;
     private boolean autoApproveEnabled;
+    @OneToMany
     private Collection<Review> reviews = new ArrayList<>();
+    @OneToMany
     private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
+    @OneToMany
     private Collection<Amenity> amenities = Arrays.asList(new Amenity(1L, "Wi-Fi", null), new Amenity(2L, "Washing machine", null));
 
 
