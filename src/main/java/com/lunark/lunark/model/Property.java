@@ -26,10 +26,12 @@ public class Property {
     private int minGuests;
     @Positive
     private int maxGuests;
+    @NotBlank
     private String description;
     private double latitude;
     private double longitude;
     @OneToOne
+    @NotNull
     private Address address;
     //TODO: Store images
     @Transient
@@ -43,7 +45,7 @@ public class Property {
     @OneToMany
     private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
     @OneToMany
-    private Collection<Amenity> amenities = Arrays.asList(new Amenity(1L, "Wi-Fi", null), new Amenity(2L, "Washing machine", null));
+    private Collection<Amenity> amenities = new ArrayList<>();
 
     public enum PropertyType {
         DUPLEX,

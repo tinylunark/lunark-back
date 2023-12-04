@@ -54,7 +54,7 @@ public class PropertyService implements IPropertyService {
             return property;
         } catch (RuntimeException ex) {
             Throwable e = ex; Throwable c = null;
-            while((e != null) && !((c = ex.getCause()) instanceof ConstraintViolationException)){
+            while((e != null) && !((c = e.getCause()) instanceof ConstraintViolationException)){
                 e = (RuntimeException) c;
             }
             if ((c != null) && (c instanceof ConstraintViolationException)) {
