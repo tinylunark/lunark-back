@@ -25,11 +25,20 @@ public class PropertyAvailabilityEntry {
         this.isReserved = false;
     }
 
+    public PropertyAvailabilityEntry(LocalDate date, double price, Property property) {
+        this.date = date;
+        this.price = price;
+        this.isReserved = false;
+        this.property = property;
+    }
+
     public PropertyAvailabilityEntry(LocalDate date, double price, boolean isReserved) {
         this.date = date;
         this.price = price;
         this.isReserved = isReserved;
     }
+
+
 
     public double getPrice() {
         return price;
