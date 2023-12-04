@@ -2,6 +2,9 @@ package com.lunark.lunark.service;
 
 
 import com.lunark.lunark.model.*;
+import com.lunark.lunark.repository.IPropertyRepository;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -12,66 +15,35 @@ import java.util.Optional;
 
 @Service
 public class PropertyService implements IPropertyService {
-    // TODO: add logic
+    @Autowired
+    IPropertyRepository propertyRepository;
 
     @Override
     public Collection<Property> findAll() {
-        return Arrays.asList(
-                new Property(1L,
-                        "Vila Golija",
-                        1,
-                        5,
-                        "Vila pored Semeteskog jezera",
-                        45,
-                        45,
-                        new Address("Negde", "Semetes", "Serbia"),
-                        new ArrayList<Image>(),
-                        true,
-                        PricingMode.WHOLE_UNIT,
-                        24,
-                        true,
-                        new ArrayList<Review>(),
-                        new ArrayList<PropertyAvailabilityEntry>(),
-                        Arrays.asList(new Amenity(1L, "Wi-Fi", null))
-                ),
-                new Property(2L,
-                        "Hotel Oderberger",
-                        1,
-                        5,
-                        "Located in Berlin, 1.1 miles from Memorial of the Berlin Wall, Hotel Oderberger has accommodations with a garden, private parking, a terrace and a bar. Among the facilities at this property are a concierge service and a tour desk, along with free WiFi throughout the property. Natural History Museum, Berlin is 1.6 miles away and Alexanderplatz is 1.6 miles from the hotel.\n",
-                        45,
-                        45,
-                        new Address("Oderberger Straße 57", "Berlin", "Germany"),
-                        new ArrayList<Image>(),
-                        true,
-                        PricingMode.WHOLE_UNIT,
-                        24,
-                        true,
-                        new ArrayList<Review>(),
-                        new ArrayList<PropertyAvailabilityEntry>(),
-                        Arrays.asList(new Amenity(1L, "Wi-Fi", null), new Amenity(3L, "Indoor swimming pool", null))
-                )
-        );
+        return propertyRepository.findAll();
     }
 
     @Override
     public Optional<Property> find(Long id) {
-        return Optional.of(new Property());
+        return propertyRepository.findById(id);
     }
 
     @Override
     public Property create(Property property) {
-        return new Property();
+        return propertyRepository.saveAndFlush(property);
     }
 
     @Override
     public Property update(Property property) {
-        return new Property();
+        if(propertyRepository.findById(property.getId()).isEmpty()) {
+            return null;
+        }
+        return propertyRepository.saveAndFlush(property);
     }
 
     @Override
     public void delete(Long id) {
-
+        propertyRepository.deleteById(id);
     }
 
     @Override
