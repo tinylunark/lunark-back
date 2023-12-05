@@ -32,13 +32,12 @@ public class PropertyAvailabilityEntry {
         this.property = property;
     }
 
-    public PropertyAvailabilityEntry(LocalDate date, double price, boolean isReserved) {
+    public PropertyAvailabilityEntry(LocalDate date, double price, Property property, boolean isReserved) {
         this.date = date;
         this.price = price;
         this.isReserved = isReserved;
+        this.property = property;
     }
-
-
 
     public double getPrice() {
         return price;
@@ -67,5 +66,13 @@ public class PropertyAvailabilityEntry {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
     }
 }

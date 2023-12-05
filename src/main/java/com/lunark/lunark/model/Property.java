@@ -1,25 +1,30 @@
 package com.lunark.lunark.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
-import org.springframework.cglib.core.Local;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import java.awt.Image;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +60,45 @@ public class Property {
     @OneToMany
     private Collection<Amenity> amenities = new ArrayList<>();
 
+    public boolean setAvailabilityEntries(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
+        if (this.willCloseOnReservedDate(newAvailabilityEntries) || this.willPriceChangeOnReservedDate(newAvailabilityEntries)) {
+            return false;
+        }
+
+        for (PropertyAvailabilityEntry newEntry: newAvailabilityEntries) {
+            Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
+            if(oldEntry.isPresent()) {
+                newEntry.setReserved(oldEntry.get().isReserved());
+            }
+        }
+
+        this.availabilityEntries = newAvailabilityEntries;
+        return true;
+    }
+
+    private boolean willCloseOnReservedDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
+        Set<LocalDate> reservedDates = this.availabilityEntries.stream()
+                .filter(propertyAvailabilityEntry -> propertyAvailabilityEntry.isReserved())
+                .map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate())
+                .collect(Collectors.toSet());
+        Set<LocalDate> newAvailableDates = newAvailabilityEntries.stream()
+                .map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate())
+                .collect(Collectors.toSet());
+
+        return !newAvailableDates.containsAll(reservedDates);
+    }
+
+    private boolean willPriceChangeOnReservedDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
+        for (PropertyAvailabilityEntry newEntry: newAvailabilityEntries) {
+            Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
+            if(oldEntry.isPresent() && oldEntry.get().isReserved() && oldEntry.get().getPrice() != newEntry.getPrice()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public enum PropertyType {
         DUPLEX,
         APARTMENT,
@@ -64,7 +108,7 @@ public class Property {
 
     public boolean isAvailable(LocalDate day) {
         for (PropertyAvailabilityEntry availabilityEntry : availabilityEntries) {
-            if (availabilityEntry.isFor(day)) {
+            if (availabilityEntry.isFor(day) && !availabilityEntry.isReserved()) {
                 return true;
             }
         }
@@ -88,7 +132,7 @@ public class Property {
         return Optional.of(new Reservation(null, from, to, numberOfGuests, autoApproveEnabled ? ReservationStatus.ACCEPTED : ReservationStatus.PENDING, 1000, this, null));
     }
 
-    public Optional<PropertyAvailabilityEntry> getAvailabilityEntry(LocalDate day) {
+    private Optional<PropertyAvailabilityEntry> getAvailabilityEntry(LocalDate day) {
         for (PropertyAvailabilityEntry availabilityEntry : availabilityEntries) {
             if (availabilityEntry.isFor(day)) {
                 return Optional.of(availabilityEntry);

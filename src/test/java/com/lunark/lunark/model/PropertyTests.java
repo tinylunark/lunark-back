@@ -25,8 +25,8 @@ public class PropertyTests {
             "Vila pored Semeteskog jezera",
             45,
             45,
-            new Address("Negde", "Semetes", "Serbia"),
-            new ArrayList<Image>(),
+            new Address(),
+            new ArrayList<PropertyImage>(),
             true,
             PricingMode.WHOLE_UNIT,
             24,
@@ -41,8 +41,11 @@ public class PropertyTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, property),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, property),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, property),
-                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, property)
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, property),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, property, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, property, true)
         ));
+
 
         property.setAvailabilityEntries(availabilityEntries);
     }
@@ -56,6 +59,11 @@ public class PropertyTests {
             "2023-11-30, 2023-12-03, false",
             "2023-12-01, 2023-12-09, false",
             "2024-12-01, 2024-12-09, false",
+            "2024-12-11, 2024-12-11, false",
+            "2024-12-11, 2024-12-12, false",
+            "2024-12-09, 2024-12-12, false",
+            "2024-12-13, 2024-12-14, false",
+            "2024-12-12, 2024-12-14, false",
     })
     public void testIsAvailable(LocalDate from, LocalDate to, boolean shouldBeAvailable) {
         Assertions.assertEquals(shouldBeAvailable, property.isAvailable(from, to));
@@ -107,15 +115,103 @@ public class PropertyTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 1000, null)
         ));
         return Arrays.asList(
-            Arguments.arguments(validAvailabilityEntries, true),
-            Arguments.arguments(validAvailabilityEntriesWithGap, true),
-            Arguments.arguments(entriesThatAlreadyExist, false),
-            Arguments.arguments(onlyOneEntryExists, false)
+                Arguments.arguments(validAvailabilityEntries, true),
+                Arguments.arguments(validAvailabilityEntriesWithGap, true),
+                Arguments.arguments(entriesThatAlreadyExist, false),
+                Arguments.arguments(onlyOneEntryExists, false)
         );
     }
     @ParameterizedTest
     @MethodSource(value="returnParamsForTestMakeAvailable")
     public void testMakeAvailableMultipleDays(Collection<PropertyAvailabilityEntry> availabilityEntries, boolean shouldWork) {
         Assertions.assertEquals(shouldWork, property.makeAvailable(availabilityEntries));
+    }
+
+    public static List<Arguments> returnParamsForTestSetAvailabilityEntries() {
+        List<PropertyAvailabilityEntry> addedNewDaysInMiddle = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 4), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 5), 1000, null)
+        ));
+
+        List<PropertyAvailabilityEntry> addedNewDaysBefore = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 30), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 29), 1000, null)
+        ));
+
+        List<PropertyAvailabilityEntry> addedNewDaysAfter = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 13), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 14), 1000, null)
+        ));
+
+        List<PropertyAvailabilityEntry> changedPrices = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 13), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 14), 1000, null)
+        ));
+        List<PropertyAvailabilityEntry> removedReservedDay = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
+        ));
+        List<PropertyAvailabilityEntry> priceChangedOnReservedDay = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 3000, null, true)
+        ));
+
+        List<PropertyAvailabilityEntry> removedAvailableDays = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
+        ));
+
+        return Arrays.asList(
+                Arguments.arguments(addedNewDaysBefore, true),
+                Arguments.arguments(addedNewDaysAfter, true),
+                Arguments.arguments(addedNewDaysInMiddle, true),
+                Arguments.arguments(removedReservedDay, false),
+                Arguments.arguments(priceChangedOnReservedDay, false),
+                Arguments.arguments(removedAvailableDays, true)
+        );
+    }
+    @ParameterizedTest
+    @MethodSource(value="returnParamsForTestSetAvailabilityEntries")
+    public void testSetAvailabilityEntries(Collection<PropertyAvailabilityEntry> newAvailabilityEntries, boolean shouldWork) {
+        Assertions.assertEquals(shouldWork, property.setAvailabilityEntries(newAvailabilityEntries));
     }
 }
