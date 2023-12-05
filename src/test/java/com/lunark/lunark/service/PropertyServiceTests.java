@@ -14,6 +14,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.awt.*;
 import java.time.*;
@@ -25,7 +32,6 @@ public class PropertyServiceTests {
     @Mock
     private IPropertyRepository propertyRepository;
 
-    @InjectMocks
     private PropertyService propertyService;
 
     private List<Property> properties;
@@ -34,13 +40,12 @@ public class PropertyServiceTests {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.initMocks(this);
         Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
         Clock testClock = Clock.fixed(testTime, ZoneId.systemDefault());
-
-        MockitoAnnotations.initMocks(this);
+        propertyService = new PropertyService(propertyRepository, null, testClock);
         availabilityEntries = new ArrayList<>(Arrays.asList(
                 new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),
-                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),

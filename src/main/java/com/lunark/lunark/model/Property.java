@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
+import org.springframework.context.annotation.Bean;
 
 import java.awt.Image;
 import java.time.Clock;
@@ -60,10 +63,6 @@ public class Property {
     private Collection<Amenity> amenities = new ArrayList<>();
     @Transient
     private Clock clock = Clock.systemDefaultZone();
-
-    public void setClock(Clock clock) {
-        this.clock = clock;
-    }
 
     private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
         return availabilityEntries.stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet()).size() == availabilityEntries.size();

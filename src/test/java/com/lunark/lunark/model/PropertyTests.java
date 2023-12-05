@@ -2,12 +2,17 @@ package com.lunark.lunark.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.awt.Image;
+import java.awt.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,21 +29,21 @@ public class PropertyTests {
     public void setUp() {
         Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
         Clock testClock = Clock.fixed(testTime, ZoneId.systemDefault());
-        property =  new Property(1L,
-            "Vila Golija",
-            1,
-            5,
-            "Vila pored Semeteskog jezera",
-            45,
-            45,
-            new Address(),
-            new ArrayList<PropertyImage>(),
-            true,
-            PricingMode.WHOLE_UNIT,
-            24,
-            true,
-            new ArrayList<Review>(),
-            new ArrayList<PropertyAvailabilityEntry>(),
+        property = new Property(1L,
+                "Vila Golija",
+                1,
+                5,
+                "Vila pored Semeteskog jezera",
+                45,
+                45,
+                new Address(),
+                new ArrayList<PropertyImage>(),
+                true,
+                PricingMode.WHOLE_UNIT,
+                24,
+                true,
+                new ArrayList<Review>(),
+                new ArrayList<PropertyAvailabilityEntry>(),
                 List.of(new Amenity(1L, "Wi-Fi", null)),
             testClock
         );
@@ -208,13 +213,22 @@ public class PropertyTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
         ));
 
+        List<PropertyAvailabilityEntry> madeAvailableToday = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 28), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 3000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
+        ));
+
         return Arrays.asList(
                 Arguments.arguments(addedNewDaysBefore, true),
                 Arguments.arguments(addedNewDaysAfter, true),
                 Arguments.arguments(addedNewDaysInMiddle, true),
                 Arguments.arguments(removedReservedDay, false),
                 Arguments.arguments(priceChangedOnReservedDay, false),
-                Arguments.arguments(removedAvailableDays, true)
+                Arguments.arguments(removedAvailableDays, true),
+                Arguments.arguments(madeAvailableToday, false)
         );
     }
 
