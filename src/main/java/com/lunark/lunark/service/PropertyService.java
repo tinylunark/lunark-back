@@ -2,21 +2,28 @@ package com.lunark.lunark.service;
 
 
 import com.lunark.lunark.model.*;
+import com.lunark.lunark.repository.IPropertyImageRepository;
 import com.lunark.lunark.repository.IPropertyRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.awt.*;
+import javax.swing.*;
+import java.io.IOException;
 import java.util.*;
 
 @Service
 public class PropertyService implements IPropertyService {
     @Autowired
     IPropertyRepository propertyRepository;
+
+    @Autowired
+    IPropertyImageRepository propertyImageRepository;
 
     @Override
     public Collection<Property> findAll() {
@@ -92,5 +99,33 @@ public class PropertyService implements IPropertyService {
         }
         double sum = reviewList.stream().mapToDouble(Review::getRating).sum();
         return sum / reviewList.size();
+    }
+
+    @Override
+    public void saveImage(Property property, MultipartFile file) throws IOException {
+        byte[] byteObjects = new byte[file.getBytes().length];
+
+        int i = 0;
+
+        for (byte b : file.getBytes()){
+            byteObjects[i++] = b;
+        }
+
+        PropertyImage propertyImage = new PropertyImage();
+        propertyImage.setImageData(byteObjects);
+        propertyImage.setProperty(property);
+        propertyImage.setImage(new ImageIcon(byteObjects));
+        propertyImage.setMimeType(file.getContentType());
+
+        property.getImages().add(propertyImage);
+
+        propertyRepository.save(property);
+        propertyImageRepository.save(propertyImage);
+    }
+
+    @Override
+    @Transactional
+    public Optional<PropertyImage> getImage(Long imageId, Long propertyId) {
+        return propertyImageRepository.findByIdAndProperty(imageId, propertyId);
     }
 }

@@ -10,6 +10,7 @@ import lombok.Data;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Data
@@ -31,8 +32,12 @@ public class Property {
     @Valid
     private Address address;
     //TODO: Store images
-    @Transient
-    private Collection<Image> photos;
+    @OneToMany(
+            mappedBy = "property",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Collection<PropertyImage> images;
     private boolean approved = false;
     private PricingMode pricingMode = PricingMode.PER_PERSON;
     private int cancellationDeadline;

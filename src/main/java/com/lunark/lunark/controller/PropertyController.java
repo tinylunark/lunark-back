@@ -6,14 +6,21 @@ import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
+import com.lunark.lunark.model.PropertyImage;
 import com.lunark.lunark.service.IPropertyService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -107,5 +114,39 @@ public class PropertyController {
     @PostMapping(value = "/approve/{id}")
     public ResponseEntity<?> approveProperty(@PathVariable("id") Long id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/{propertyId}/images/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable("propertyId") Long propertyId, @PathVariable("imageId") Long imageId) {
+        Optional<Property> property = propertyService.find(propertyId);
+        if (property.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<PropertyImage> image = propertyService.getImage(imageId, propertyId);
+        if (image.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType(image.get().getMimeType()))
+                .body(image.get().getImageData());
+    }
+
+    @PostMapping(value = "/{id}/images")
+    public ResponseEntity<?> uploadImage(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
+        Optional<Property> property = propertyService.find(id);
+
+        if (property.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            propertyService.saveImage(property.get(), file);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (IOException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 }
