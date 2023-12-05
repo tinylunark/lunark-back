@@ -9,14 +9,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.awt.Image;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
-import java.awt.Image;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,9 +58,22 @@ public class Property {
     private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
     @OneToMany
     private Collection<Amenity> amenities = new ArrayList<>();
+    @Transient
+    private Clock clock = Clock.systemDefaultZone();
 
+    public void setClock(Clock clock) {
+        this.clock = clock;
+    }
+
+    private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
+        return availabilityEntries.stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet()).size() == availabilityEntries.size();
+    }
     public boolean setAvailabilityEntries(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
-        if (this.willCloseOnReservedDate(newAvailabilityEntries) || this.willPriceChangeOnReservedDate(newAvailabilityEntries)) {
+        if (this.willCloseOnReservedDate(newAvailabilityEntries) || this.willPriceChangeOnReservedDate(newAvailabilityEntries) || this.willPriceOrAvailabilityChangeForPastDate(newAvailabilityEntries)) {
+            return false;
+        }
+
+        if(!allDatesUnique(newAvailabilityEntries)) {
             return false;
         }
 
@@ -99,6 +111,16 @@ public class Property {
         return false;
     }
 
+    private boolean willPriceOrAvailabilityChangeForPastDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
+        for (PropertyAvailabilityEntry newEntry: newAvailabilityEntries) {
+            Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
+            if(newEntry.getDate().compareTo(LocalDate.now(clock)) <= 0 && (oldEntry.isEmpty() || oldEntry.get().getPrice() != newEntry.getPrice())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     public enum PropertyType {
         DUPLEX,
         APARTMENT,

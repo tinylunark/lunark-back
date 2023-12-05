@@ -8,7 +8,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.awt.Image;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +21,8 @@ public class PropertyTests {
     private Property property;
     @BeforeEach
     public void setUp() {
+        Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Clock testClock = Clock.fixed(testTime, ZoneId.systemDefault());
         property =  new Property(1L,
             "Vila Golija",
             1,
@@ -33,7 +38,8 @@ public class PropertyTests {
             true,
             new ArrayList<Review>(),
             new ArrayList<PropertyAvailabilityEntry>(),
-                List.of(new Amenity(1L, "Wi-Fi", null))
+                List.of(new Amenity(1L, "Wi-Fi", null)),
+            testClock
         );
 
         List<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>(Arrays.asList(
