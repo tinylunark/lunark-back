@@ -19,6 +19,7 @@ import java.util.List;
 
 public class PropertyTests {
     private Property property;
+
     @BeforeEach
     public void setUp() {
         Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -57,7 +58,7 @@ public class PropertyTests {
     }
 
     @ParameterizedTest
-    @CsvSource(value={
+    @CsvSource(value = {
             "2023-12-01, 2023-12-01, true",
             "2023-12-01, 2023-12-03, true",
             "2023-12-01, 2023-12-04, false",
@@ -76,7 +77,7 @@ public class PropertyTests {
     }
 
     @ParameterizedTest
-    @CsvSource(value={
+    @CsvSource(value = {
             "2023-12-01, 2023-12-01, true",
             "2023-12-01, 2023-12-03, true",
             "2023-12-01, 2023-12-04, false",
@@ -90,7 +91,7 @@ public class PropertyTests {
     }
 
     @ParameterizedTest
-    @CsvSource(value={
+    @CsvSource(value = {
             "2023-12-01, false",
             "2023-12-03, false",
             "2023-12-02, false",
@@ -127,8 +128,9 @@ public class PropertyTests {
                 Arguments.arguments(onlyOneEntryExists, false)
         );
     }
+
     @ParameterizedTest
-    @MethodSource(value="returnParamsForTestMakeAvailable")
+    @MethodSource(value = "returnParamsForTestMakeAvailable")
     public void testMakeAvailableMultipleDays(Collection<PropertyAvailabilityEntry> availabilityEntries, boolean shouldWork) {
         Assertions.assertEquals(shouldWork, property.makeAvailable(availabilityEntries));
     }
@@ -215,8 +217,9 @@ public class PropertyTests {
                 Arguments.arguments(removedAvailableDays, true)
         );
     }
+
     @ParameterizedTest
-    @MethodSource(value="returnParamsForTestSetAvailabilityEntries")
+    @MethodSource(value = "returnParamsForTestSetAvailabilityEntries")
     public void testSetAvailabilityEntries(Collection<PropertyAvailabilityEntry> newAvailabilityEntries, boolean shouldWork) {
         Assertions.assertEquals(shouldWork, property.setAvailabilityEntries(newAvailabilityEntries));
     }

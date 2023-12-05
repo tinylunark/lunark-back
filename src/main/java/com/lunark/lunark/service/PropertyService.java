@@ -96,6 +96,24 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
+    public boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability) {
+        Optional<Property> propertyOptional = this.find(id);
+        if (propertyOptional.isEmpty()){
+            return false;
+        }
+        Property property = propertyOptional.get();
+        for(PropertyAvailabilityEntry entry: newPricesAndAvailability) {
+            entry.setProperty(property);
+        }
+        if (!property.setAvailabilityEntries(newPricesAndAvailability)) {
+            return false;
+        }
+        update(property);
+        return true;
+
+    }
+
+    @Override
     public void delete(Long id) {
         propertyRepository.deleteById(id);
         propertyRepository.flush();

@@ -5,6 +5,7 @@ import com.lunark.lunark.model.PropertyImage;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import com.lunark.lunark.model.PropertyAvailabilityEntry;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -18,4 +19,5 @@ public interface IPropertyService {
     Double getAverageGrade(Long id);
     void saveImage(Property property, MultipartFile file) throws IOException;
     Optional<PropertyImage> getImage(Long imageId, Long propertyId);
+    boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability);
 }
