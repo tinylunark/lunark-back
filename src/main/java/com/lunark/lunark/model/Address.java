@@ -1,25 +1,17 @@
 package com.lunark.lunark.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
-@Entity
+@Data
+@Embeddable
 public class Address{
+    @NotBlank
     String street;
+    @NotBlank
     String city;
+    @NotBlank
     String country;
-    @Id
-    @OneToOne
-    Property property;
-
-    public Address() {
-
-    }
-
-    public Address(String street, String city, String country) {
-        this.street = street;
-        this.city = city;
-        this.country = country;
-    }
 }

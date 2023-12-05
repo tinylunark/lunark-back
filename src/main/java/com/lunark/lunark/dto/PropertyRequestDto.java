@@ -1,5 +1,6 @@
 package com.lunark.lunark.dto;
 
+import com.lunark.lunark.model.Address;
 import com.lunark.lunark.model.PricingMode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class PropertyRequestDto {
     int minGuests;
     int maxGuests;
     String description;
+    Address address;
     double latitude;
     double longitude;
     Collection<Image> photos;
