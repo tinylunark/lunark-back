@@ -48,6 +48,9 @@ public class PropertyService implements IPropertyService {
     @Override
     public Property create(Property property) {
         try {
+            for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries()) {
+                entry.setProperty(property);
+            }
             propertyRepository.save(property);
             propertyRepository.flush();
             return property;
@@ -67,9 +70,7 @@ public class PropertyService implements IPropertyService {
         try {
             Optional<Property> property = find(newProperty.getId());
             if (property.isEmpty()) {
-                propertyRepository.save(newProperty);
-                propertyRepository.flush();
-                return newProperty;
+                return this.create(newProperty);
             } else {
                 property.get().setName(newProperty.getName());
                 property.get().setAddress(newProperty.getAddress());

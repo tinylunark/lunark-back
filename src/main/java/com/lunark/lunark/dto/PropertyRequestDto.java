@@ -19,4 +19,5 @@ public class PropertyRequestDto {
     int cancellationDeadline;
     boolean autoApproveEnabled;
     Collection<Long> amenities;
+    Collection<AvailabilityEntryDto> availabilityEntries;
 }

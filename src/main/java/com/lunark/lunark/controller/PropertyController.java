@@ -4,6 +4,7 @@ import com.lunark.lunark.dto.AmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
 import com.lunark.lunark.dto.*;
+import com.lunark.lunark.mapper.PropertyDtoMapper;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.model.PropertyImage;
@@ -48,7 +49,7 @@ public class PropertyController {
             ) {
         List<PropertyResponseDto> propertyDtos = propertyService.findAll()
                 .stream()
-                .map(p -> modelMapper.map(p, PropertyResponseDto.class))
+                .map(p -> PropertyDtoMapper.fromPropertyToDto(p))
                 .toList();
 
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
@@ -62,7 +63,7 @@ public class PropertyController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        PropertyResponseDto propertyDto = modelMapper.map(property.get(), PropertyResponseDto.class);
+        PropertyResponseDto propertyDto = PropertyDtoMapper.fromPropertyToDto(property.get());
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
     }
 
@@ -109,20 +110,19 @@ public class PropertyController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
-        Property property = propertyService.create(modelMapper.map(propertyDto, Property.class));
-        PropertyResponseDto response = modelMapper.map(property, PropertyResponseDto.class);
+        Property property = propertyService.create(PropertyDtoMapper.fromDtoToProperty(propertyDto));
+        PropertyResponseDto response = PropertyDtoMapper.fromPropertyToDto(property);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
-        // TODO: add service calls
-        Property property = modelMapper.map(propertyDto, Property.class);
+        Property property = PropertyDtoMapper.fromDtoToProperty(propertyDto);
         if (this.propertyService.find(property.getId()).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         property = this.propertyService.update(property);
-        return new ResponseEntity<>(modelMapper.map(property, PropertyResponseDto.class), HttpStatus.CREATED);
+        return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
