@@ -56,12 +56,25 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public Property update(Property property) {
+    public Property update(Property newProperty) {
         try {
-            find(property.getId());
-            propertyRepository.save(property);
-            propertyRepository.flush();
-            return property;
+            Optional<Property> property = find(newProperty.getId());
+            if (property.isEmpty()) {
+                propertyRepository.save(newProperty);
+                propertyRepository.flush();
+                return newProperty;
+            } else {
+                property.get().setName(newProperty.getName());
+                property.get().setAddress(newProperty.getAddress());
+                property.get().setAmenities(newProperty.getAmenities());
+                property.get().setDescription(newProperty.getDescription());
+                property.get().setMinGuests(newProperty.getMinGuests());
+                property.get().setMaxGuests(newProperty.getMaxGuests());
+
+                propertyRepository.save(property.get());
+                propertyRepository.flush();
+                return property.get();
+            }
         } catch (RuntimeException ex) {
             Throwable e = ex; Throwable c = null;
             while((e != null) && !((c = e.getCause()) instanceof ConstraintViolationException)){
