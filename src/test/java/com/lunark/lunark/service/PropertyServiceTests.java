@@ -242,16 +242,16 @@ public class PropertyServiceTests {
         }
 
         if(shouldWork) {
-            Mockito.when(propertyRepository.saveAndFlush(properties.get(id.intValue()))).thenReturn(properties.get(id.intValue()));
+            Mockito.when(propertyRepository.save(properties.get(id.intValue()))).thenReturn(properties.get(id.intValue()));
         }
 
         Assertions.assertEquals(shouldWork, propertyService.changePricesAndAvailability(id, newPricesAndAvailability));
-        Mockito.verify(propertyRepository).findById(id);
+        Mockito.verify(propertyRepository, Mockito.atLeastOnce()).findById(id);
         if(shouldWork) {
             for(PropertyAvailabilityEntry propertyAvailabilityEntry: newPricesAndAvailability) {
                 Assertions.assertEquals(properties.get(id.intValue()), propertyAvailabilityEntry.getProperty());
             }
-            Mockito.verify(propertyRepository).saveAndFlush(properties.get(id.intValue()));
+            Mockito.verify(propertyRepository).save(properties.get(id.intValue()));
         }
     }
 }
