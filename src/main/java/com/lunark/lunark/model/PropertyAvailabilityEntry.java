@@ -10,6 +10,7 @@ public class PropertyAvailabilityEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
+    @JoinColumn(name = "property_id")
     private Property property;
     private LocalDate date;
     private double price;

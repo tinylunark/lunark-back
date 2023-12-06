@@ -59,7 +59,8 @@ public class Property {
     private Collection<Review> reviews = new ArrayList<>();
     @OneToMany(
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            mappedBy = "property"
     )
     private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
     @OneToMany
