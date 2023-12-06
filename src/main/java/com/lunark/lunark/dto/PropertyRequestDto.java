@@ -2,10 +2,10 @@ package com.lunark.lunark.dto;
 
 import com.lunark.lunark.model.Address;
 import com.lunark.lunark.model.PricingMode;
+import com.lunark.lunark.model.PropertyImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
 import java.util.Collection;
 
 @Data
@@ -18,7 +18,7 @@ public class PropertyRequestDto {
     Address address;
     double latitude;
     double longitude;
-    Collection<Image> photos;
+    Collection<PropertyImage> images;
     PricingMode pricingMode;
     int cancellationDeadline;
     boolean autoApproveEnabled;

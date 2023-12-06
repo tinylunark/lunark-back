@@ -134,7 +134,7 @@ public class PropertyController {
                 .body(image.get().getImageData());
     }
 
-    @PostMapping(value = "/{id}/images")
+    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
         Optional<Property> property = propertyService.find(id);
 

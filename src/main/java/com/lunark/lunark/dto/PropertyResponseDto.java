@@ -2,6 +2,7 @@ package com.lunark.lunark.dto;
 
 import com.lunark.lunark.model.Address;
 import com.lunark.lunark.model.PricingMode;
+import com.lunark.lunark.model.PropertyImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +20,7 @@ public class PropertyResponseDto {
     Address address;
     double latitude;
     double longitude;
-    Collection<Image> photos;
+    Collection<PropertyImage> images;
     boolean approved;
     PricingMode pricingMode;
     int cancellationDeadline;
