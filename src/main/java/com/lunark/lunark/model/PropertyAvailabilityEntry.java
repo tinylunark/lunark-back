@@ -1,6 +1,8 @@
 package com.lunark.lunark.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -11,6 +13,7 @@ public class PropertyAvailabilityEntry {
     Long id;
     @ManyToOne
     @JoinColumn(name = "property_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Property property;
     private LocalDate date;
     private double price;
