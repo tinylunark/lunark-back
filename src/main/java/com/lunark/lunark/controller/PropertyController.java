@@ -1,28 +1,21 @@
 package com.lunark.lunark.controller;
 
 import com.lunark.lunark.dto.AmenityDto;
-import com.lunark.lunark.dto.PropertyAmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.model.PropertyImage;
 import com.lunark.lunark.service.IPropertyService;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
