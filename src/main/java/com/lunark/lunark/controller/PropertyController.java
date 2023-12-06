@@ -9,6 +9,7 @@ import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.model.PropertyImage;
 import com.lunark.lunark.service.IPropertyService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -29,11 +30,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/properties")
 public class PropertyController {
-    @Autowired
-    IPropertyService propertyService;
+    private final IPropertyService propertyService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    ModelMapper modelMapper;
+    public PropertyController(IPropertyService propertyService, ModelMapper modelMapper) {
+        this.propertyService = propertyService;
+        this.modelMapper = modelMapper;
+    }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PropertyResponseDto>> getAll(
