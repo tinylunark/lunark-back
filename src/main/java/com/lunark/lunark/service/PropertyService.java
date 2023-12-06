@@ -19,11 +19,14 @@ import java.util.*;
 
 @Service
 public class PropertyService implements IPropertyService {
-    @Autowired
-    IPropertyRepository propertyRepository;
+    private final IPropertyRepository propertyRepository;
+    private final IPropertyImageRepository propertyImageRepository;
 
     @Autowired
-    IPropertyImageRepository propertyImageRepository;
+    public PropertyService(IPropertyRepository propertyRepository, IPropertyImageRepository propertyImageRepository) {
+        this.propertyRepository = propertyRepository;
+        this.propertyImageRepository = propertyImageRepository;
+    }
 
     @Override
     public Collection<Property> findAll() {
@@ -114,7 +117,6 @@ public class PropertyService implements IPropertyService {
         PropertyImage propertyImage = new PropertyImage();
         propertyImage.setImageData(byteObjects);
         propertyImage.setProperty(property);
-        propertyImage.setImage(new ImageIcon(byteObjects));
         propertyImage.setMimeType(file.getContentType());
 
         property.getImages().add(propertyImage);
