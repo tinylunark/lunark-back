@@ -57,7 +57,10 @@ public class Property {
     private boolean autoApproveEnabled = false;
     @OneToMany
     private Collection<Review> reviews = new ArrayList<>();
-    @OneToMany
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
     @OneToMany
     private Collection<Amenity> amenities = new ArrayList<>();
@@ -67,23 +70,25 @@ public class Property {
     private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
         return availabilityEntries.stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet()).size() == availabilityEntries.size();
     }
+
     public boolean setAvailabilityEntries(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
         if (this.willCloseOnReservedDate(newAvailabilityEntries) || this.willPriceChangeOnReservedDate(newAvailabilityEntries) || this.willPriceOrAvailabilityChangeForPastDate(newAvailabilityEntries)) {
             return false;
         }
 
-        if(!allDatesUnique(newAvailabilityEntries)) {
+        if (!allDatesUnique(newAvailabilityEntries)) {
             return false;
         }
 
-        for (PropertyAvailabilityEntry newEntry: newAvailabilityEntries) {
+        for (PropertyAvailabilityEntry newEntry : newAvailabilityEntries) {
             Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
-            if(oldEntry.isPresent()) {
+            if (oldEntry.isPresent()) {
                 newEntry.setReserved(oldEntry.get().isReserved());
             }
         }
 
-        this.availabilityEntries = newAvailabilityEntries;
+        this.availabilityEntries.clear();
+        this.availabilityEntries.addAll(newAvailabilityEntries);
         return true;
     }
 
@@ -100,9 +105,9 @@ public class Property {
     }
 
     private boolean willPriceChangeOnReservedDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
-        for (PropertyAvailabilityEntry newEntry: newAvailabilityEntries) {
+        for (PropertyAvailabilityEntry newEntry : newAvailabilityEntries) {
             Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
-            if(oldEntry.isPresent() && oldEntry.get().isReserved() && oldEntry.get().getPrice() != newEntry.getPrice()) {
+            if (oldEntry.isPresent() && oldEntry.get().isReserved() && oldEntry.get().getPrice() != newEntry.getPrice()) {
                 return true;
             }
         }
@@ -111,9 +116,9 @@ public class Property {
     }
 
     private boolean willPriceOrAvailabilityChangeForPastDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
-        for (PropertyAvailabilityEntry newEntry: newAvailabilityEntries) {
+        for (PropertyAvailabilityEntry newEntry : newAvailabilityEntries) {
             Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
-            if(newEntry.getDate().compareTo(LocalDate.now(clock)) <= 0 && (oldEntry.isEmpty() || oldEntry.get().getPrice() != newEntry.getPrice())) {
+            if (newEntry.getDate().compareTo(LocalDate.now(clock)) <= 0 && (oldEntry.isEmpty() || oldEntry.get().getPrice() != newEntry.getPrice())) {
                 return true;
             }
         }
@@ -135,6 +140,7 @@ public class Property {
         }
         return false;
     }
+
     public boolean isAvailable(LocalDate from, LocalDate to) {
         for (LocalDate date = from; !date.isAfter(to); date = date.plusDays(1L)) {
             if (!isAvailable(date)) {
@@ -174,7 +180,7 @@ public class Property {
     }
 
     public boolean makeAvailable(Collection<PropertyAvailabilityEntry> availabilityEntries) {
-        for (PropertyAvailabilityEntry availabilityEntry: availabilityEntries) {
+        for (PropertyAvailabilityEntry availabilityEntry : availabilityEntries) {
             if (isAvailable(availabilityEntry.getDate())) {
                 return false;
             }

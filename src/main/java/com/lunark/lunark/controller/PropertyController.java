@@ -3,6 +3,7 @@ package com.lunark.lunark.controller;
 import com.lunark.lunark.dto.AmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
+import com.lunark.lunark.dto.*;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.model.PropertyImage;
@@ -20,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/properties")
@@ -72,18 +74,36 @@ public class PropertyController {
     }
   
     @GetMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<PropertyAvailabilityEntry>> getPricesAndAvailability(@PathVariable("id") Long id) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> getPricesAndAvailability(@PathVariable("id") Long id) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(property.get().getAvailabilityEntries(), HttpStatus.OK);
+        List<AvailabilityEntryDto> availabilityEntryDtos = property.get().getAvailabilityEntries().stream()
+                .map(propertyAvailabilityEntry -> modelMapper.map(propertyAvailabilityEntry, AvailabilityEntryDto.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(availabilityEntryDtos, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<PropertyAvailabilityEntry>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<PropertyAvailabilityEntry> availabilityEntries) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<AvailabilityEntryDto> availabilityEntries) {
+        Optional<Property> property = propertyService.find(id);
+
+        if (property.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<PropertyAvailabilityEntry> propertyAvailabilityEntries = availabilityEntries.stream()
+                .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
+                .collect(Collectors.toList());
+
+        if(!this.propertyService.changePricesAndAvailability(id, propertyAvailabilityEntries)) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         return new ResponseEntity<>(availabilityEntries, HttpStatus.OK);
     }
 

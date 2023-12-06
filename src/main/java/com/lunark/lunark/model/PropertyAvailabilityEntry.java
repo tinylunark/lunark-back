@@ -1,14 +1,14 @@
 package com.lunark.lunark.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 public class PropertyAvailabilityEntry {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     @ManyToOne
     private Property property;
     private LocalDate date;
