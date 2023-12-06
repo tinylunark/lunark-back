@@ -1,0 +1,11 @@
+delete from property_availability_entry;
+insert into property (address_property_id,approved,auto_approve_enabled,cancellation_deadline,description,latitude,longitude,max_guests,min_guests,name,pricing_mode) values (null,true,false,1,'',45.0,45.0,5,1,'Vila Golija',1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2022-12-1', 1000, false, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-1', 1000, false, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-2', 2000, false, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-3', 2000, false, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-9', 2000, false, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-10', 2000, false, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-11', 2000, true, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-12', 2000, true, 1);
+insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-1', 1000, false, 1);
