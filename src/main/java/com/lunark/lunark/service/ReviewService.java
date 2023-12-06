@@ -21,7 +21,7 @@ public class ReviewService implements IReviewService<Review> {
     IAccountService accountService;
 
     @Autowired
-    PropertyService propertyService;
+    IPropertyService propertyService;
 
     @Override
     public Collection<Review> findAll() {
