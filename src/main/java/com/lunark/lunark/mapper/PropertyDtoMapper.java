@@ -1,10 +1,10 @@
 package com.lunark.lunark.mapper;
 
-import com.lunark.lunark.dto.AvailabilityEntryDto;
-import com.lunark.lunark.dto.PropertyRequestDto;
-import com.lunark.lunark.dto.PropertyResponseDto;
-import com.lunark.lunark.model.Property;
-import com.lunark.lunark.model.PropertyAvailabilityEntry;
+import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
+import com.lunark.lunark.properties.dto.PropertyRequestDto;
+import com.lunark.lunark.properties.dto.PropertyResponseDto;
+import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
