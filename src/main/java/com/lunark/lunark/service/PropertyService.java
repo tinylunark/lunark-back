@@ -9,23 +9,30 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import com.lunark.lunark.repository.IPropertyRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.*;
 
 @Service
 public class PropertyService implements IPropertyService {
-    private final IPropertyRepository propertyRepository;
+    // TODO: add logic
+    private IPropertyRepository propertyRepository;
     private final IPropertyImageRepository propertyImageRepository;
+    private Clock clock;
 
     @Autowired
-    public PropertyService(IPropertyRepository propertyRepository, IPropertyImageRepository propertyImageRepository) {
+    public PropertyService(IPropertyRepository propertyRepository, IPropertyImageRepository propertyImageRepository, Clock clock) {
         this.propertyRepository = propertyRepository;
         this.propertyImageRepository = propertyImageRepository;
+        this.clock = clock;
     }
 
     @Override
@@ -41,6 +48,9 @@ public class PropertyService implements IPropertyService {
     @Override
     public Property create(Property property) {
         try {
+            for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries()) {
+                entry.setProperty(property);
+            }
             propertyRepository.save(property);
             propertyRepository.flush();
             return property;
@@ -60,9 +70,7 @@ public class PropertyService implements IPropertyService {
         try {
             Optional<Property> property = find(newProperty.getId());
             if (property.isEmpty()) {
-                propertyRepository.save(newProperty);
-                propertyRepository.flush();
-                return newProperty;
+                return this.create(newProperty);
             } else {
                 property.get().setName(newProperty.getName());
                 property.get().setAddress(newProperty.getAddress());
@@ -94,8 +102,28 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
+    public boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability) {
+        Optional<Property> propertyOptional = this.find(id);
+        if (propertyOptional.isEmpty()){
+            return false;
+        }
+        Property property = propertyOptional.get();
+        property.setClock(clock);
+        for(PropertyAvailabilityEntry entry: newPricesAndAvailability) {
+            entry.setProperty(property);
+        }
+        if (!property.setAvailabilityEntries(newPricesAndAvailability)) {
+            return false;
+        }
+        update(property);
+        return true;
+
+    }
+
+    @Override
     public void delete(Long id) {
         propertyRepository.deleteById(id);
+        propertyRepository.flush();
     }
 
     @Override

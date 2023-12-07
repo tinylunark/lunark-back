@@ -3,6 +3,8 @@ package com.lunark.lunark.controller;
 import com.lunark.lunark.dto.AmenityDto;
 import com.lunark.lunark.dto.PropertyRequestDto;
 import com.lunark.lunark.dto.PropertyResponseDto;
+import com.lunark.lunark.dto.*;
+import com.lunark.lunark.mapper.PropertyDtoMapper;
 import com.lunark.lunark.model.Property;
 import com.lunark.lunark.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.model.PropertyImage;
@@ -19,6 +21,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/properties")
@@ -45,7 +49,7 @@ public class PropertyController {
             ) {
         List<PropertyResponseDto> propertyDtos = propertyService.findAll()
                 .stream()
-                .map(p -> modelMapper.map(p, PropertyResponseDto.class))
+                .map(p -> PropertyDtoMapper.fromPropertyToDto(p))
                 .toList();
 
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
@@ -59,7 +63,7 @@ public class PropertyController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        PropertyResponseDto propertyDto = modelMapper.map(property.get(), PropertyResponseDto.class);
+        PropertyResponseDto propertyDto = PropertyDtoMapper.fromPropertyToDto(property.get());
         return new ResponseEntity<>(propertyDto, HttpStatus.OK);
     }
 
@@ -71,40 +75,63 @@ public class PropertyController {
     }
   
     @GetMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<PropertyAvailabilityEntry>> getPricesAndAvailability(@PathVariable("id") Long id) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> getPricesAndAvailability(@PathVariable("id") Long id) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(property.get().getAvailabilityEntries(), HttpStatus.OK);
+        List<AvailabilityEntryDto> availabilityEntryDtos = property.get().getAvailabilityEntries().stream()
+                .map(propertyAvailabilityEntry -> modelMapper.map(propertyAvailabilityEntry, AvailabilityEntryDto.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(availabilityEntryDtos, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<PropertyAvailabilityEntry>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<PropertyAvailabilityEntry> availabilityEntries) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<AvailabilityEntryDto> availabilityEntries) {
+        Optional<Property> property = propertyService.find(id);
+
+        if (property.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<PropertyAvailabilityEntry> propertyAvailabilityEntries = availabilityEntries.stream()
+                .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
+                .collect(Collectors.toList());
+
+        if(!this.propertyService.changePricesAndAvailability(id, propertyAvailabilityEntries)) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         return new ResponseEntity<>(availabilityEntries, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
-        Property property = propertyService.create(modelMapper.map(propertyDto, Property.class));
-        PropertyResponseDto response = modelMapper.map(property, PropertyResponseDto.class);
+        Property property = propertyService.create(PropertyDtoMapper.fromDtoToProperty(propertyDto));
+        PropertyResponseDto response = PropertyDtoMapper.fromPropertyToDto(property);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable("id") Long id, @RequestBody PropertyRequestDto propertyDto) {
-        Property property = modelMapper.map(propertyDto, Property.class);
-        property.setId(id);
-        property = propertyService.update(property);
-        PropertyResponseDto response = modelMapper.map(property, PropertyResponseDto.class);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
+        Property property = PropertyDtoMapper.fromDtoToProperty(propertyDto);
+        if (this.propertyService.find(property.getId()).isEmpty())  {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        property = this.propertyService.update(property);
+        return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteProperty(@PathVariable("id") Long id) {
-        propertyService.delete(id);
+    public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
+        // TODO: add service calls
+        if (this.propertyService.find(id).isEmpty())  {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        this.propertyService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -1,15 +1,19 @@
 package com.lunark.lunark.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
 @Entity
 public class PropertyAvailabilityEntry {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     @ManyToOne
+    @JoinColumn(name = "property_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Property property;
     private LocalDate date;
     private double price;
@@ -25,10 +29,18 @@ public class PropertyAvailabilityEntry {
         this.isReserved = false;
     }
 
-    public PropertyAvailabilityEntry(LocalDate date, double price, boolean isReserved) {
+    public PropertyAvailabilityEntry(LocalDate date, double price, Property property) {
+        this.date = date;
+        this.price = price;
+        this.isReserved = false;
+        this.property = property;
+    }
+
+    public PropertyAvailabilityEntry(LocalDate date, double price, Property property, boolean isReserved) {
         this.date = date;
         this.price = price;
         this.isReserved = isReserved;
+        this.property = property;
     }
 
     public double getPrice() {
@@ -58,5 +70,13 @@ public class PropertyAvailabilityEntry {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
     }
 }
