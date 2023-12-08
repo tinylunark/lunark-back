@@ -66,6 +66,7 @@ public class Property {
     private Collection<Amenity> amenities = new ArrayList<>();
     @Transient
     private Clock clock = Clock.systemDefaultZone();
+    private PropertyType type;
 
     private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
         return availabilityEntries.stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet()).size() == availabilityEntries.size();
