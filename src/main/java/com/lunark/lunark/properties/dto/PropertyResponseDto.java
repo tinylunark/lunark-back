@@ -2,6 +2,7 @@ package com.lunark.lunark.properties.dto;
 
 import com.lunark.lunark.properties.model.Address;
 import com.lunark.lunark.properties.model.PricingMode;
+import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,4 +27,5 @@ public class PropertyResponseDto {
     boolean autoApproveEnabled;
     Collection<PropertyAmenityDto> amenities;
     Collection<AvailabilityEntryDto> availabilityEntries;
+    Property.PropertyType type;
 }

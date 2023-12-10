@@ -4,6 +4,7 @@ import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import jakarta.persistence.criteria.*;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -20,59 +21,88 @@ public class PropertySpecification implements Specification<Property> {
 
     @Override
     public Predicate toPredicate(Root<Property> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-        Predicate predicate = criteriaBuilder.disjunction();
+        Predicate predicate = criteriaBuilder.conjunction();
 
         if (filter.getAddress() != null) {
-            predicate.getExpressions()
-                    .add(criteriaBuilder.equal(root.get("address"), filter.getAddress()));
+            Expression<String> fullAddress = criteriaBuilder.concat(
+                    root.get("address").get("street"),
+                    criteriaBuilder.concat(
+                            criteriaBuilder.literal(", "),
+                            criteriaBuilder.concat(
+                                    root.get("address").get("city"),
+                                    criteriaBuilder.concat(
+                                            criteriaBuilder.literal(", "),
+                                            root.get("address").get("country")
+                                    )
+                            )
+                    )
+            );
+
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(fullAddress, "%" + filter.getAddress() + "%"));
         }
 
-        if (filter.getGuestNumber() > 0) {
-            predicate.getExpressions()
-                    .add(criteriaBuilder.and(
-                            criteriaBuilder.greaterThanOrEqualTo(root.get("maxGuests"), filter.getGuestNumber()),
-                            criteriaBuilder.lessThanOrEqualTo(root.get("minGuests"), filter.getGuestNumber()))
-                    );
+        if (filter.getGuestNumber() != null) {
+            Predicate guestNumberPredicate = criteriaBuilder.and(
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("maxGuests"), filter.getGuestNumber()),
+                    criteriaBuilder.lessThanOrEqualTo(root.get("minGuests"), filter.getGuestNumber())
+            );
+            predicate = criteriaBuilder.and(predicate, guestNumberPredicate);
         }
 
         if (filter.getStartDate() != null) {
-            Join<PropertyAvailabilityEntry, LocalDate> dateJoin = root.join("availabilityEntries");
+            Subquery<LocalDate> subquery = query.subquery(LocalDate.class);
+            Root<Property> subRoot = subquery.correlate(root);
+            Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
+            subquery.select(entryJoin.get("date"));
+            subquery.where(criteriaBuilder.greaterThanOrEqualTo(entryJoin.get("date"), filter.getStartDate()));
 
-            predicate.getExpressions()
-                    .add(criteriaBuilder.greaterThanOrEqualTo(dateJoin, filter.getStartDate()));
+            Predicate startDatePredicate = criteriaBuilder.exists(subquery);
+            predicate = criteriaBuilder.and(predicate, startDatePredicate);
         }
 
         if (filter.getEndDate() != null) {
-            Join<PropertyAvailabilityEntry, LocalDate> dateJoin = root.join("availabilityEntries");
+            Subquery<LocalDate> subquery = query.subquery(LocalDate.class);
+            Root<Property> subRoot = subquery.correlate(root);
+            Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
+            subquery.select(entryJoin.get("date"));
+            subquery.where(criteriaBuilder.lessThanOrEqualTo(entryJoin.get("date"), filter.getEndDate()));
 
-            predicate.getExpressions()
-                    .add(criteriaBuilder.lessThanOrEqualTo(dateJoin, filter.getEndDate()));
+            Predicate endDatePredicate = criteriaBuilder.exists(subquery);
+            predicate = criteriaBuilder.and(predicate, endDatePredicate);
         }
 
         if (filter.getType() != null) {
-            predicate.getExpressions()
-                    .add(criteriaBuilder.equal(root.get("type"), filter.getType()));
+            Predicate typePredicate = criteriaBuilder.equal(root.get("type"), filter.getType());
+            predicate = criteriaBuilder.and(predicate, typePredicate);
         }
 
-        if (filter.getMinPrice() > 0) {
-            Join<PropertyAvailabilityEntry, Double> priceJoin = root.join("availabilityEntries");
+        if (filter.getMinPrice() != null) {
+            Subquery<Double> subquery = query.subquery(Double.class);
+            Root<Property> subRoot = subquery.correlate(root);
+            Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
+            subquery.select(entryJoin.get("price"));
+            subquery.where(criteriaBuilder.greaterThanOrEqualTo(entryJoin.get("price"), filter.getMinPrice()));
 
-            predicate.getExpressions()
-                    .add(criteriaBuilder.greaterThanOrEqualTo(priceJoin, filter.getMinPrice()));
+            Predicate minPricePredicate = criteriaBuilder.exists(subquery);
+            predicate = criteriaBuilder.and(predicate, minPricePredicate);
         }
 
-        if (filter.getMinPrice() > 0) {
-            Join<PropertyAvailabilityEntry, Double> priceJoin = root.join("availabilityEntries");
+        if (filter.getMaxPrice() != null) {
+            Subquery<Double> subquery = query.subquery(Double.class);
+            Root<Property> subRoot = subquery.correlate(root);
+            Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
+            subquery.select(entryJoin.get("price"));
+            subquery.where(criteriaBuilder.lessThanOrEqualTo(entryJoin.get("price"), filter.getMaxPrice()));
 
-            predicate.getExpressions()
-                    .add(criteriaBuilder.lessThanOrEqualTo(priceJoin, filter.getMinPrice()));
+            Predicate maxPricePredicate = criteriaBuilder.exists(subquery);
+            predicate = criteriaBuilder.and(predicate, maxPricePredicate);
         }
 
         if (filter.getAmenityIds() != null) {
-            predicate.getExpressions()
-                    .add(root.get("amenities").in(filter.getAmenityIds())); // TODO: find a way to make this work
+            // TODO: this should be implemented when the amenities service is implemented
         }
 
         return predicate;
     }
+
 }

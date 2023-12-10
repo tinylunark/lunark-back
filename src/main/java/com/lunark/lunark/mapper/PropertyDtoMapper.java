@@ -23,6 +23,7 @@ public class PropertyDtoMapper {
 
     public static Property fromDtoToProperty(PropertyRequestDto propertyRequestDto) {
         Property property = modelMapper.map(propertyRequestDto, Property.class);
+
         List<PropertyAvailabilityEntry> availabilityEntries = propertyRequestDto.getAvailabilityEntries().stream()
                         .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
                         .collect(Collectors.toList());

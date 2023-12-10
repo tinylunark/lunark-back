@@ -1,9 +1,6 @@
 package com.lunark.lunark.properties.controller;
 
-import com.lunark.lunark.properties.dto.AmenityDto;
-import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
-import com.lunark.lunark.properties.dto.PropertyRequestDto;
-import com.lunark.lunark.properties.dto.PropertyResponseDto;
+import com.lunark.lunark.properties.dto.*;
 import com.lunark.lunark.mapper.PropertyDtoMapper;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
@@ -11,6 +8,7 @@ import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -39,16 +39,28 @@ public class PropertyController {
     public ResponseEntity<List<PropertyResponseDto>> getAll(
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Integer guestNumber,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "ddMMyyyy") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "ddMMyyyy") LocalDate endDate,
             @RequestParam(required = false) List<AmenityDto> amenities,
             @RequestParam(required = false) Property.PropertyType type,
-            @RequestParam(required = false) Integer minPrice,
-            @RequestParam(required = false) Integer maxPrice
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
             ) {
-        List<PropertyResponseDto> propertyDtos = propertyService.findAll()
-                .stream()
-                .map(p -> PropertyDtoMapper.fromPropertyToDto(p))
+
+        PropertySearchDto filter = PropertySearchDto.builder()
+                .address(location)
+                .guestNumber(guestNumber)
+                .startDate(startDate)
+                .endDate(endDate)
+                .type(type)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .build();
+
+        List<Property> properties = propertyService.findByFilter(filter);
+
+        List<PropertyResponseDto> propertyDtos = properties.stream()
+                .map(PropertyDtoMapper::fromPropertyToDto)
                 .toList();
 
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
