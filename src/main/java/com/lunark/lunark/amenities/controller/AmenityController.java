@@ -1,7 +1,7 @@
-package com.lunark.lunark.properties.controller;
+package com.lunark.lunark.amenities.controller;
 
-import com.lunark.lunark.properties.dto.AmenityDto;
-import com.lunark.lunark.properties.model.Amenity;
+import com.lunark.lunark.amenities.model.Amenity;
+import com.lunark.lunark.amenities.dto.AmenityDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

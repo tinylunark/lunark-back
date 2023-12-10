@@ -1,11 +1,13 @@
-package com.lunark.lunark.properties.model;
+package com.lunark.lunark.amenities.model;
 
+import com.lunark.lunark.properties.model.Property;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.awt.*;
+import java.util.Collection;
 
 @Data
 @NoArgsConstructor

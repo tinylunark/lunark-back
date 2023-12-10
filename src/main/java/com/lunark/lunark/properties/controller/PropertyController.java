@@ -1,6 +1,6 @@
 package com.lunark.lunark.properties.controller;
 
-import com.lunark.lunark.properties.dto.AmenityDto;
+import com.lunark.lunark.amenities.dto.AmenityDto;
 import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
 import com.lunark.lunark.properties.dto.PropertyRequestDto;
 import com.lunark.lunark.properties.dto.PropertyResponseDto;

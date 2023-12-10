@@ -1,4 +1,4 @@
-package com.lunark.lunark.properties.dto;
+package com.lunark.lunark.amenities.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,7 @@ import java.awt.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AmenityDto {
-    private Long id;
+public class PropertyAmenityDto {
     private String name;
     private Image icon;
 }

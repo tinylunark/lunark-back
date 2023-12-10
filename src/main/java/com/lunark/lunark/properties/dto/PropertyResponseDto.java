@@ -1,5 +1,6 @@
 package com.lunark.lunark.properties.dto;
 
+import com.lunark.lunark.amenities.dto.PropertyAmenityDto;
 import com.lunark.lunark.properties.model.Address;
 import com.lunark.lunark.properties.model.PricingMode;
 import com.lunark.lunark.properties.model.PropertyImage;
