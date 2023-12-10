@@ -41,7 +41,8 @@ public class PropertyTests {
                 new ArrayList<Review>(),
                 new ArrayList<PropertyAvailabilityEntry>(),
                 List.of(new Amenity(1L, "Wi-Fi", null)),
-            testClock
+                testClock,
+                Property.PropertyType.APARTMENT
         );
 
         List<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>(Arrays.asList(
