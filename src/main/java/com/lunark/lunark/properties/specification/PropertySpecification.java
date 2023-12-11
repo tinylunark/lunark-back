@@ -1,18 +1,17 @@
 package com.lunark.lunark.properties.specification;
 
+import com.lunark.lunark.amenities.model.Amenity;
 import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import jakarta.persistence.criteria.*;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
-import java.util.Collection;
 
 public class PropertySpecification implements Specification<Property> {
 
-    private PropertySearchDto filter;
+    private final PropertySearchDto filter;
 
     public PropertySpecification(PropertySearchDto filter) {
         super();
@@ -99,7 +98,14 @@ public class PropertySpecification implements Specification<Property> {
         }
 
         if (filter.getAmenityIds() != null) {
-            // TODO: this should be implemented when the amenities service is implemented
+            Subquery<Amenity> subquery = query.subquery(Amenity.class);
+            Root<Property> subRoot = subquery.correlate(root);
+            Join<Property, Amenity> amenityJoin = subRoot.join("amenities");
+            subquery.select(amenityJoin.get("id"));
+            subquery.where(criteriaBuilder.in(amenityJoin.get("id")).value(filter.getAmenityIds()));
+
+            Predicate amenitiesPredicate = criteriaBuilder.exists(subquery);
+            predicate = criteriaBuilder.and(predicate, amenitiesPredicate);
         }
 
         return predicate;

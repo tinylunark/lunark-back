@@ -1,12 +1,11 @@
 package com.lunark.lunark.properties.dto;
 
-import com.lunark.lunark.properties.model.Address;
 import com.lunark.lunark.properties.model.Property;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
@@ -15,7 +14,7 @@ public class PropertySearchDto {
     Integer guestNumber;
     LocalDate startDate;
     LocalDate endDate;
-    Set<Long> amenityIds;
+    List<Long> amenityIds;
     Property.PropertyType type;
     Double minPrice;
     Double maxPrice;

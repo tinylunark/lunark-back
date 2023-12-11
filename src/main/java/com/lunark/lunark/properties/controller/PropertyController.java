@@ -1,7 +1,10 @@
 package com.lunark.lunark.properties.controller;
 
-import com.lunark.lunark.properties.dto.*;
 import com.lunark.lunark.mapper.PropertyDtoMapper;
+import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
+import com.lunark.lunark.properties.dto.PropertyRequestDto;
+import com.lunark.lunark.properties.dto.PropertyResponseDto;
+import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
@@ -17,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +57,7 @@ public class PropertyController {
                 .type(type)
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
+                .amenityIds(amenityIds)
                 .build();
 
         List<Property> properties = propertyService.findByFilter(filter);
