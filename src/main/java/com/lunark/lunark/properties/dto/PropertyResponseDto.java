@@ -1,6 +1,6 @@
 package com.lunark.lunark.properties.dto;
 
-import com.lunark.lunark.amenities.dto.PropertyAmenityDto;
+import com.lunark.lunark.amenities.dto.AmenityRequestDto;
 import com.lunark.lunark.properties.model.Address;
 import com.lunark.lunark.properties.model.PricingMode;
 import com.lunark.lunark.properties.model.PropertyImage;
@@ -25,6 +25,6 @@ public class PropertyResponseDto {
     PricingMode pricingMode;
     int cancellationDeadline;
     boolean autoApproveEnabled;
-    Collection<PropertyAmenityDto> amenities;
+    Collection<AmenityRequestDto> amenities;
     Collection<AvailabilityEntryDto> availabilityEntries;
 }

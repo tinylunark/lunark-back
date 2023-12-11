@@ -1,6 +1,6 @@
 package com.lunark.lunark.properties.controller;
 
-import com.lunark.lunark.amenities.dto.AmenityDto;
+import com.lunark.lunark.amenities.dto.AmenityResponseDto;
 import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
 import com.lunark.lunark.properties.dto.PropertyRequestDto;
 import com.lunark.lunark.properties.dto.PropertyResponseDto;
@@ -41,7 +41,7 @@ public class PropertyController {
             @RequestParam(required = false) Integer guestNumber,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
-            @RequestParam(required = false) List<AmenityDto> amenities,
+            @RequestParam(required = false) List<AmenityResponseDto> amenities,
             @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice
