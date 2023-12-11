@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,6 @@ public class PropertyRequestDto {
     PricingMode pricingMode;
     int cancellationDeadline;
     boolean autoApproveEnabled;
-    Collection<Long> amenities;
+    List<Long> amenityIds;
     Collection<AvailabilityEntryDto> availabilityEntries;
 }
