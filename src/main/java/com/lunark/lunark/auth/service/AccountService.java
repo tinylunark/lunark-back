@@ -22,6 +22,7 @@ public class AccountService implements IAccountService {
         return accountRepository.findAll();
     }
 
+
     @Override
     public Account create(Account account) {
         account.setVerified(false);
@@ -36,6 +37,11 @@ public class AccountService implements IAccountService {
     @Override
     public Optional<Account> find(String email, String password) {
         return accountRepository.findByEmailAndPassword(email, password);
+    }
+
+    @Override
+    public Optional<Account> find(String email) {
+        return accountRepository.findByEmail(email);
     }
 
     @Override
