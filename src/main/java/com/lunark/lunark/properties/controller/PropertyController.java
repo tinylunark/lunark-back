@@ -41,7 +41,7 @@ public class PropertyController {
             @RequestParam(required = false) Integer guestNumber,
             @RequestParam(required = false) @DateTimeFormat(pattern = "ddMMyyyy") LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "ddMMyyyy") LocalDate endDate,
-            @RequestParam(required = false) List<AmenityDto> amenities,
+            @RequestParam(required = false) List<Long> amenityIds,
             @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice

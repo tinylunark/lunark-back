@@ -1,5 +1,6 @@
 package com.lunark.lunark.property.service;
 
+import com.lunark.lunark.amenities.model.Amenity;
 import com.lunark.lunark.properties.model.*;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.PropertyService;

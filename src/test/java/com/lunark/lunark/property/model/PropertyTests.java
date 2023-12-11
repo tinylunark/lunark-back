@@ -1,5 +1,6 @@
 package com.lunark.lunark.property.model;
 
+import com.lunark.lunark.amenities.model.Amenity;
 import com.lunark.lunark.properties.model.*;
 import com.lunark.lunark.reviews.model.Review;
 import org.junit.jupiter.api.Assertions;
