@@ -63,7 +63,8 @@ public class PropertyServiceTests {
                         new ArrayList<Review>(),
                         new ArrayList<PropertyAvailabilityEntry>(),
                         List.of(new Amenity(1L, "Wi-Fi", null)),
-                        testClock
+                        testClock,
+                        Property.PropertyType.APARTMENT
                 ),
                 new Property(1L,
                         "Ami Hotel",
@@ -80,7 +81,8 @@ public class PropertyServiceTests {
                         new ArrayList<Review>(),
                         new ArrayList<>(),
                         List.of(new Amenity(1L, "Wi-Fi", null)),
-                        testClock
+                        testClock,
+                        Property.PropertyType.APARTMENT
                 ),
                 new Property(2L,
                         "Hotel Terasa",
@@ -97,7 +99,8 @@ public class PropertyServiceTests {
                         new ArrayList<Review>(),
                         availabilityEntries,
                         List.of(new Amenity(1L, "Wi-Fi", null)),
-                        testClock
+                        testClock,
+                        Property.PropertyType.APARTMENT
                 )
         ));
     }

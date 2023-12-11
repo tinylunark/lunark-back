@@ -1,13 +1,16 @@
 package com.lunark.lunark.properties.service;
 
+import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyImage;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface IPropertyService {
@@ -20,4 +23,5 @@ public interface IPropertyService {
     void saveImage(Property property, MultipartFile file) throws IOException;
     Optional<PropertyImage> getImage(Long imageId, Long propertyId);
     boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability);
+    List<Property> findByFilter(PropertySearchDto filter);
 }

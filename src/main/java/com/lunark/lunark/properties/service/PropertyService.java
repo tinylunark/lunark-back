@@ -1,16 +1,19 @@
 package com.lunark.lunark.properties.service;
 
 
+import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.repostiory.IPropertyImageRepository;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
+import com.lunark.lunark.properties.specification.PropertySpecification;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -117,6 +120,12 @@ public class PropertyService implements IPropertyService {
         update(property);
         return true;
 
+    }
+
+    @Override
+    public List<Property> findByFilter(PropertySearchDto filter) {
+        Specification<Property> specification = new PropertySpecification(filter);
+        return propertyRepository.findAll(specification);
     }
 
     @Override
