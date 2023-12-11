@@ -1,5 +1,6 @@
 package com.lunark.lunark.properties.model;
 
+import com.lunark.lunark.amenities.model.Amenity;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reviews.model.Review;
@@ -62,7 +63,7 @@ public class Property {
             mappedBy = "property"
     )
     private Collection<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>();
-    @OneToMany
+    @ManyToMany
     private Collection<Amenity> amenities = new ArrayList<>();
     @Transient
     private Clock clock = Clock.systemDefaultZone();
