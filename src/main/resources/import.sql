@@ -1,26 +1,36 @@
 -- Account imports
+--Password: password1
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user1@example.com', '$2a$10$FJ.cj9UfVwXVnmNACr/9QOFZ.MKtTjVNBMUI8d7rWr.D18qoss1v.', 'John', 'Doe', '123 Main St', '1234567890', true, 0, false);
+--Password: password2
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user2@example.com', '$2a$10$EAdnVLmcYbL5o66p2tD8..ultVcZF69/nC64U4kzv/kxOkPozOnOa', 'Jane', 'Smith', '456 Oak St', '9876543210', true, 0, false);
+--Password: adminpassword1
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('admin1@example.com', '$2a$10$/w0fts1.JZZIvHhVzFaqWuj5WYyYpr241Tmf4dWgs/hA6xO9FHfi.', 'Admin', 'User', '789 Elm St', '1112223333', true, 2, false);
+--Password: adminpassword2
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('admin2@example.com', '$2a$10$/y782IN1T9t8lR2uKHEmJe9YIOQb5UDWOsS13iM5FCGgbizirMSYW', 'Super', 'Admin', '890 Pine St', '4445556666', true, 2, false);
+--Password: blockedpassword
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('blockeduser@example.com', '$2a$10$OrSpGDiqLsDxpNoC.Nn4.OiRdeUJ4DjJ1F1Q00WkT4wzzTxegUDPC', 'Blocked', 'User', '567 Birch St', '9998887777', true, 0, true);
+--Password: unverifiedpassword
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('unverified@example.com', '$2a$10$O7Ti/V9/EWr6IKLFy1V4Fehsk2slEEuHoJ3pIEFxT6ab8Zr1muVWe', 'Unverified', 'User', '321 Cedar St', '3334445555', false, 0, false);
+--Password: password3
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user3@example.com', '$2a$10$n/tcwPNGRI4Aanvz5CJp2.pvvOFJncDxHLT2OjDy2gqQ5QXRwUONG', 'Chris', 'Johnson', '789 Maple St', '7778889999', true, 0, false);
+--Password: password4
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user4@example.com', '$2a$10$1wwMVoNmv.Qsy9p9WYC5xO4gswAzc7w7V9FT3x6FfAtl0Hicv0N2q', 'Megan', 'Taylor', '234 Pine St', '5554443333', true, 0, false);
+--Password: password5
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user5@example.com', '$2a$10$OrHomTrY.lEfFDlkwK/tPeKrjMXyy/R.nefcbfpgcxrI03WvoGkIu', 'David', 'Brown', '876 Oak St', '2221110000', true, 1, false);
+--Password: password6
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user6@example.com', '$2a$10$GdwvPv72sNBVe.4QhUY7/OdLzRb8RH8Oo4/LR8nWF7NW83/CM4oPy', 'Sophie', 'Miller', '567 Birch St', '9998887777', true, 1, false);
 
 -- Review imports
-INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Great host!', true, '2023-01-10T12:30:00', 'HOST');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 'PROPERTY');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 'HOST');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 'PROPERTY');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (2, 'Not satisfied', false, '2023-05-30T18:20:00', 'HOST');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Enjoyed my stay', true, '2023-06-05T22:00:00', 'PROPERTY');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Fantastic host!', true, '2023-07-12T09:30:00', 'HOST');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (3, 'Needs improvement', false, '2023-08-18T14:10:00', 'PROPERTY');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Responsive host', true, '2023-09-22T17:00:00', 'HOST');
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Beautiful property', true, '2023-10-28T20:45:00', 'PROPERTY');
+INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Great host!', true, '2023-01-10T12:30:00', 0);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 1);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 0);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 1);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (2, 'Not satisfied', false, '2023-05-30T18:20:00', 0);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Enjoyed my stay', true, '2023-06-05T22:00:00', 1);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Fantastic host!', true, '2023-07-12T09:30:00', 0);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (3, 'Needs improvement', false, '2023-08-18T14:10:00', 1);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Responsive host', true, '2023-09-22T17:00:00', 0);
+INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Beautiful property', true, '2023-10-28T20:45:00', 1);
 
 -- Property imports
 INSERT INTO Property (name, min_guests, max_guests, description, latitude, longitude, approved, pricing_mode, cancellation_deadline, auto_approve_enabled) VALUES ('Cozy Cabin', 2, 4, 'A charming cabin in the woods', 40.7128, -74.0060, true, 0, 7, true);
