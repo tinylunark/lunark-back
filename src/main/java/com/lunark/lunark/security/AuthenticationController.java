@@ -39,7 +39,6 @@ public class AuthenticationController {
 
     @PostMapping(value="/login", consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> createAuthenticationToken( @RequestBody AuthRequest authenticationRequest, HttpServletResponse response) {
-
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(),
                 authenticationRequest.getPassword())

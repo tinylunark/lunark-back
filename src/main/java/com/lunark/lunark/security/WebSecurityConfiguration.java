@@ -48,7 +48,7 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll()
                             .requestMatchers("/api/test/**").permitAll()
-                            .anyRequest().authenticated()
+                .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -70,7 +70,7 @@ public class WebSecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/auth/login")
+    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/signup")
     			.requestMatchers(HttpMethod.GET,
     "/", "/webjars/*", "/*.html", "favicon.ico",
     			"/*/*.html", "/*/*.css", "/*/*.js");
