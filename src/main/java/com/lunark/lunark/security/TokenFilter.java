@@ -6,6 +6,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,7 @@ import java.io.IOException;
 @Component
 public class TokenFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(TokenFilter.class);
     private final UserDetailsService userDetailsService;
     private final TokenUtils tokenUtil;
 
@@ -29,35 +32,29 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-        if(request.getRequestURL().toString().contains("/api")) {
-            String requestTokenHeader = request.getHeader("Authorization");
-            String username = null;
-            String token = null;
+        String username;
+        String authToken = tokenUtil.getToken(request);
 
-            if (requestTokenHeader != null && requestTokenHeader.contains("Bearer")) {
-                token = requestTokenHeader.substring(requestTokenHeader.indexOf("Bearer") + 7);
-                try {
-                    username = tokenUtil.getUsernameFromToken(token);
-                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                    if (tokenUtil.validateToken(token, userDetails)) {
-                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-                        usernamePasswordAuthenticationToken
-                                .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        try {
+
+            if (authToken != null) {
+                username = tokenUtil.getUsernameFromToken(authToken);
+                if (username != null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                    if (tokenUtil.validateToken(authToken, userDetails)) {
+                        TokenBasedAuth authentication = new TokenBasedAuth(userDetails);
+                        authentication.setToken(authToken);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Unable to get JWT token.");
-                } catch (ExpiredJwtException e) {
-                    System.out.println("Token has expired.");
-                } catch (io.jsonwebtoken.MalformedJwtException e) {
-                    System.out.println("Bad JWT token.");
                 }
-            } else {
-                logger.warn("JWT token does not exist");
             }
+        }
+        catch (ExpiredJwtException ex) {
+            logger.debug("Token expired!");
         }
         chain.doFilter(request, response);
     }
