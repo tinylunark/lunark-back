@@ -23,7 +23,7 @@ public class TokenUtils {
     @Value("tinysecret")
     public String SECRET;
 
-    @Value("1800000")
+    @Value("18000")
     private int EXPIRES_IN;
 
     @Value("Authorization")
@@ -79,4 +79,20 @@ public class TokenUtils {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    public int getExpiredIn() {
+        return (int) JWT_TOKEN_VALIDITY;
+    }
+    public String getToken(HttpServletRequest request) {
+        String authHeader = getAuthHeaderFromHeader(request);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        return null;
+    }
+
+
+
 }
