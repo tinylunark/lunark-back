@@ -5,13 +5,10 @@ import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.service.AccountService;
 import com.lunark.lunark.util.TokenUtils;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(value="api/auth", produces= MediaType.APPLICATION_JSON_VALUE)
@@ -46,7 +42,7 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Account account  = (Account) authentication.getPrincipal();
-        String jwt = tokenUtils.generateToken(account.getUsername());
+        String jwt = tokenUtils.generateToken(account);
         int expiresIn = tokenUtils.getExpiredIn();
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
     }
