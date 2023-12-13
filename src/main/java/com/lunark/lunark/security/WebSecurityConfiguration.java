@@ -18,8 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
@@ -28,12 +31,14 @@ public class WebSecurityConfiguration {
 
     private final TokenFilter jwtRequestFilter;
     private final TokenEntryPoint tokenEntryPoint;
+    private final MvcRequestMatcher.Builder mvcMatcherBuilder;
 
     @Autowired
     @Lazy
-    public WebSecurityConfiguration(TokenFilter jwtRequestFilter, TokenEntryPoint tokenEntryPoint) {
+    public WebSecurityConfiguration(TokenFilter jwtRequestFilter, TokenEntryPoint tokenEntryPoint, HandlerMappingIntrospector introspector) {
         this.jwtRequestFilter = jwtRequestFilter;
         this.tokenEntryPoint = tokenEntryPoint;
+        mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
     }
 
     @Bean
@@ -46,8 +51,9 @@ public class WebSecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(tokenEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/**").permitAll()
-                            .requestMatchers("/api/test/**").permitAll()
+                        auth.requestMatchers(mvcMatcherBuilder.pattern("/api/auth/**")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+                            .requestMatchers(mvcMatcherBuilder.pattern("/api/test/**")).permitAll()
                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -70,10 +76,18 @@ public class WebSecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/signup")
-    			.requestMatchers(HttpMethod.GET,
-    "/", "/webjars/*", "/*.html", "favicon.ico",
-    			"/*/*.html", "/*/*.css", "/*/*.js");
+        MvcRequestMatcher loginMatcher = mvcMatcherBuilder.pattern("/api/auth/login");
+        loginMatcher.setMethod(HttpMethod.POST);
+        MvcRequestMatcher signupMatcher = mvcMatcherBuilder.pattern("/api/auth/signup");
+        loginMatcher.setMethod(HttpMethod.POST);
+    	return (web) -> web.ignoring().requestMatchers(loginMatcher).requestMatchers(signupMatcher)
+                .requestMatchers(new AntPathRequestMatcher("/"))
+                .requestMatchers(new AntPathRequestMatcher("/webjars/**"))
+                .requestMatchers(new AntPathRequestMatcher("/*.html"))
+                .requestMatchers(new AntPathRequestMatcher("favicon.ico"))
+                .requestMatchers(new AntPathRequestMatcher("/**/*.html"))
+                .requestMatchers(new AntPathRequestMatcher("/**/*.css"))
+                .requestMatchers(new AntPathRequestMatcher("/**/*.js"));
 
     }
 }

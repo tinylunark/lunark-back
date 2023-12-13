@@ -2,6 +2,7 @@ package com.lunark.lunark.security;
 
 import com.lunark.lunark.util.TokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,6 +56,9 @@ public class TokenFilter extends OncePerRequestFilter {
         }
         catch (ExpiredJwtException ex) {
             logger.debug("Token expired!");
+        }
+        catch (SignatureException ex) {
+            logger.debug("Unsigned token passed");
         }
         chain.doFilter(request, response);
     }
