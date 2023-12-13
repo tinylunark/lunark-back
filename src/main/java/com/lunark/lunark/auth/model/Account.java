@@ -3,26 +3,36 @@ package com.lunark.lunark.auth.model;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-public class Account {
+public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+    @Column
     private String password;
+    @Column
     private String name;
+    @Column
     private String surname;
+    @Column
     private String address;
+    @Column
     private String phoneNumber;
+    @Column
     private boolean verified;
+    @Column
     private AccountRole role;
+    @Column
     private boolean blocked;
+
     @OneToMany
     private Collection<Review> reviews;
     @OneToMany
@@ -30,8 +40,6 @@ public class Account {
     public Account() {
 
     }
-
-
 
     public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews, HashSet<Property> favoriteProperties) {
         this.id = id;
@@ -55,6 +63,41 @@ public class Account {
         return verified && !blocked;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(role.name()));
+        return grantedAuthorities;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return verified && !blocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
     public boolean credentialsMatch(String email, String password) {
         return this.email.equals(email) && this.email.equals(password);
     }
@@ -73,10 +116,6 @@ public class Account {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {
@@ -154,6 +193,4 @@ public class Account {
     public void setFavoriteProperties(Set<Property> favoriteProperties) {
         this.favoriteProperties = favoriteProperties;
     }
-
-
 }

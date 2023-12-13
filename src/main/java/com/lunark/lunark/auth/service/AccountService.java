@@ -5,6 +5,7 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.auth.repository.IAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,15 +17,19 @@ public class AccountService implements IAccountService {
     @Autowired
     IAccountRepository accountRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Collection<Account> findAll() {
         return accountRepository.findAll();
     }
 
+
     @Override
     public Account create(Account account) {
         account.setVerified(false);
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
         return accountRepository.saveAndFlush(account);
     }
 
@@ -36,6 +41,11 @@ public class AccountService implements IAccountService {
     @Override
     public Optional<Account> find(String email, String password) {
         return accountRepository.findByEmailAndPassword(email, password);
+    }
+
+    @Override
+    public Optional<Account> find(String email) {
+        return accountRepository.findByEmail(email);
     }
 
     @Override

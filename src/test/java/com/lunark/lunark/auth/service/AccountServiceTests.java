@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -22,6 +23,9 @@ import java.util.Optional;
 public class AccountServiceTests {
     @Mock
     private IAccountRepository accountRepository;
+
+    @Mock
+    private PasswordEncoder mockPasswordEncoder;
 
     @InjectMocks
     private AccountService accountService;
@@ -36,6 +40,7 @@ public class AccountServiceTests {
 
     @Test
     public void testAdd() {
+        Mockito.when(mockPasswordEncoder.encode(account.getPassword())).thenReturn(account.getPassword());
         Mockito.when(accountRepository.saveAndFlush(account)).thenReturn(account);
         Assertions.assertSame(account, accountService.create(account));
         Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.of(account));
