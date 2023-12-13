@@ -70,6 +70,10 @@ public class WebSecurityConfiguration {
                             .requestMatchers(mvcMatcherBuilder.pattern("/api/test/**")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}/images")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{propertyId:\\d+}/images/{imageId:\\d+}")).permitAll()
+                            //TODO: Remove
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/properties/{id:\\d+}/images")).permitAll()
                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
