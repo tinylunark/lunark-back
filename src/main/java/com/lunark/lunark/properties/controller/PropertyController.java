@@ -41,8 +41,8 @@ public class PropertyController {
     public ResponseEntity<List<PropertyResponseDto>> getAll(
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Integer guestNumber,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "ddMMyyyy") LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "ddMMyyyy") LocalDate endDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
             @RequestParam(required = false) List<Long> amenityIds,
             @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) Double minPrice,
