@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -27,12 +28,16 @@ import java.util.stream.Collectors;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class)
 @Import(TestConfiguration.class)
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class PropertyControllerPricesAndAvailabilityIntegrationTests {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
     @Autowired
     private ModelMapper mapper;
+
+    //JWT for user5@example.com
+    private final String fakeHostJWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNUBleGFtcGxlLmNvbSIsImV4cCI6MTcwMjUwMTY2ODAsImlhdCI6MTcwMjQ4MzY2OH0.E2jC-esqWn3SZtWSBD19bwIXkDvA2dFqfg6VU5_fBwJNLHMGO3XjQTq-gY-tZuCVG-eeqeh8RK5e-U84vxn-sw";
 
     public static List<Arguments> getPositiveRequests() {
         List<PropertyAvailabilityEntry> addedNewDaysInMiddle = new ArrayList<>(Arrays.asList(
@@ -107,7 +112,9 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
         List<AvailabilityEntryDto> availabilityEntryDtos = availabilityEntries.stream()
                 .map(propertyAvailabilityEntry -> mapper.map(propertyAvailabilityEntry, AvailabilityEntryDto.class))
                 .collect(Collectors.toList());
-        return new HttpEntity<>(availabilityEntryDtos, new HttpHeaders());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + fakeHostJWT);
+        return new HttpEntity<>(availabilityEntryDtos, headers);
     }
 
     @ParameterizedTest
