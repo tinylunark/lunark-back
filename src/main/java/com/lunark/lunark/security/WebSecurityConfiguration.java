@@ -68,6 +68,8 @@ public class WebSecurityConfiguration {
                         auth.requestMatchers(mvcMatcherBuilder.pattern("/api/auth/**")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                             .requestMatchers(mvcMatcherBuilder.pattern("/api/test/**")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}")).permitAll()
                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
