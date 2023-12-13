@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +22,7 @@ public class TokenUtils {
     @Value("lunark")
     private String APP_NAME;
 
-    @Value("tinysecret")
-    public String SECRET;
+    public byte[] SECRET = "tinysecret".getBytes();
 
     @Value("18000")
     private int EXPIRES_IN;
