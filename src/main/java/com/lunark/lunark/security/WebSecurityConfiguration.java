@@ -109,7 +109,8 @@ public class WebSecurityConfiguration {
                 .requestMatchers(new AntPathRequestMatcher("favicon.ico"))
                 .requestMatchers(new AntPathRequestMatcher("/**/*.html"))
                 .requestMatchers(new AntPathRequestMatcher("/**/*.css"))
-                .requestMatchers(new AntPathRequestMatcher("/**/*.js"));
+                .requestMatchers(new AntPathRequestMatcher("/**/*.js"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS, "/**"));
 
     }
 }
