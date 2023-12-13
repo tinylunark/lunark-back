@@ -70,6 +70,8 @@ public class WebSecurityConfiguration {
                             .requestMatchers(mvcMatcherBuilder.pattern("/api/test/**")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/amenities")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/amenities/*")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}/images")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{propertyId:\\d+}/images/{imageId:\\d+}")).permitAll()
                             //TODO: Remove
