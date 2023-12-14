@@ -42,6 +42,20 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
+    public WebMvcConfigurer CORSConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedHeaders("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+                        .allowCredentials(false);
+            }
+        };
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.securityContext((securityContext) -> securityContext
                 .securityContextRepository(new RequestAttributeSecurityContextRepository())
@@ -54,6 +68,14 @@ public class WebSecurityConfiguration {
                         auth.requestMatchers(mvcMatcherBuilder.pattern("/api/auth/**")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                             .requestMatchers(mvcMatcherBuilder.pattern("/api/test/**")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/amenities")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/amenities/*")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}/images")).permitAll()
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{propertyId:\\d+}/images/{imageId:\\d+}")).permitAll()
+                            //TODO: Remove
+                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/properties/{id:\\d+}/images")).permitAll()
                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -87,7 +109,8 @@ public class WebSecurityConfiguration {
                 .requestMatchers(new AntPathRequestMatcher("favicon.ico"))
                 .requestMatchers(new AntPathRequestMatcher("/**/*.html"))
                 .requestMatchers(new AntPathRequestMatcher("/**/*.css"))
-                .requestMatchers(new AntPathRequestMatcher("/**/*.js"));
+                .requestMatchers(new AntPathRequestMatcher("/**/*.js"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS, "/**"));
 
     }
 }

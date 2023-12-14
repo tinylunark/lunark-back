@@ -5,25 +5,19 @@ import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.service.AccountService;
 import com.lunark.lunark.util.TokenUtils;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(value="api/auth", produces= MediaType.APPLICATION_JSON_VALUE)
@@ -40,13 +34,13 @@ public class AuthenticationController {
     @PostMapping(value="/login", consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenState> createAuthenticationToken( @RequestBody AuthRequest authenticationRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getUsername(),
+                authenticationRequest.getEmail(),
                 authenticationRequest.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Account account  = (Account) authentication.getPrincipal();
-        String jwt = tokenUtils.generateToken(account.getUsername());
+        String jwt = tokenUtils.generateToken(account);
         int expiresIn = tokenUtils.getExpiredIn();
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
     }
@@ -56,5 +50,23 @@ public class AuthenticationController {
         Optional<Account> existUser = this.accountService.find(userRequest.getEmail());
         Account account = this.accountService.create(userRequest.toAccount());
         return new ResponseEntity<>(account, HttpStatus.CREATED);
+    }
+
+    @GetMapping(
+            value = "/logout",
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public ResponseEntity logoutUser() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(auth instanceof AnonymousAuthenticationToken)){
+            SecurityContextHolder.clearContext();
+
+            return new ResponseEntity<>("You successfully logged out!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Lunark user is not authenticated!", HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
