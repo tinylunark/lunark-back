@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,7 +65,6 @@ public class AccountController {
     @GetMapping(path="/nonadmins", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AccountDto>> getNonAdmins(SpringDataWebProperties.Pageable pageable) {
         List<Account> nonAdmins = accountService.findAll().stream().filter(account -> account.getRole() != AccountRole.ADMIN).collect(Collectors.toList());
-
         List<AccountDto> accountDtos = nonAdmins.stream().map(AccountDtoMapper::fromAccountToDTO).collect(Collectors.toList());
         return new ResponseEntity<>(accountDtos, HttpStatus.OK);
     }
@@ -78,17 +78,17 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
+
     @PutMapping(path="/{id}")
     public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountSignUpDto accountDto, @PathVariable("id") Long id) {
         Optional<Account> accountOptional = accountService.find(id);
         if(accountOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         Account account = accountDto.toAccount();
         account.setId(id);
         accountService.update(account);
-
         return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.OK);
     }
 
