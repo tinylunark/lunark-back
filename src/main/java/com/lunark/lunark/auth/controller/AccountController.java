@@ -87,6 +87,7 @@ public class AccountController {
 
         Account account = accountDto.toAccount();
         account.setId(id);
+        account.setVerified(accountOptional.get().isVerified());
         accountService.update(account);
 
         return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.OK);
