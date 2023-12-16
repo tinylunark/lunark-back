@@ -3,6 +3,7 @@ package com.lunark.lunark.auth.model;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,28 +34,6 @@ public class Account implements UserDetails {
     @Column
     private boolean blocked;
 
-    @Column
-    private String country;
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    @Column
-    private Date birthday;
-
     @OneToMany
     private Collection<Review> reviews;
     @OneToMany
@@ -63,15 +42,13 @@ public class Account implements UserDetails {
 
     }
 
-    public Account(Long id, String email, String password, String name, String surname, Date birthday, String address, String country, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews, HashSet<Property> favoriteProperties) {
+    public Account(Long id, String email, String password, String name, String surname, String address, String phoneNumber, boolean verified, AccountRole role, boolean notificationsEnabled, boolean blocked, Collection<Review> reviews, HashSet<Property> favoriteProperties) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.birthday = birthday;
         this.address = address;
-        this.country = country;
         this.phoneNumber = phoneNumber;
         this.verified = verified;
         this.role = role;
