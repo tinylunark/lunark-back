@@ -159,9 +159,21 @@ public class PropertyController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping(value = "/approve/{id}")
-    public ResponseEntity<?> approveProperty(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping("/approve/{id}")
+    public ResponseEntity<Property> approveProperty(@PathVariable Long id) {
+        return propertyService.find(id)
+                .map(this::approveAndSaveProperty)
+                .orElse(notFoundResponse());
+    }
+
+    private ResponseEntity<Property> approveAndSaveProperty(Property property) {
+        property.setApproved(true);
+        propertyService.update(property);
+        return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity<Property> notFoundResponse() {
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping(value = "/{propertyId}/images/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
