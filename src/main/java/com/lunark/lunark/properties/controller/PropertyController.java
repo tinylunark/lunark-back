@@ -72,7 +72,7 @@ public class PropertyController {
 
     @GetMapping(value="/unapproved", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PropertyResponseDto>> getAllUnapproved(SpringDataWebProperties pageable) {
-        List<Property> unapprovedProperties = propertyService.findAll().stream().filter(property -> !property.isApproved()).toList();
+        List<Property> unapprovedProperties = propertyService.findUnapproved();
         List<PropertyResponseDto> propertyDtos = unapprovedProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
     }
