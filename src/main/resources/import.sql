@@ -18,7 +18,7 @@ INSERT INTO account (email, password, name, surname, address, phone_number, veri
 --Password: password5
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user5@example.com', '$2a$10$OrHomTrY.lEfFDlkwK/tPeKrjMXyy/R.nefcbfpgcxrI03WvoGkIu', 'Daniel', 'Cooper', '876 Rainbow St', '2223334444', true, 2, false, 'Japan', '1982-06-18');--Password: password6
 -- Password: password6
-INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user6@example.com', '$2a$10$GdwvPv72sNBVe.4QhUY7/OdLzRb8RH8Oo4/LR8nWF7NW83/CM4oPy', 'Chloe', 'Baker', '567 Hail St', '9990001111', true, 1, false, 'Brazil', '1989-03-08');
+INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user7@example.com', '$2a$10$GdwvPv72sNBVe.4QhUY7/OdLzRb8RH8Oo4/LR8nWF7NW83/CM4oPy', 'Chloe', 'Baker', '567 Hail St', '9990001111', true, 1, false, 'Brazil', '1989-03-08');
 
 
 -- Review imports
@@ -35,7 +35,7 @@ INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Beaut
 
 -- Property imports
 
-INSERT INTO Property (name, min_guests, max_guests, description, latitude, longitude, approved, pricing_mode, cancellation_deadline, auto_approve_enabled, street, city, country) VALUES ('Shilage Castle', 2, 4, 'Shilage Castle is a castle located in eastern Erusea, within the state of Shilage. Shilage Castle is based on Castle Szigliget, with the landscape surrounding it resembling the Szigliget village. Extract from Acepedia.', 48.9994708,20.7649368, true, 0, 7, true, 'Shilage Castle', 'Shilage', 'Erusea');
+INSERT INTO Property (name, min_guests, max_guests, description, latitude, longitude, approved, pricing_mode, cancellation_deadline, auto_approve_enabled, street, city, country) VALUES ('Shilage Castle', 2, 4, 'Shilage Castle is a castle located in eastern Erusea, within the state of Shilage. Shilage Castle is based on Castle Szigliget, with the landscape surrounding it resembling the Szigliget village. Extract from Acepedia.', 48.9994708,20.7649368, false, 0, 7, true, 'Shilage Castle', 'Shilage', 'Erusea');
 INSERT INTO Property (name, min_guests, max_guests, description, latitude, longitude, approved, pricing_mode, cancellation_deadline, auto_approve_enabled, street, city, country) VALUES ('Cozy Cabin', 2, 4, 'A charming cabin in the woods', 40.7128, -74.0060, true, 0, 7, true, 'New York City Hall, New York, NY 10007', 'New York NY', 'United States');
 INSERT INTO Property (name, min_guests, max_guests, description, latitude, longitude, approved, pricing_mode, cancellation_deadline, auto_approve_enabled, street, city, country) VALUES ('City Apartment', 1, 2, 'Modern apartment in the heart of the city', 34.0522, -118.2437, true, 0, 14, false, 'Trg Dositeja Obradovica 6', 'Novi Sad', 'Serbia');
 INSERT INTO Property (name, min_guests, max_guests, description, latitude, longitude, approved, pricing_mode, cancellation_deadline, auto_approve_enabled, street, city, country) VALUES ('Lakefront Retreat', 6, 10, 'Spacious retreat by the lake', 42.3601, -71.0589, true, 0, 30, true, 'Trg Dositeja Obradovica 6', 'Novi Sad', 'Serbia');

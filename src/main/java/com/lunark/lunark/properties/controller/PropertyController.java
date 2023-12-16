@@ -11,6 +11,7 @@ import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,13 +48,14 @@ public class PropertyController {
             @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice
-            ) {
+    ) {
 
         PropertySearchDto filter = PropertySearchDto.builder()
                 .address(location)
                 .guestNumber(guestNumber)
                 .startDate(startDate)
                 .endDate(endDate)
+                .approved(true)
                 .type(type)
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
@@ -65,9 +67,17 @@ public class PropertyController {
         List<PropertyResponseDto> propertyDtos = properties.stream()
                 .map(PropertyDtoMapper::fromPropertyToDto)
                 .toList();
-
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
     }
+
+    @GetMapping(value="/unapproved", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PropertyResponseDto>> getAllUnapproved(SpringDataWebProperties pageable) {
+        List<Property> unapprovedProperties = propertyService.findAll().stream().filter(property -> !property.isApproved()).toList();
+        List<PropertyResponseDto> propertyDtos = unapprovedProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
+        return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
+    }
+
+
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> getProperty(@PathVariable("id") Long id) {

@@ -51,6 +51,15 @@ public class Property {
             orphanRemoval = true
     )
     private Collection<PropertyImage> images;
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
     private boolean approved = false;
     private PricingMode pricingMode = PricingMode.PER_PERSON;
     private int cancellationDeadline;
