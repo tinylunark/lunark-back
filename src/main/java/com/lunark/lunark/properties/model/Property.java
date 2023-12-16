@@ -128,10 +128,9 @@ public class Property {
         return false;
     }
     public enum PropertyType {
-        DUPLEX,
-        APARTMENT,
-        COTTAGE,
-        HUT
+        WHOLE_HOUSE,
+        ROOM,
+        SHARED_ROOM
     }
 
     public boolean isAvailable(LocalDate day) {
