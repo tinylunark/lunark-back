@@ -21,9 +21,9 @@ public class Amenity {
     @Column(unique = true)
     @NotBlank(message = "Invalid Name: Should not be blank")
     private String name;
-    //TODO: Store images
-    @Transient
-    private Image icon;
+
+    //Material design icon name
+    private String icon;
 
     @Override
     public String toString() {

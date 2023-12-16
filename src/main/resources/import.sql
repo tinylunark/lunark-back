@@ -55,3 +55,11 @@ insert into property_availability_entry(date, price, is_reserved, property_id) v
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-11', 2000, true, 1);
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-12', 2000, true, 1);
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-1', 1000, false, 1);
+
+-- Amenity imports
+insert into amenity(name, icon) values ('Free parking', 'local_parking');
+insert into amenity(name, icon) values ('Air condtioning', 'ac_unit');
+insert into amenity(name, icon) values ('WiFi', 'wifi');
+insert into amenity(name, icon) values ('Pool', 'pool');
+insert into amenity(name, icon) values ('Medical Services', 'medical_services');
+insert into amenity(name, icon) values ('Dedicated workspace', 'desk');
