@@ -15,6 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -150,6 +151,7 @@ public class PropertyController {
     }
 
     @PostMapping(value = "/approve/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<?> approveProperty(@PathVariable("id") Long id) {
         propertyService.approve(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
