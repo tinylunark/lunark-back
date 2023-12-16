@@ -129,6 +129,17 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
+    public void approve(Long id) {
+        Optional<Property> property = propertyRepository.findById(id);
+
+        property.map(p -> {
+            p.setApproved(true);
+            propertyRepository.save(p);
+            return p;
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "property not found"));
+    }
+
+    @Override
     public void delete(Long id) {
         propertyRepository.deleteById(id);
         propertyRepository.flush();

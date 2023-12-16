@@ -24,4 +24,5 @@ public interface IPropertyService {
     Optional<PropertyImage> getImage(Long imageId, Long propertyId);
     boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability);
     List<Property> findByFilter(PropertySearchDto filter);
+    void approve(Long id);
 }

@@ -151,6 +151,7 @@ public class PropertyController {
 
     @PostMapping(value = "/approve/{id}")
     public ResponseEntity<?> approveProperty(@PathVariable("id") Long id) {
+        propertyService.approve(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
