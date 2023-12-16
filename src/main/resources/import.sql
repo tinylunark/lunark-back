@@ -2,9 +2,9 @@
 --Password: password1
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user1@example.com', '$2a$10$FJ.cj9UfVwXVnmNACr/9QOFZ.MKtTjVNBMUI8d7rWr.D18qoss1v.', 'Alex', 'Johnson', '123 Sky St', '1112233444', true, 0, false, 'USA', '1990-05-15');
 --Password: password2
-INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user2@example.com', '$2a$10$EAdnVLmcYbL5o66p2tD8..ultVcZF69/nC64U4kzv/kxOkPozOnOa', 'Sophia', 'Brown', '456 Cloud St', '9876654321', true, 0, false, 'Canada', '1985-09-20');
+INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user2@example.com', '$2a$10$EAdnVLmcYbL5o66p2tD8..ultVcZF69/nC64U4kzv/kxOkPozOnOa', 'Sophia', 'Brown', '456 Cloud St', '9876654321', true, 1, false, 'Canada', '1985-09-20');
 --Password: adminpassword1
-INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('admin@example.com', '$2a$10$/w0fts1.JZZIvHhVzFaqWuj5WYyYpr241Tmf4dWgs/hA6xO9FHfi.', 'William', 'Smith', '789 Sun St', '5556667777', true, 0, false, 'UK', '1998-02-10');
+INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('admin@example.com', '$2a$10$/w0fts1.JZZIvHhVzFaqWuj5WYyYpr241Tmf4dWgs/hA6xO9FHfi.', 'William', 'Smith', '789 Sun St', '5556667777', true, 2, false, 'UK', '1998-02-10');
 --Password: adminpassword2
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('admin2@example.com', '$2a$10$/y782IN1T9t8lR2uKHEmJe9YIOQb5UDWOsS13iM5FCGgbizirMSYW', 'Emma', 'Jones', '890 Rain St', '3332221111', true, 0, false, 'Australia', '1993-11-25');
 --Password: blockedpassword
@@ -16,7 +16,7 @@ INSERT INTO account (email, password, name, surname, address, phone_number, veri
 --Password: password4
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user4@example.com', '$2a$10$1wwMVoNmv.Qsy9p9WYC5xO4gswAzc7w7V9FT3x6FfAtl0Hicv0N2q', 'Grace', 'Miller', '234 Storm St', '5556667777', true, 0, false, 'Italy', '1992-01-12');
 --Password: password5
-INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user5@example.com', '$2a$10$OrHomTrY.lEfFDlkwK/tPeKrjMXyy/R.nefcbfpgcxrI03WvoGkIu', 'Daniel', 'Cooper', '876 Rainbow St', '2223334444', true, 1, false, 'Japan', '1982-06-18');--Password: password6
+INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user5@example.com', '$2a$10$OrHomTrY.lEfFDlkwK/tPeKrjMXyy/R.nefcbfpgcxrI03WvoGkIu', 'Daniel', 'Cooper', '876 Rainbow St', '2223334444', true, 2, false, 'Japan', '1982-06-18');--Password: password6
 -- Password: password6
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked, country, birthday) VALUES ('user6@example.com', '$2a$10$GdwvPv72sNBVe.4QhUY7/OdLzRb8RH8Oo4/LR8nWF7NW83/CM4oPy', 'Chloe', 'Baker', '567 Hail St', '9990001111', true, 1, false, 'Brazil', '1989-03-08');
 
