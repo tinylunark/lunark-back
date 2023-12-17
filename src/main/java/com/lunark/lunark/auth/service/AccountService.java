@@ -50,8 +50,15 @@ public class AccountService implements IAccountService {
 
     @Override
     public Account update(Account account) {
-        if(accountRepository.findById(account.getId()).isEmpty()) {
+        Optional<Account> oldAccountOptional = accountRepository.findById(account.getId());
+        if(oldAccountOptional.isEmpty()) {
             return null;
+        }
+        Account oldAccount = oldAccountOptional.get();
+        if(account.getPassword() == null) {
+            account.setPassword(oldAccount.getPassword());
+        } else {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
         }
         return accountRepository.saveAndFlush(account);
     }
