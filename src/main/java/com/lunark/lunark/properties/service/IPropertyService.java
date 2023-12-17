@@ -18,6 +18,9 @@ public interface IPropertyService {
     Optional<Property> find(Long id);
     Property create(Property property);
     Property update(Property property);
+
+    List<Property> findUnapproved();
+
     void delete(Long id);
     Double getAverageGrade(Long id);
     void saveImage(Property property, MultipartFile file) throws IOException;

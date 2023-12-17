@@ -1,5 +1,7 @@
 package com.lunark.lunark.util;
 
+import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.auth.service.AccountService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,10 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -31,6 +30,8 @@ public class TokenUtils {
     private String AUTH_HEADER;
 
     private static final String AUDIENCE_WEB = "web";
+
+    private AccountService accountService;
 
     public<T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
@@ -62,9 +63,10 @@ public class TokenUtils {
         return expiration.before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Account userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", userDetails.getAuthorities());
+        claims.put("profileId", userDetails.getId());
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

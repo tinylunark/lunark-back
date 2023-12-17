@@ -4,6 +4,10 @@ import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.properties.model.Property;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -108,8 +112,8 @@ public class AccountSignUpDto {
     }
 
     public Account toAccount() {
-        AccountRole role = AccountRole.fromString(this.role);
-        return new Account(null, email, password, name, surname, address, phoneNumber, false, role, false, false, new ArrayList<>(), new HashSet<Property>() {
-        });
+        AccountRole accountRole = AccountRole.fromString(this.role);
+
+        return new Account(null, email, password, name, surname, address, phoneNumber, false, accountRole, false, false, new ArrayList<>(), new HashSet<>());
     }
 }

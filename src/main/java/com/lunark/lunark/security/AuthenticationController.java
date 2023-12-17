@@ -4,6 +4,7 @@ import com.lunark.lunark.auth.dto.AccountSignUpDto;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.service.AccountService;
 import com.lunark.lunark.util.TokenUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,6 +68,5 @@ public class AuthenticationController {
         } else {
             return new ResponseEntity<>("Lunark user is not authenticated!", HttpStatus.BAD_REQUEST);
         }
-
     }
 }

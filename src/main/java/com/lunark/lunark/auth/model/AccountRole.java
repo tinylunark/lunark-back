@@ -1,9 +1,11 @@
 package com.lunark.lunark.auth.model;
 
-public enum AccountRole {
-    GUEST("guest"),
-    HOST("host"),
-    ADMIN("admin");
+import org.springframework.security.core.GrantedAuthority;
+
+public enum AccountRole implements GrantedAuthority {
+    GUEST("GUEST"),
+    HOST("HOST"),
+    ADMIN("ADMIN");
 
     private String name;
 
@@ -13,11 +15,11 @@ public enum AccountRole {
 
     public static AccountRole fromString(String value) {
         switch (value) {
-            case "guest":
+            case "GUEST":
                 return AccountRole.GUEST;
-            case "host":
+            case "HOST":
                 return AccountRole.HOST;
-            case "admin":
+            case "ADMIN":
                 return AccountRole.ADMIN;
         }
         throw new IllegalArgumentException("Invalid string in account role");
@@ -26,5 +28,10 @@ public enum AccountRole {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }

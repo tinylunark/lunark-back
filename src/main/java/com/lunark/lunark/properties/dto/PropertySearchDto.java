@@ -14,6 +14,7 @@ public class PropertySearchDto {
     Integer guestNumber;
     LocalDate startDate;
     LocalDate endDate;
+    Boolean approved;
     List<Long> amenityIds;
     Property.PropertyType type;
     Double minPrice;
