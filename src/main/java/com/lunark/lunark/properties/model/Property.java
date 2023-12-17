@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -51,15 +52,7 @@ public class Property {
             orphanRemoval = true
     )
     private Collection<PropertyImage> images;
-
-    public boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
-
+    @Getter
     private boolean approved = false;
     private PricingMode pricingMode = PricingMode.PER_PERSON;
     private int cancellationDeadline;
@@ -77,6 +70,19 @@ public class Property {
     @Transient
     private Clock clock = Clock.systemDefaultZone();
     private PropertyType type;
+    private Long hostId;
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public Long getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+    }
 
     private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
         return availabilityEntries.stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet()).size() == availabilityEntries.size();
