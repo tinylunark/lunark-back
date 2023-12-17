@@ -77,7 +77,14 @@ public class PropertyController {
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
     }
 
-
+    @GetMapping(value="/my-properties", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PropertyResponseDto>> getMyProperties(@RequestParam("hostId") Long hostId, SpringDataWebProperties pageable) {
+        List<Property> myProperties = propertyService.findAllPropertiesForHost(hostId);
+        System.out.println(myProperties);
+        System.out.println("NAJJACI COVEK IAKAD");
+        List<PropertyResponseDto> propertyDtos = myProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
+        return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
+    }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PropertyResponseDto> getProperty(@PathVariable("id") Long id) {
