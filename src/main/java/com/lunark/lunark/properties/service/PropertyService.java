@@ -130,6 +130,11 @@ public class PropertyService implements IPropertyService {
         return propertyRepository.findAll(specification);
     }
 
+    @Override
+    public List<Property> findAllPropertiesForHost(Long hostId) {
+        return propertyRepository.findAll().stream().filter(property -> Objects.equals(property.getHostId(), hostId)).toList();
+    }
+
 
     @Override
     public List<Property> findUnapproved() {
