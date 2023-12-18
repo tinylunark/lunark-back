@@ -16,13 +16,11 @@ import java.util.Optional;
 @Service
 public class VerificationService implements IVerificationService {
     private IVerificationLinkRepository verificationLinkRepository;
-    private IAccountRepository accountRepository;
     private Clock clock;
 
     @Autowired
-    public VerificationService(IVerificationLinkRepository verificationLinkRepository, IAccountRepository accountRepository, Clock clock) {
+    public VerificationService(IVerificationLinkRepository verificationLinkRepository, Clock clock) {
         this.verificationLinkRepository = verificationLinkRepository;
-        this.accountRepository = accountRepository;
         this.clock = clock;
     }
 
