@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.time.Clock;
 import java.util.*;
 
+import static java.util.Locale.filter;
+
 @Service
 public class PropertyService implements IPropertyService {
     // TODO: add logic
@@ -126,6 +128,12 @@ public class PropertyService implements IPropertyService {
     public List<Property> findByFilter(PropertySearchDto filter) {
         Specification<Property> specification = new PropertySpecification(filter);
         return propertyRepository.findAll(specification);
+    }
+
+
+    @Override
+    public List<Property> findUnapproved() {
+        return propertyRepository.findAll().stream().filter(property -> !property.isApproved()).toList();
     }
 
     @Override

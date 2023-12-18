@@ -49,11 +49,12 @@ public class WebSecurityConfiguration {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200")
                         .allowedHeaders("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS")
                         .allowCredentials(false);
             }
         };
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -68,14 +69,7 @@ public class WebSecurityConfiguration {
                         auth.requestMatchers(mvcMatcherBuilder.pattern("/api/auth/**")).permitAll()
                             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                             .requestMatchers(mvcMatcherBuilder.pattern("/api/test/**")).permitAll()
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties")).permitAll()
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}")).permitAll()
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/amenities")).permitAll()
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/amenities/*")).permitAll()
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{id:\\d+}/images")).permitAll()
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/properties/{propertyId:\\d+}/images/{imageId:\\d+}")).permitAll()
-                            //TODO: Remove
-                            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/properties/{id:\\d+}/images")).permitAll()
+                            .requestMatchers(mvcMatcherBuilder.pattern("/api/**")).permitAll()
                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
