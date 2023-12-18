@@ -11,13 +11,11 @@ import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -56,7 +54,7 @@ public class ReservationService implements IReservationService {
         double totalPrice = calculatePrice(
                 reservationDto.getStartDate(),
                 reservationDto.getEndDate(),
-                property.get().getAvailabilityEntries().stream().toList()
+                property.get().getAvailabilityEntries()
         );
 
         Reservation reservation = Reservation.builder()
@@ -72,8 +70,8 @@ public class ReservationService implements IReservationService {
         return this.reservationRepository.save(reservation);
     }
 
-    private double calculatePrice(LocalDate start, LocalDate end, List<PropertyAvailabilityEntry> entries) {
-        List<LocalDate> datesToBook = start.datesUntil(end.plusDays(1)).toList();
+    private double calculatePrice(LocalDate start, LocalDate end, Collection<PropertyAvailabilityEntry> entries) {
+        Collection<LocalDate> datesToBook = start.datesUntil(end.plusDays(1)).toList();
 
         return entries.stream()
                 .filter(entry -> datesToBook.contains(entry.getDate()))
