@@ -1,11 +1,19 @@
 package com.lunark.lunark.reservations.controller;
 
-import com.lunark.lunark.reservations.dto.ReservationConfirmationDto;
+import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.reservations.dto.ReservationResponseDto;
 import com.lunark.lunark.reservations.dto.ReservationDto;
-import com.lunark.lunark.reservations.dto.ReservationRequestDTO;
+import com.lunark.lunark.reservations.dto.ReservationRequestDto;
+import com.lunark.lunark.reservations.model.Reservation;
+import com.lunark.lunark.reservations.service.IReservationService;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -15,10 +23,24 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
+    private final IReservationService reservationService;
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public ReservationController(IReservationService reservationService, ModelMapper modelMapper) {
+        this.reservationService = reservationService;
+        this.modelMapper = modelMapper;
+    }
+
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationConfirmationDto> createReservation(@RequestHeader("x-access-token") String guestToken, @RequestBody ReservationRequestDTO reservationRequestDTO) {
-        ReservationConfirmationDto reservationConfirmationDto = new ReservationConfirmationDto("Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 3);
-        return new ResponseEntity<>(reservationConfirmationDto, HttpStatus.CREATED);
+    @PreAuthorize("hasAuthority('guest')")
+    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto dto) {
+        Account user = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Reservation reservation = this.reservationService.create(dto, user.getUsername());
+        ReservationResponseDto response = modelMapper.map(reservation, ReservationResponseDto.class);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{reservation_id}")
