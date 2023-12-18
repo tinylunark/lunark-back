@@ -33,7 +33,7 @@ public class ReservationController {
     }
 
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('guest')")
+    @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto dto) {
         Account user = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
