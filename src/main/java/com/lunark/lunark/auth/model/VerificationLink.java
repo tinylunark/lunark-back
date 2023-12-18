@@ -41,6 +41,7 @@ public class VerificationLink {
     public boolean tryUse() {
         if (isValid()) {
             account.verify();
+            this.used = true;
             return true;
         }
         return false;
