@@ -1,11 +1,9 @@
 package com.lunark.lunark.auth.model;
 
-import com.lunark.lunark.auth.model.Account;
-
 import java.time.Duration;
 import java.util.Date;
 
-public class VerficationLink {
+public class VerificationLink {
     private int id;
     private boolean used;
     private Date created;
