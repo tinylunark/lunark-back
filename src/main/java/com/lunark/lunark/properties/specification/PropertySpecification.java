@@ -108,6 +108,11 @@ public class PropertySpecification implements Specification<Property> {
             predicate = criteriaBuilder.and(predicate, amenitiesPredicate);
         }
 
+        if (filter.getApproved() != null) {
+            Predicate typePredicate = criteriaBuilder.equal(root.get("approved"), filter.getApproved());
+            predicate = criteriaBuilder.and(predicate, typePredicate);
+        }
+
         return predicate;
     }
 
