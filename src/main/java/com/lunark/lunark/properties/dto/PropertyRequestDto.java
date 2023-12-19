@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class PropertyRequestDto {
+    Long id;
     String name;
     int minGuests;
     int maxGuests;
