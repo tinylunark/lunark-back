@@ -17,7 +17,7 @@ public interface IPropertyService {
     Collection<Property> findAll();
     Optional<Property> find(Long id);
     Property create(Property property);
-    Property update(Property property);
+    Property update(Property property, Long id);
 
     List<Property> findUnapproved();
 
