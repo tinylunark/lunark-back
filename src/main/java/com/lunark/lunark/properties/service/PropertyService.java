@@ -89,10 +89,8 @@ public class PropertyService implements IPropertyService {
                 property.get().setType(newProperty.getType());
                 property.get().setPricingMode(newProperty.getPricingMode());
                 property.get().setCancellationDeadline(newProperty.getCancellationDeadline());
-                property.get().setAmenities(new ArrayList<>());
-
-                System.out.println("PROPERTY =>");
-                System.out.println(property);
+                property.get().setAmenities(newProperty.getAmenities());
+                property.get().setHost(newProperty.getHost());
 
                 propertyRepository.save(property.get());
                 propertyRepository.flush();
