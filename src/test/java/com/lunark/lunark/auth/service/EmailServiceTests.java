@@ -12,6 +12,6 @@ public class EmailServiceTests {
     public void sendMail() {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         EmailService emailService = context.getBean(EmailService.class);
-        emailService.send("161ibbpgf@mozmail.com", "My first message from java");
+        emailService.send("161ibbpgf@mozmail.com", "Mail subject", "My first message from java");
     }
 }

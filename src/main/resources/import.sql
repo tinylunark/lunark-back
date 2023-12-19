@@ -64,3 +64,8 @@ insert into amenity(name, icon) values ('WiFi', 'wifi');
 insert into amenity(name, icon) values ('Pool', 'pool');
 insert into amenity(name, icon) values ('Medical Services', 'medical_services');
 insert into amenity(name, icon) values ('Dedicated workspace', 'desk');
+
+--Verification link imports
+insert into verification_link (used, account_id, created) values (false, 6, '2023-12-17 18:05:06')
+
+

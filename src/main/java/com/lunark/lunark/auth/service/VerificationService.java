@@ -18,6 +18,7 @@ public class VerificationService implements IVerificationService {
     private IVerificationLinkRepository verificationLinkRepository;
     private IEmailService emailService;
     private Clock clock;
+    private final String mailSubject = "Verification instructions for Lunark account";
 
     @Autowired
     public VerificationService(IVerificationLinkRepository verificationLinkRepository, IEmailService emailService, Clock clock) {
@@ -29,7 +30,7 @@ public class VerificationService implements IVerificationService {
     @Override
     public void createVerificationLink(Account account) {
         VerificationLink verificationLink = verificationLinkRepository.saveAndFlush(new VerificationLink(account, Date.from(clock.instant())));
-        emailService.send(account.getEmail(), getVerificationEmail(account.getEmail(), verificationLink.getId()));
+        emailService.send(account.getEmail(), mailSubject, getVerificationEmail(account.getEmail(), verificationLink.getId()));
     }
 
     @Override

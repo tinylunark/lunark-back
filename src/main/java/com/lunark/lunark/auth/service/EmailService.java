@@ -18,19 +18,19 @@ public class EmailService implements IEmailService {
 
     @Value("${email.username}")
     @Setter
-    public String username;
+    private String username;
 
     @Value("${email.password}")
     @Setter
-    public String password;
+    private String password;
 
     @Value("${email.smtp-server}")
     @Setter
-    public String smtpServer;
+    private String smtpServer;
 
     @Value("${email.domain}")
     @Setter
-    public String domain;
+    private String domain;
 
     public EmailService() {
     }
@@ -54,7 +54,7 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public void send(String to, String content) {
+    public void send(String to, String subject, String content) {
         this.setUpProperties();
         this.setUpSession();
         Message message = new MimeMessage(session);
@@ -62,7 +62,7 @@ public class EmailService implements IEmailService {
             message.setFrom(new InternetAddress(username+"@"+domain));
             message.setRecipients(
                     Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject("Mail Subject");
+            message.setSubject(subject);
             String msg = content;
 
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
