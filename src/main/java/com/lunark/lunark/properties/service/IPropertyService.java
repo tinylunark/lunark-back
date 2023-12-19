@@ -17,7 +17,7 @@ public interface IPropertyService {
     Collection<Property> findAll();
     Optional<Property> find(Long id);
     Property create(Property property);
-    Property update(Property property);
+    Property update(Property property, Long id);
 
     List<Property> findUnapproved();
 
@@ -27,4 +27,6 @@ public interface IPropertyService {
     Optional<PropertyImage> getImage(Long imageId, Long propertyId);
     boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability);
     List<Property> findByFilter(PropertySearchDto filter);
+
+    List<Property> findAllPropertiesForHost(Long hostId);
 }

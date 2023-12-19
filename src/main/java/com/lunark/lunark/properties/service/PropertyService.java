@@ -70,9 +70,9 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public Property update(Property newProperty) {
+    public Property update(Property newProperty, Long id) {
         try {
-            Optional<Property> property = find(newProperty.getId());
+            Optional<Property> property = find(id);
             if (property.isEmpty()) {
                 return this.create(newProperty);
             } else {
@@ -82,6 +82,15 @@ public class PropertyService implements IPropertyService {
                 property.get().setDescription(newProperty.getDescription());
                 property.get().setMinGuests(newProperty.getMinGuests());
                 property.get().setMaxGuests(newProperty.getMaxGuests());
+                property.get().setLongitude(newProperty.getLongitude());
+                property.get().setLatitude(newProperty.getLatitude());
+                property.get().setAvailabilityEntries(newProperty.getAvailabilityEntries());
+                property.get().setAutoApproveEnabled(newProperty.isAutoApproveEnabled());
+                property.get().setType(newProperty.getType());
+                property.get().setPricingMode(newProperty.getPricingMode());
+                property.get().setCancellationDeadline(newProperty.getCancellationDeadline());
+                property.get().setAmenities(newProperty.getAmenities());
+                property.get().setHost(newProperty.getHost());
 
                 propertyRepository.save(property.get());
                 propertyRepository.flush();
@@ -119,7 +128,7 @@ public class PropertyService implements IPropertyService {
         if (!property.setAvailabilityEntries(newPricesAndAvailability)) {
             return false;
         }
-        update(property);
+        update(property, property.getId());
         return true;
 
     }
@@ -128,6 +137,11 @@ public class PropertyService implements IPropertyService {
     public List<Property> findByFilter(PropertySearchDto filter) {
         Specification<Property> specification = new PropertySpecification(filter);
         return propertyRepository.findAll(specification);
+    }
+
+    @Override
+    public List<Property> findAllPropertiesForHost(Long hostId) {
+        return propertyRepository.findAll().stream().filter(property -> Objects.equals(property.getHost().getId(), hostId)).toList();
     }
 
 
