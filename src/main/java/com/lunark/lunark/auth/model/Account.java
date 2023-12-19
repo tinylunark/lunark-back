@@ -1,6 +1,7 @@
 package com.lunark.lunark.auth.model;
 
 import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,6 +39,17 @@ public class Account implements UserDetails {
     private Collection<Review> reviews;
     @OneToMany
     private Set<Property> favoriteProperties;
+    @OneToMany(mappedBy = "guest")
+    private Set<Reservation> reservations;
+
+    public Set<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
     public Account() {
 
     }
@@ -60,6 +72,7 @@ public class Account implements UserDetails {
     public void verify() {
         verified = true;
     }
+
     public boolean canLogIn() {
         return verified && !blocked;
     }
@@ -99,6 +112,7 @@ public class Account implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
     public boolean credentialsMatch(String email, String password) {
         return this.email.equals(email) && this.email.equals(password);
     }
