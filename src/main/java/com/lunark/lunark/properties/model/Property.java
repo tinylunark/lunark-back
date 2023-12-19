@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import lombok.Getter;
+import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.auth.model.AccountRole;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
