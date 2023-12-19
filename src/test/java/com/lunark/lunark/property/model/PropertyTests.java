@@ -1,6 +1,7 @@
 package com.lunark.lunark.property.model;
 
 import com.lunark.lunark.amenities.model.Amenity;
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.properties.model.*;
 import com.lunark.lunark.reviews.model.Review;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +44,8 @@ public class PropertyTests {
                 new ArrayList<PropertyAvailabilityEntry>(),
                 List.of(new Amenity(1L, "Wi-Fi", null)),
                 testClock,
-                Property.PropertyType.ROOM
+                Property.PropertyType.ROOM,
+                new Account()
         );
 
         List<PropertyAvailabilityEntry> availabilityEntries = new ArrayList<>(Arrays.asList(
