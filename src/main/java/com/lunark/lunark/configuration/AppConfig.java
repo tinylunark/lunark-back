@@ -10,7 +10,7 @@ import java.time.Clock;
 
 @Configuration
 @ComponentScan("com.lunark.lunark")
-@PropertySource("classpath:application-local.properties")
+@PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
 public class AppConfig {
     @Bean
     public Clock clock() {

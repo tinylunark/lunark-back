@@ -28,7 +28,7 @@ public class EmailService implements IEmailService {
     }
 
     @Autowired
-    public EmailService(@Value("${email.username}") String username, @Value("${email.password}") String password, @Value("${email.smtp-server}") String smtpServer, @Value("${email.domain}") String domain) {
+    public EmailService(@Value("${email.username:username}") String username, @Value("${email.password:password}") String password, @Value("${email.smtp-server:smtp.example.com}") String smtpServer, @Value("${email.domain:example.com}") String domain) {
         this.username = username;
         this.password = password;
         this.smtpServer = smtpServer;
