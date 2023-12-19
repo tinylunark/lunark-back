@@ -29,4 +29,5 @@ public interface IPropertyService {
     List<Property> findByFilter(PropertySearchDto filter);
 
     List<Property> findAllPropertiesForHost(Long hostId);
+    Property deleteImages(Long id);
 }

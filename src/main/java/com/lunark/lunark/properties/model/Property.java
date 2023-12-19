@@ -78,6 +78,23 @@ public class Property {
     @JoinColumn(name = "host_id")
     private Account host;
 
+    public void copyFields(Property other) {
+        this.setName(other.getName());
+        this.setAddress(other.getAddress());
+        this.getAmenities().clear();
+        this.getAmenities().addAll(other.getAmenities());
+        this.setDescription(other.getDescription());
+        this.setMinGuests(other.getMinGuests());
+        this.setMaxGuests(other.getMaxGuests());
+        this.setCancellationDeadline(other.getCancellationDeadline());
+        this.setPricingMode(other.getPricingMode());
+        this.setAutoApproveEnabled(other.isAutoApproveEnabled());
+        this.setLongitude(other.getLongitude());
+        this.setLatitude(other.getLatitude());
+        this.setType(other.getType());
+        this.setHost(other.getHost());
+    }
+
     public void setApproved(boolean approved) {
         this.approved = approved;
     }

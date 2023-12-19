@@ -63,7 +63,7 @@ public class PropertyServiceTests {
                         true,
                         new ArrayList<Review>(),
                         new ArrayList<PropertyAvailabilityEntry>(),
-                        List.of(new Amenity(1L, "Wi-Fi", null)),
+                        new ArrayList<>(List.of(new Amenity(1L, "Wi-Fi", null))),
                         testClock,
                         Property.PropertyType.ROOM,
                         new Account()
@@ -82,7 +82,7 @@ public class PropertyServiceTests {
                         true,
                         new ArrayList<Review>(),
                         new ArrayList<>(),
-                        List.of(new Amenity(1L, "Wi-Fi", null)),
+                        new ArrayList<>(List.of(new Amenity(1L, "Wi-Fi", null))),
                         testClock,
                         Property.PropertyType.ROOM,
                         new Account()
@@ -101,7 +101,7 @@ public class PropertyServiceTests {
                         true,
                         new ArrayList<Review>(),
                         availabilityEntries,
-                        List.of(new Amenity(1L, "Wi-Fi", null)),
+                        new ArrayList<>(List.of(new Amenity(1L, "Wi-Fi", null))),
                         testClock,
                         Property.PropertyType.ROOM,
                         new Account()
