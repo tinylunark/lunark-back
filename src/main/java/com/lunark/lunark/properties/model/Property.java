@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import lombok.Getter;
+import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.auth.model.AccountRole;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -53,15 +56,7 @@ public class Property {
             orphanRemoval = true
     )
     private Collection<PropertyImage> images;
-
-    public boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
-
+    @Getter
     private boolean approved = false;
     private PricingMode pricingMode = PricingMode.PER_PERSON;
     private int cancellationDeadline;
@@ -79,6 +74,21 @@ public class Property {
     @Transient
     private Clock clock = Clock.systemDefaultZone();
     private PropertyType type;
+    @ManyToOne
+    @JoinColumn(name = "host_id")
+    private Account host;
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public Account getHost() {
+        return host;
+    }
+
+    public void setHost(Account host) {
+        this.host = host;
+    }
 
     private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
         return availabilityEntries.stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet()).size() == availabilityEntries.size();

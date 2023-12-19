@@ -1,6 +1,7 @@
 package com.lunark.lunark.property.service;
 
 import com.lunark.lunark.amenities.model.Amenity;
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.properties.model.*;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.PropertyService;
@@ -64,7 +65,8 @@ public class PropertyServiceTests {
                         new ArrayList<PropertyAvailabilityEntry>(),
                         List.of(new Amenity(1L, "Wi-Fi", null)),
                         testClock,
-                        Property.PropertyType.ROOM
+                        Property.PropertyType.ROOM,
+                        new Account()
                 ),
                 new Property(1L,
                         "Ami Hotel",
@@ -82,7 +84,8 @@ public class PropertyServiceTests {
                         new ArrayList<>(),
                         List.of(new Amenity(1L, "Wi-Fi", null)),
                         testClock,
-                        Property.PropertyType.ROOM
+                        Property.PropertyType.ROOM,
+                        new Account()
                 ),
                 new Property(2L,
                         "Hotel Terasa",
@@ -100,7 +103,8 @@ public class PropertyServiceTests {
                         availabilityEntries,
                         List.of(new Amenity(1L, "Wi-Fi", null)),
                         testClock,
-                        Property.PropertyType.ROOM
+                        Property.PropertyType.ROOM,
+                        new Account()
                 )
         ));
     }
