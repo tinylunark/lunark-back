@@ -3,19 +3,19 @@ package com.lunark.lunark.auth.controller;
 import com.lunark.lunark.auth.dto.AccountDto;
 import com.lunark.lunark.auth.dto.AccountSignUpDto;
 import com.lunark.lunark.auth.dto.AccountVerifiedDto;
+import com.lunark.lunark.auth.model.VerificationLink;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
 import com.lunark.lunark.properties.service.IPropertyService;
-import com.lunark.lunark.auth.service.VerificationService;
+import com.lunark.lunark.auth.service.IVerificationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class AccountController {
     IAccountService accountService;
 
     @Autowired
-    VerificationService verificationService;
+    IVerificationService verificationService;
 
     @Autowired
     IPropertyService propertyService;
@@ -57,8 +57,8 @@ public class AccountController {
     @PostMapping(path="", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountSignUpDto accountDto) {
         Account newAccount = accountDto.toAccount();
-        newAccount.verify();
         Account account = accountService.create(newAccount);
+        verificationService.createVerificationLink(account);
         return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.CREATED);
     }
 
@@ -93,16 +93,13 @@ public class AccountController {
         return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.OK);
     }
 
-    @PostMapping(path="/verify/{verification_link_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountVerifiedDto> verifyAccount(@PathVariable("verification_link_id") Long verifcationLinkId) {
-        Optional<Account> account = accountService.find(verifcationLinkId);
-        if(account.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping(path="/verify/{verification_link_id}")
+    public ResponseEntity<?> verifyAccount(@PathVariable("verification_link_id") Long verificationLinkId) {
+        if (this.verificationService.verify(verificationLinkId)) {
+            return new ResponseEntity<>("Account verified successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Verification link already used or expired", HttpStatus.BAD_REQUEST);
         }
-
-        Account verifiedAccount = account.get();
-        verifiedAccount.verify();
-        return new ResponseEntity<>(new AccountVerifiedDto(accountService.update(verifiedAccount)), HttpStatus.OK);
     }
 
     @PostMapping(value = "/block/{id}")
