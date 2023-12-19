@@ -5,7 +5,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +16,25 @@ public class EmailService implements IEmailService {
     private Properties prop;
     private Session session;
 
-    @Value("${email.username}")
-    @Setter
     private String username;
 
-    @Value("${email.password}")
-    @Setter
     private String password;
 
-    @Value("${email.smtp-server}")
-    @Setter
     private String smtpServer;
 
-    @Value("${email.domain}")
-    @Setter
     private String domain;
 
     public EmailService() {
+    }
+
+    @Autowired
+    public EmailService(@Value("${email.username}") String username, @Value("${email.password}") String password, @Value("${email.smtp-server}") String smtpServer, @Value("${email.domain}") String domain) {
+        this.username = username;
+        this.password = password;
+        this.smtpServer = smtpServer;
+        this.domain = domain;
+        this.setUpProperties();
+        this.setUpSession();
     }
 
     public void setUpProperties() {
@@ -55,13 +57,10 @@ public class EmailService implements IEmailService {
 
     @Override
     public void send(String to, String subject, String content) {
-        this.setUpProperties();
-        this.setUpSession();
         Message message = new MimeMessage(session);
         try {
-            message.setFrom(new InternetAddress(username+"@"+domain));
-            message.setRecipients(
-                    Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setFrom(new InternetAddress(username + "@" + domain));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
             String msg = content;
 
