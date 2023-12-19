@@ -80,8 +80,6 @@ public class PropertyController {
     @GetMapping(value="/my-properties", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PropertyResponseDto>> getMyProperties(@RequestParam("hostId") Long hostId, SpringDataWebProperties pageable) {
         List<Property> myProperties = propertyService.findAllPropertiesForHost(hostId);
-        System.out.println(myProperties);
-        System.out.println("NAJJACI COVEK IAKAD");
         List<PropertyResponseDto> propertyDtos = myProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
     }
@@ -152,7 +150,7 @@ public class PropertyController {
         if (this.propertyService.find(property.getId()).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        property = this.propertyService.update(property);
+        property = this.propertyService.update(property, propertyDto.getId());
         return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.CREATED);
     }
 
@@ -175,7 +173,7 @@ public class PropertyController {
 
     private ResponseEntity<Property> approveAndSaveProperty(Property property) {
         property.setApproved(true);
-        propertyService.update(property);
+        propertyService.update(property, property.getId());
         return ResponseEntity.ok().build();
     }
 
