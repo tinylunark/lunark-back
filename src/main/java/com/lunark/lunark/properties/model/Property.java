@@ -70,7 +70,9 @@ public class Property {
     @Transient
     private Clock clock = Clock.systemDefaultZone();
     private PropertyType type;
-    private Long hostId;
+    @ManyToOne
+    @JoinColumn(name = "host_id")
+    private Account host;
 
     public void setApproved(boolean approved) {
         this.approved = approved;
