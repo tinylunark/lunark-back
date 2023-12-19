@@ -90,7 +90,6 @@ public class PropertyService implements IPropertyService {
                 property.get().setPricingMode(newProperty.getPricingMode());
                 property.get().setCancellationDeadline(newProperty.getCancellationDeadline());
                 property.get().setAmenities(new ArrayList<>());
-                property.get().setHostId(10L);
 
                 System.out.println("PROPERTY =>");
                 System.out.println(property);
@@ -144,7 +143,7 @@ public class PropertyService implements IPropertyService {
 
     @Override
     public List<Property> findAllPropertiesForHost(Long hostId) {
-        return propertyRepository.findAll().stream().filter(property -> Objects.equals(property.getHostId(), hostId)).toList();
+        return propertyRepository.findAll().stream().filter(property -> Objects.equals(property.getHost().getId(), hostId)).toList();
     }
 
 
