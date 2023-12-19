@@ -78,12 +78,12 @@ public class Property {
         this.approved = approved;
     }
 
-    public Long getHostId() {
-        return hostId;
+    public Account getHost() {
+        return host;
     }
 
-    public void setHostId(Long hostId) {
-        this.hostId = hostId;
+    public void setHost(Account host) {
+        this.host = host;
     }
 
     private static boolean allDatesUnique(Collection<PropertyAvailabilityEntry> availabilityEntries) {
