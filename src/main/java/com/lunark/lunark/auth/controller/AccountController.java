@@ -74,8 +74,10 @@ public class AccountController {
         if(accountService.find(id).isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        accountService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if(accountService.delete(id)) {
+            return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 

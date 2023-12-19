@@ -13,7 +13,7 @@ public interface IAccountService {
     Optional<Account> find(String username, String password);
     Optional<Account> find(String email);
     Account update(Account account);
-    void delete(Long id);
+    boolean delete(Long id);
     void addToFavorites(Long id, Property property);
     Double getAverageGrade(Long id);
 }
