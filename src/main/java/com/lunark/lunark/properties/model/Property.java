@@ -92,6 +92,7 @@ public class Property {
         this.setLongitude(other.getLongitude());
         this.setLatitude(other.getLatitude());
         this.setType(other.getType());
+        this.setHost(other.getHost());
     }
 
     public void setApproved(boolean approved) {
