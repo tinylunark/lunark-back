@@ -99,6 +99,14 @@ public class PropertyService implements IPropertyService {
         }
     }
 
+    public Property deleteImages(Long id) {
+        Optional<Property> property = find(id);
+        property.get().getImages().clear();
+        propertyRepository.save(property.get());
+        propertyRepository.flush();
+        return property.get();
+    }
+
     @Override
     public boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability) {
         Optional<Property> propertyOptional = this.find(id);

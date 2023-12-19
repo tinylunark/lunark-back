@@ -151,6 +151,7 @@ public class PropertyController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         property = this.propertyService.update(property, propertyDto.getId());
+        property = this.propertyService.deleteImages(property.getId());
         return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.CREATED);
     }
 
