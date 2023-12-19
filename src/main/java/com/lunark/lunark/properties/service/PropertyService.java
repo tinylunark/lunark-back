@@ -78,7 +78,8 @@ public class PropertyService implements IPropertyService {
             } else {
                 property.get().setName(newProperty.getName());
                 property.get().setAddress(newProperty.getAddress());
-                property.get().setAmenities(newProperty.getAmenities());
+                property.get().getAmenities().clear();
+                property.get().getAmenities().addAll(newProperty.getAmenities());
                 property.get().setDescription(newProperty.getDescription());
                 property.get().setMinGuests(newProperty.getMinGuests());
                 property.get().setMaxGuests(newProperty.getMaxGuests());
