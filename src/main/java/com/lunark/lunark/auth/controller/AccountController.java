@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,6 +73,7 @@ public class AccountController {
     }
 
     @DeleteMapping(path="/{id}")
+    @PreAuthorize("hasRole('GUEST') or hasRole('HOST')")
     public ResponseEntity<AccountDto> deleteAccount(@PathVariable("id") Long id) {
         if(accountService.find(id).isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -85,6 +87,7 @@ public class AccountController {
 
 
     @PutMapping(path="/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('GUEST') or hasRole('HOST')")
     public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountSignUpDto accountDto, @PathVariable("id") Long id) {
         Optional<Account> accountOptional = accountService.find(id);
         if(accountOptional.isEmpty()) {
@@ -97,7 +100,9 @@ public class AccountController {
         return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.OK);
     }
 
+
     @PutMapping("/update-password")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('GUEST') or hasRole('HOST')")
     public ResponseEntity<AccountDto> updatePassword(@RequestBody AccountUpdatePasswordDto passwordUpdateDto) {
         boolean isUpdated = accountService.updatePassword(
                 passwordUpdateDto.getAccountId(),
@@ -117,11 +122,13 @@ public class AccountController {
     }
 
     @PostMapping(value = "/block/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> blockAccount(@PathVariable("id") Long id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(path="/{id}/add-favorite/{propertyId}")
+    @PreAuthorize("hasRole('GUEST')")
     public ResponseEntity<AccountSignUpDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
         Optional<Account> accountOptional = accountService.find(accountId);
         if(accountOptional.isEmpty()) {
