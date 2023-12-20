@@ -16,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,6 +72,7 @@ public class PropertyController {
     }
 
     @GetMapping(value="/unapproved", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PropertyResponseDto>> getAllUnapproved(SpringDataWebProperties pageable) {
         List<Property> unapprovedProperties = propertyService.findUnapproved();
         List<PropertyResponseDto> propertyDtos = unapprovedProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
@@ -114,6 +116,7 @@ public class PropertyController {
     }
 
     @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<AvailabilityEntryDto> availabilityEntries) {
         Optional<Property> property = propertyService.find(id);
 
@@ -133,6 +136,7 @@ public class PropertyController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
         Property property = propertyService.create(PropertyDtoMapper.fromDtoToProperty(propertyDto));
         PropertyResponseDto response = PropertyDtoMapper.fromPropertyToDto(property);
@@ -140,6 +144,7 @@ public class PropertyController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
         Property property = PropertyDtoMapper.fromDtoToProperty(propertyDto);
         if (this.propertyService.find(property.getId()).isEmpty())  {
@@ -150,6 +155,7 @@ public class PropertyController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
         // TODO: add service calls
         if (this.propertyService.find(id).isEmpty())  {
@@ -160,6 +166,7 @@ public class PropertyController {
     }
 
     @PostMapping("/approve/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Property> approveProperty(@PathVariable Long id) {
         return propertyService.find(id)
                 .map(this::approveAndSaveProperty)
@@ -195,6 +202,7 @@ public class PropertyController {
     }
 
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> uploadImage(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
         Optional<Property> property = propertyService.find(id);
 
