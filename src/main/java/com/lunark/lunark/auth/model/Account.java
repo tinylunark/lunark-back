@@ -5,6 +5,8 @@ import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 
 @Entity
+@SQLDelete(sql
+        = "UPDATE account "
+        + "SET deleted = true "
+        + "WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +48,9 @@ public class Account implements UserDetails {
     private Set<Property> favoriteProperties;
     @OneToMany(mappedBy = "guest")
     private Set<Reservation> reservations;
+
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private boolean deleted = false;
 
     public Set<Reservation> getReservations() {
         return reservations;
