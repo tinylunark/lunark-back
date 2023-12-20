@@ -22,12 +22,19 @@ import lombok.Getter;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
+@SQLDelete(sql
+        = "UPDATE property "
+        + "SET deleted = true "
+        + "WHERE id = ?")
+@Where(clause = "deleted = false")
 @Data
 @Builder
 @AllArgsConstructor
@@ -77,6 +84,31 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "host_id")
     private Account host;
+
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private boolean deleted = false;
+
+    public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<PropertyImage> images, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews, Collection<PropertyAvailabilityEntry> availabilityEntries, Collection<Amenity> amenities, Clock clock, PropertyType type, Account host) {
+        this.id = id;
+        this.name = name;
+        this.minGuests = minGuests;
+        this.maxGuests = maxGuests;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
+        this.images = images;
+        this.approved = approved;
+        this.pricingMode = pricingMode;
+        this.cancellationDeadline = cancellationDeadline;
+        this.autoApproveEnabled = autoApproveEnabled;
+        this.reviews = reviews;
+        this.availabilityEntries = availabilityEntries;
+        this.amenities = amenities;
+        this.clock = clock;
+        this.type = type;
+        this.host = host;
+    }
 
     public void copyFields(Property other) {
         this.setName(other.getName());
