@@ -80,6 +80,7 @@ public class PropertyController {
     }
 
     @GetMapping(value="/my-properties", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<List<PropertyResponseDto>> getMyProperties(@RequestParam("hostId") Long hostId, SpringDataWebProperties pageable) {
         List<Property> myProperties = propertyService.findAllPropertiesForHost(hostId);
         List<PropertyResponseDto> propertyDtos = myProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
