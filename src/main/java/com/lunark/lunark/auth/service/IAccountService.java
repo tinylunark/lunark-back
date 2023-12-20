@@ -14,6 +14,7 @@ public interface IAccountService {
     Optional<Account> find(String email);
     Account update(Account account);
     boolean delete(Long id);
+    boolean updatePassword(Long id, String oldPassword, String newPassword);
     void addToFavorites(Long id, Property property);
     Double getAverageGrade(Long id);
 }
