@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AccountService implements IAccountService {
@@ -93,6 +90,27 @@ public class AccountService implements IAccountService {
         }
         accountRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public boolean updatePassword(Long accountId, String oldPassword, String newPassword) {
+        Optional<Account> accountToUpdate = accountRepository.findById(accountId);
+        if ( accountToUpdate.isEmpty() || !isOldPasswordCorrect(accountToUpdate.get(), oldPassword)) {
+            return false;
+        }
+        updateAccountPassword(accountToUpdate.get(), newPassword);
+        return true;
+    }
+
+    private boolean isOldPasswordCorrect(Account account, String oldPassword) {
+        String currentPassword = account.getPassword();
+        return passwordEncoder.matches(oldPassword, currentPassword);
+    }
+
+    private void updateAccountPassword(Account account, String newPassword) {
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+        account.setPassword(encodedNewPassword);
+        accountRepository.saveAndFlush(account);
     }
 
     private boolean isGuestAccount(AccountRole accountRole) {

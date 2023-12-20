@@ -2,6 +2,7 @@ package com.lunark.lunark.auth.controller;
 
 import com.lunark.lunark.auth.dto.AccountDto;
 import com.lunark.lunark.auth.dto.AccountSignUpDto;
+import com.lunark.lunark.auth.dto.AccountUpdatePasswordDto;
 import com.lunark.lunark.auth.dto.AccountVerifiedDto;
 import com.lunark.lunark.auth.model.VerificationLink;
 import com.lunark.lunark.mapper.AccountDtoMapper;
@@ -14,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -93,6 +95,16 @@ public class AccountController {
         account.setVerified(accountOptional.get().isVerified());
         accountService.update(account);
         return new ResponseEntity<>(modelMapper.map(account, AccountDto.class), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<AccountDto> updatePassword(@RequestBody AccountUpdatePasswordDto passwordUpdateDto) {
+        boolean isUpdated = accountService.updatePassword(
+                passwordUpdateDto.getAccountId(),
+                passwordUpdateDto.getOldPassword(),
+                passwordUpdateDto.getNewPassword());
+        if (isUpdated) { return new ResponseEntity<>(HttpStatus.OK); }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path="/verify/{verification_link_id}")
