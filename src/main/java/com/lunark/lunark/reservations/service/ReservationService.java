@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService implements IReservationService {
@@ -68,6 +71,25 @@ public class ReservationService implements IReservationService {
                 .build();
 
         return this.reservationRepository.save(reservation);
+    }
+
+    @Override
+    public List<Reservation> getAllReservationsForPropertiesList(List<Property> propertiesList) {
+        List<Reservation> reservationsForProperties = new ArrayList<>();
+        List<Reservation> allReservations = reservationRepository.findAll();
+        for(Property property : propertiesList) {
+            for(Reservation reservation : allReservations) {
+                if (reservation.getProperty() != null && reservation.getProperty().getId().equals(property.getId())) {
+                    reservationsForProperties.add(reservation);
+                }
+            }
+        }
+        return reservationsForProperties;
+    }
+
+    @Override
+    public List<Reservation> getAllReservationsForUser(Long userId) {
+        return reservationRepository.findAll().stream().filter(reservation -> reservation.getGuest().getId().equals(userId)).collect(Collectors.toList());
     }
 
     private double calculatePrice(LocalDate start, LocalDate end, Collection<PropertyAvailabilityEntry> entries) {
