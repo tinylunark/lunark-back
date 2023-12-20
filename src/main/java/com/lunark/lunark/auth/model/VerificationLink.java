@@ -1,18 +1,22 @@
 package com.lunark.lunark.auth.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
 
 import java.time.Duration;
 import java.util.Date;
 
 @Entity
+@SQLDelete(sql
+        = "UPDATE verification_link "
+        + "SET deleted = true "
+        + "WHERE id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor
 @Data
 public class VerificationLink {
@@ -27,6 +31,9 @@ public class VerificationLink {
     @OneToOne(cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account;
+
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private boolean deleted = false;
 
     public VerificationLink(Account account, Date created) {
         this.account = account;
