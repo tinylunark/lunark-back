@@ -3,10 +3,10 @@ package com.lunark.lunark.auth.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.properties.model.Property;
-import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.IPropertyService;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
+import com.lunark.lunark.reservations.service.ReservationService;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.auth.repository.IAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ public class AccountService implements IAccountService {
     @Autowired
     IAccountRepository accountRepository;
 
-    // @Autowired
-    // ReservationRepository reservationRepository;
+    @Autowired
+    ReservationService reservationService;
 
     @Autowired
     IPropertyService propertyService;
@@ -82,14 +82,38 @@ public class AccountService implements IAccountService {
         AccountRole accountRole = account.getRole();
 
         if (isGuestAccount(accountRole)) {
-            // Uncomment when Reservation Service and List are implemented
-            // handleUserAccountDeletion(id);
+             handleUserAccountDeletion(id);
         } else {
             List<Property> propertiesList = propertyService.findAllPropertiesForHost(account.getId());
             handleHostAccountDeletion(id, propertiesList);
         }
         accountRepository.deleteById(id);
         return true;
+    }
+
+    private boolean isGuestAccount(AccountRole accountRole) {
+        return accountRole == AccountRole.GUEST;
+    }
+
+    private void handleUserAccountDeletion(Long userId) {
+        List<Reservation> reservationList = reservationService.getAllReservationsForUser(userId);
+        if (noAcceptedReservations(reservationList)) {
+            accountRepository.deleteById(userId);
+        }
+    }
+
+    private void handleHostAccountDeletion(Long hostId, List<Property> propertiesList) {
+         List<Reservation> reservationList = reservationService.getAllReservationsForPropertiesList(propertiesList);
+         if (noAcceptedReservations(reservationList)) {
+             for (Property property : propertiesList) {
+                 propertyService.delete(property.getId());
+             }
+             accountRepository.deleteById(hostId);
+         }
+    }
+
+    public static boolean noAcceptedReservations(List<Reservation> reservationList) {
+        return reservationList.stream().noneMatch(reservation -> reservation.getStatus() == ReservationStatus.ACCEPTED);
     }
 
     @Override
@@ -112,40 +136,6 @@ public class AccountService implements IAccountService {
         account.setPassword(encodedNewPassword);
         accountRepository.saveAndFlush(account);
     }
-
-    private boolean isGuestAccount(AccountRole accountRole) {
-        return accountRole == AccountRole.GUEST;
-    }
-
-    private void handleUserAccountDeletion(Long userId) {
-        // Uncomment when Reservation Service and List are implemented
-        // List<Reservation> reservationList = reservationRepository.getAllReservationsForUser(userId);
-        // if (noAcceptedReservations(reservationList)) {
-        //
-        //     accountRepository.deleteById(userId);
-        // }
-    }
-
-    private void handleHostAccountDeletion(Long hostId, List<Property> propertiesList) {
-        // Uncomment when Reservation Service and List are implemented
-        // List<Reservation> reservationList = reservationRepository.getAllReservationsForPropertiesList(propertiesList);
-        // if (noAcceptedReservations(reservationList)) {
-        //     for (Property property : propertiesList) {
-        //         propertyService.delete(property.getId());
-        //     }
-        //     accountRepository.deleteById(hostId);
-        // }
-        for (Property property : propertiesList) {
-            propertyService.delete(property.getId());
-        }
-        accountRepository.deleteById(hostId);
-    }
-
-    public static boolean noAcceptedReservations(List<Reservation> reservationList) {
-        return reservationList.stream().noneMatch(reservation -> reservation.getStatus() == ReservationStatus.ACCEPTED);
-    }
-
-
 
     @Override
     public Double getAverageGrade(Long id) {
