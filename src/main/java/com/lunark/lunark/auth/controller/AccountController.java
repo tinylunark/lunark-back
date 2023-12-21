@@ -73,7 +73,7 @@ public class AccountController {
     }
 
     @DeleteMapping(path="/{id}")
-    @PreAuthorize("hasRole('GUEST') or hasRole('HOST')")
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<AccountDto> deleteAccount(@PathVariable("id") Long id) {
         if(accountService.find(id).isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -87,7 +87,7 @@ public class AccountController {
 
 
     @PutMapping(path="/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('GUEST') or hasRole('HOST')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountSignUpDto accountDto, @PathVariable("id") Long id) {
         Optional<Account> accountOptional = accountService.find(id);
         if(accountOptional.isEmpty()) {
@@ -102,7 +102,7 @@ public class AccountController {
 
 
     @PutMapping("/update-password")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('GUEST') or hasRole('HOST')")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<AccountDto> updatePassword(@RequestBody AccountUpdatePasswordDto passwordUpdateDto) {
         boolean isUpdated = accountService.updatePassword(
                 passwordUpdateDto.getAccountId(),
@@ -122,13 +122,13 @@ public class AccountController {
     }
 
     @PostMapping(value = "/block/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> blockAccount(@PathVariable("id") Long id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(path="/{id}/add-favorite/{propertyId}")
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<AccountSignUpDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
         Optional<Account> accountOptional = accountService.find(accountId);
         if(accountOptional.isEmpty()) {

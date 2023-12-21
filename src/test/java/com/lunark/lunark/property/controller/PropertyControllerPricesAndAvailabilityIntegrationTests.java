@@ -37,7 +37,7 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
     private ModelMapper mapper;
 
     //JWT for user5@example.com
-    private final String fakeHostJWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyNUBleGFtcGxlLmNvbSIsImV4cCI6MTcwMjUwMTY2ODAsImlhdCI6MTcwMjQ4MzY2OH0.E2jC-esqWn3SZtWSBD19bwIXkDvA2dFqfg6VU5_fBwJNLHMGO3XjQTq-gY-tZuCVG-eeqeh8RK5e-U84vxn-sw";
+    private final String fakeHostJWT = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsInJvbGUiOlt7ImF1dGhvcml0eSI6IkhPU1QifV0sInByb2ZpbGVJZCI6MiwiZXhwIjoxNzAzMTU4NTQwMCwiaWF0IjoxNzAzMTQwNTQwfQ.4NJKcQ1CcU1c9fQ-CaQr18vCsOwg-H74TrGVWL2H4YjuBYNAjUx5_uQu_nMDe68yLn3KqTsqIETKoOuXQqEJqg";
 
     public static List<Arguments> getPositiveRequests() {
         List<PropertyAvailabilityEntry> addedNewDaysInMiddle = new ArrayList<>(Arrays.asList(
