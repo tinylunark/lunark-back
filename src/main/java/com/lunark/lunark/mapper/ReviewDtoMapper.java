@@ -1,7 +1,7 @@
 package com.lunark.lunark.mapper;
 
-import com.lunark.lunark.dto.ReviewDto;
-import com.lunark.lunark.model.Review;
+import com.lunark.lunark.reviews.dto.ReviewDto;
+import com.lunark.lunark.reviews.model.Review;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
