@@ -5,6 +5,7 @@ import com.lunark.lunark.properties.model.Address;
 import com.lunark.lunark.properties.model.PricingMode;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyImage;
+import com.lunark.lunark.reviews.dto.ReviewDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,5 +30,6 @@ public class PropertyResponseDto {
     boolean autoApproveEnabled;
     List<AmenityResponseDto> amenities;
     Collection<AvailabilityEntryDto> availabilityEntries;
+    List<ReviewDto> reviews;
     Property.PropertyType type;
 }

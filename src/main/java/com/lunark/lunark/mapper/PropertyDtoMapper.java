@@ -8,6 +8,7 @@ import com.lunark.lunark.properties.dto.PropertyRequestDto;
 import com.lunark.lunark.properties.dto.PropertyResponseDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
+import com.lunark.lunark.reviews.dto.ReviewDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,11 @@ public class PropertyDtoMapper {
                 .map(amenity -> modelMapper.map(amenity, AmenityResponseDto.class))
                 .toList();
         propertyResponseDto.setAmenities(amenities);
+
+        List<ReviewDto> reviews = property.getReviews().stream()
+                .map(review -> modelMapper.map(review, ReviewDto.class))
+                .toList();
+        propertyResponseDto.setReviews(reviews);
 
         return propertyResponseDto;
     }

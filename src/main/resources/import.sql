@@ -56,6 +56,14 @@ insert into property_availability_entry(date, price, is_reserved, property_id) v
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-12', 2000, true, 1);
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-1', 1000, false, 1);
 
+-- Hibernate: create table property_reviews (property_id bigint not null, reviews_id bigint not null unique)
+insert into property_reviews(property_id, reviews_id) values (4, 1)
+insert into property_reviews(property_id, reviews_id) values (4, 2)
+insert into property_reviews(property_id, reviews_id) values (4, 3)
+insert into property_reviews(property_id, reviews_id) values (5, 4)
+insert into property_reviews(property_id, reviews_id) values (5, 5)
+
+
 -- Amenity imports
 insert into amenity(name, icon) values ('Free parking', 'local_parking');
 insert into amenity(name, icon) values ('Air condtioning', 'ac_unit');
