@@ -3,23 +3,24 @@ package com.lunark.lunark.auth.controller;
 import com.lunark.lunark.auth.dto.AccountDto;
 import com.lunark.lunark.auth.dto.AccountSignUpDto;
 import com.lunark.lunark.auth.dto.AccountUpdatePasswordDto;
-import com.lunark.lunark.auth.dto.AccountVerifiedDto;
-import com.lunark.lunark.auth.model.VerificationLink;
-import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
-import com.lunark.lunark.properties.service.IPropertyService;
 import com.lunark.lunark.auth.service.IVerificationService;
+import com.lunark.lunark.mapper.AccountDtoMapper;
+import com.lunark.lunark.mapper.PropertyDtoMapper;
+import com.lunark.lunark.properties.dto.PropertyResponseDto;
+import com.lunark.lunark.properties.service.IPropertyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class AccountController {
 
         return new ResponseEntity<>(modelMapper.map(account.get(), AccountDto.class), HttpStatus.OK);
     }
-  
+
     @GetMapping(value ="/average/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Double> getAverageGrade(@PathVariable("id") Long id) {
         Double averageGrade = accountService.getAverageGrade(id);
@@ -127,15 +128,22 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping(path="/{id}/add-favorite/{propertyId}")
+    @PostMapping(path="/favorites/{id}")
     @PreAuthorize("hasAuthority('GUEST')")
-    public ResponseEntity<AccountSignUpDto> addPropertyToFavorites(@PathVariable("id") Long accountId, @PathVariable("propertyId") Long propertyId) {
-        Optional<Account> accountOptional = accountService.find(accountId);
-        if(accountOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Account account = accountOptional.get();
-        accountService.addToFavorites(accountId, propertyService.find(propertyId).orElse(null));
-        return new ResponseEntity<>(new AccountSignUpDto(account), HttpStatus.OK);
+    public ResponseEntity<?> addPropertyToFavorites(@PathVariable("id") Long propertyId) {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        accountService.addToFavorites(currentUser.getId(), propertyService.find(propertyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property not found")));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<List<PropertyResponseDto>> getFavoriteProperties() {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<PropertyResponseDto> favoriteProperties = accountService.getFavoriteProperties(currentUser.getId()).stream()
+                .map(PropertyDtoMapper::fromPropertyToDto)
+                .toList();
+
+        return new ResponseEntity<>(favoriteProperties, HttpStatus.OK);
     }
 }

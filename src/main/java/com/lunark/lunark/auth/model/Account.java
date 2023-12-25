@@ -44,7 +44,7 @@ public class Account implements UserDetails {
 
     @OneToMany
     private Collection<Review> reviews;
-    @OneToMany
+    @ManyToMany
     private Set<Property> favoriteProperties;
     @OneToMany(mappedBy = "guest")
     private Set<Reservation> reservations;

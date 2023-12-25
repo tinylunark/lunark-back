@@ -17,4 +17,5 @@ public interface IAccountService {
     boolean updatePassword(Long id, String oldPassword, String newPassword);
     void addToFavorites(Long id, Property property);
     Double getAverageGrade(Long id);
+    Collection<Property> getFavoriteProperties(Long accountId);
 }
