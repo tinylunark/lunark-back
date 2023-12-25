@@ -18,4 +18,5 @@ public interface IAccountService {
     void addToFavorites(Long id, Property property);
     Double getAverageGrade(Long id);
     Collection<Property> getFavoriteProperties(Long accountId);
+    void removeFromFavorites(Long id, Property property);
 }
