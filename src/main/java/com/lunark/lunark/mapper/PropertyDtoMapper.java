@@ -2,6 +2,7 @@ package com.lunark.lunark.mapper;
 
 import com.lunark.lunark.amenities.dto.AmenityResponseDto;
 import com.lunark.lunark.amenities.model.Amenity;
+import com.lunark.lunark.auth.repository.IAccountRepository;
 import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
 import com.lunark.lunark.properties.dto.PropertyRequestDto;
 import com.lunark.lunark.properties.dto.PropertyResponseDto;
@@ -19,16 +20,19 @@ public class PropertyDtoMapper {
     private static ModelMapper modelMapper;
 
     @Autowired
+    private IAccountRepository accountRepository;
+
+    @Autowired
     public PropertyDtoMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
-    public static Property fromDtoToProperty(PropertyRequestDto propertyRequestDto) {
+    public Property fromDtoToProperty(PropertyRequestDto propertyRequestDto) {
         Property property = modelMapper.map(propertyRequestDto, Property.class);
 
         List<PropertyAvailabilityEntry> availabilityEntries = propertyRequestDto.getAvailabilityEntries().stream()
-                        .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
-                        .collect(Collectors.toList());
+                .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
+                .collect(Collectors.toList());
         property.setAvailabilityEntries(availabilityEntries);
 
         List<Amenity> amenities = propertyRequestDto.getAmenityIds().stream()
@@ -39,6 +43,7 @@ public class PropertyDtoMapper {
                 })
                 .toList();
         property.setAmenities(amenities);
+        property.setHost(accountRepository.getReferenceById(propertyRequestDto.getHostId()));
 
         return property;
     }

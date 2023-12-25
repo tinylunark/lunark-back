@@ -24,4 +24,5 @@ public class PropertyRequestDto {
     List<Long> amenityIds;
     Collection<AvailabilityEntryDto> availabilityEntries;
     Property.PropertyType type;
+    Long hostId;
 }
