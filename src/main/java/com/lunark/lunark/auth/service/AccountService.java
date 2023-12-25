@@ -9,9 +9,12 @@ import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.service.ReservationService;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.auth.repository.IAccountRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -147,6 +150,17 @@ public class AccountService implements IAccountService {
         return calculateAverageGrade(foundAccount);
     }
 
+    @Override
+    public Collection<Property> getFavoriteProperties(Long accountId) {
+        Optional<Account> account = this.find(accountId);
+        if (account.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
+        }
+
+        Hibernate.initialize(account.get().getFavoriteProperties());
+        return account.get().getFavoriteProperties();
+    }
+
     private Double calculateAverageGrade(Account account) {
         ArrayList<Review> reviewList = (ArrayList<Review>) account.getReviews();
         if (reviewList.isEmpty()) {
@@ -158,9 +172,11 @@ public class AccountService implements IAccountService {
 
     @Override
     public void addToFavorites(Long id, Property property) {
-        this.find(id).ifPresent(account -> {
+        this.find(id).ifPresentOrElse(account -> {
             account.getFavoriteProperties().add(property);
             update(account);
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
         });
     }
 }
