@@ -20,6 +20,6 @@ public class ReviewDtoMapper {
         return modelMapper.map(reviewDto, Review.class);
     }
     public static ReviewDto toDto(Review review) {
-        return modelMapper.map(review, ReviewDto.class);
+        return new ReviewDto(review.getRating(), review.getDescription(), review.getDate(), review.getAuthor().getName() + " " + review.getAuthor().getSurname(), review.getAuthor().getId(), review.getId());
     }
 }

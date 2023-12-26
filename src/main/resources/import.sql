@@ -21,16 +21,16 @@ INSERT INTO account (email, password, name, surname, address, phone_number, veri
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user7@example.com', '$2a$10$GdwvPv72sNBVe.4QhUY7/OdLzRb8RH8Oo4/LR8nWF7NW83/CM4oPy', 'Chloe', 'Baker', '567 Hail St', '9990001111', true, 1, false);
 
 -- Review imports
-INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Great host!', true, '2023-01-10T12:30:00', 0);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 1);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 0);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 1);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (2, 'Not satisfied', false, '2023-05-30T18:20:00', 0);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Enjoyed my stay', true, '2023-06-05T22:00:00', 1);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Fantastic host!', true, '2023-07-12T09:30:00', 0);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (3, 'Needs improvement', false, '2023-08-18T14:10:00', 1);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (4, 'Responsive host', true, '2023-09-22T17:00:00', 0);
-INSERT INTO Review (rating, description, approved, date, type) VALUES (5, 'Beautiful property', true, '2023-10-28T20:45:00', 1);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (4, 'Great host!', true, '2023-01-10T12:30:00', 0, 1);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 1, 4);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 0, 5);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 1, 6);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (2, 'Not satisfied', false, '2023-05-30T18:20:00', 0, 7);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (4, 'Enjoyed my stay', true, '2023-06-05T22:00:00', 1, 8);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Fantastic host!', true, '2023-07-12T09:30:00', 0, 1);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Needs improvement', false, '2023-08-18T14:10:00', 1, 4);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (4, 'Responsive host', true, '2023-09-22T17:00:00', 0, 5);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Beautiful property', true, '2023-10-28T20:45:00', 1, 6);
 
 -- Property imports
 
@@ -55,6 +55,14 @@ insert into property_availability_entry(date, price, is_reserved, property_id) v
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-11', 2000, true, 1);
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-12', 2000, true, 1);
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-1', 1000, false, 1);
+
+-- Connect reviews and properties
+insert into property_reviews(property_id, reviews_id) values (4, 1)
+insert into property_reviews(property_id, reviews_id) values (4, 2)
+insert into property_reviews(property_id, reviews_id) values (4, 3)
+insert into property_reviews(property_id, reviews_id) values (5, 4)
+insert into property_reviews(property_id, reviews_id) values (5, 5)
+
 
 -- Amenity imports
 insert into amenity(name, icon) values ('Free parking', 'local_parking');
