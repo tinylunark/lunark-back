@@ -136,6 +136,14 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping(path="/favorites/{id}")
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<?> removePropertyFromFavorites(@PathVariable("id") Long propertyId) {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        accountService.removeFromFavorites(currentUser.getId(), propertyService.find(propertyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property not found")));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping(value = "/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<List<PropertyResponseDto>> getFavoriteProperties() {

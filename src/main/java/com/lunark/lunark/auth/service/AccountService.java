@@ -161,6 +161,16 @@ public class AccountService implements IAccountService {
         return account.get().getFavoriteProperties();
     }
 
+    @Override
+    public void removeFromFavorites(Long id, Property property) {
+        this.find(id).ifPresentOrElse(account -> {
+            account.getFavoriteProperties().remove(property);
+            update(account);
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
+        });
+    }
+
     private Double calculateAverageGrade(Account account) {
         ArrayList<Review> reviewList = (ArrayList<Review>) account.getReviews();
         if (reviewList.isEmpty()) {
