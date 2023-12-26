@@ -25,4 +25,6 @@ public class PropertyRequestDto {
     Collection<AvailabilityEntryDto> availabilityEntries;
     Property.PropertyType type;
     Long hostId;
+    double latitude;
+    double longitude;
 }
