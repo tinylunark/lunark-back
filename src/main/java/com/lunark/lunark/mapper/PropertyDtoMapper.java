@@ -62,7 +62,7 @@ public class PropertyDtoMapper {
         propertyResponseDto.setAmenities(amenities);
 
         List<ReviewDto> reviews = property.getReviews().stream()
-                .map(review -> modelMapper.map(review, ReviewDto.class))
+                .map(review -> ReviewDtoMapper.toDto(review))
                 .toList();
         propertyResponseDto.setReviews(reviews);
 

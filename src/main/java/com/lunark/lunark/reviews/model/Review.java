@@ -1,6 +1,9 @@
 package com.lunark.lunark.reviews.model;
 
+import com.lunark.lunark.auth.model.Account;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -22,6 +25,10 @@ public class Review {
 
     private LocalDateTime date;
     private ReviewType type;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Account author;
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
@@ -90,5 +97,13 @@ public class Review {
 
     public void setType(ReviewType type) {
         this.type = type;
+    }
+
+    public Account getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Account author) {
+        this.author = author;
     }
 }
