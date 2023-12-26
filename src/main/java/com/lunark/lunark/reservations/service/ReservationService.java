@@ -9,8 +9,10 @@ import com.lunark.lunark.reservations.dto.ReservationRequestDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -89,7 +91,8 @@ public class ReservationService implements IReservationService {
 
     @Override
     public List<Reservation> getAllReservationsForUser(Long userId) {
-        return reservationRepository.findAll().stream().filter(reservation -> reservation.getGuest().getId().equals(userId)).collect(Collectors.toList());
+        Account account = this.accountRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guest not found"));
+        return account.getReservations().stream().toList();
     }
 
     private double calculatePrice(LocalDate start, LocalDate end, Collection<PropertyAvailabilityEntry> entries) {
