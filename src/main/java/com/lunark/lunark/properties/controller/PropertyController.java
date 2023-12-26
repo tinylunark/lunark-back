@@ -34,6 +34,9 @@ public class PropertyController {
     private final ModelMapper modelMapper;
 
     @Autowired
+    private PropertyDtoMapper propertyDtoMapper;
+
+    @Autowired
     public PropertyController(IPropertyService propertyService, ModelMapper modelMapper) {
         this.propertyService = propertyService;
         this.modelMapper = modelMapper;
@@ -144,7 +147,7 @@ public class PropertyController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
-        Property property = propertyService.create(PropertyDtoMapper.fromDtoToProperty(propertyDto));
+        Property property = propertyService.create(propertyDtoMapper.fromDtoToProperty(propertyDto));
         PropertyResponseDto response = PropertyDtoMapper.fromPropertyToDto(property);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -152,7 +155,7 @@ public class PropertyController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
-        Property property = PropertyDtoMapper.fromDtoToProperty(propertyDto);
+        Property property = propertyDtoMapper.fromDtoToProperty(propertyDto);
         if (this.propertyService.find(property.getId()).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
