@@ -9,4 +9,5 @@ public interface IReviewService<Review> {
     Review create(Review review);
     Review update(Review review);
     void delete(Long id);
+    boolean guestEligibleToReivew(Long guestId, Long propertyId);
 }
