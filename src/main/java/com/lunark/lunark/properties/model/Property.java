@@ -68,7 +68,10 @@ public class Property {
     private PricingMode pricingMode = PricingMode.PER_PERSON;
     private int cancellationDeadline;
     private boolean autoApproveEnabled = false;
-    @OneToMany
+    @OneToMany (
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Collection<Review> reviews = new ArrayList<>();
     @OneToMany(
             cascade = CascadeType.ALL,
