@@ -1,7 +1,9 @@
 package com.lunark.lunark.reviews.controller;
 
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.reviews.dto.ReviewApprovalDto;
 import com.lunark.lunark.reviews.dto.ReviewDto;
+import com.lunark.lunark.reviews.dto.PropertyReviewEligibilityDto;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.reviews.service.ReviewService;
 import org.modelmapper.ModelMapper;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -104,6 +108,14 @@ public class ReviewController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "property-review-eligibility/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<PropertyReviewEligibilityDto> checkEligibilityToReviewProperty(@PathVariable("id") Long id) {
+        Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PropertyReviewEligibilityDto propertyReviewEligibilityDto = new PropertyReviewEligibilityDto(reviewService.guestEligibleToReivew(guest.getId(), id), guest.getId(), id);
+        return new ResponseEntity<>(propertyReviewEligibilityDto, HttpStatus.OK);
     }
 
 }
