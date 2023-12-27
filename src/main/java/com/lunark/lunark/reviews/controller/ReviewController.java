@@ -111,9 +111,13 @@ public class ReviewController {
     }
 
     @GetMapping(value = "property-review-eligibility/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<PropertyReviewEligibilityDto> checkEligibilityToReviewProperty(@PathVariable("id") Long id) {
-        Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account guest;
+        try {
+            guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (ClassCastException e) {
+            return new ResponseEntity<>(new PropertyReviewEligibilityDto(false, null, id), HttpStatus.OK);
+        }
         PropertyReviewEligibilityDto propertyReviewEligibilityDto = new PropertyReviewEligibilityDto(reviewService.guestEligibleToReivew(guest.getId(), id), guest.getId(), id);
         return new ResponseEntity<>(propertyReviewEligibilityDto, HttpStatus.OK);
     }
