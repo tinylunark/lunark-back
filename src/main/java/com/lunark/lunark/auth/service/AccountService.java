@@ -77,6 +77,9 @@ public class AccountService implements IAccountService {
         } else {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
         }
+        if (oldAccount.getProfileImage() != null) {
+            account.setProfileImage(oldAccount.getProfileImage());
+        }
         return accountRepository.saveAndFlush(account);
     }
 
