@@ -1,5 +1,6 @@
 package com.lunark.lunark.auth.dto;
 
+import com.lunark.lunark.auth.model.ProfileImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,4 +20,5 @@ public class AccountDto {
     private String role;
     private boolean verified;
     private boolean blocked;
+    private ProfileImage profileImage;
 }

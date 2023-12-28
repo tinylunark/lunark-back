@@ -20,8 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -153,5 +155,30 @@ public class AccountController {
                 .toList();
 
         return new ResponseEntity<>(favoriteProperties, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST') or hasAuthority('ADMIN')")
+    public ResponseEntity<?> saveProfileImage(@RequestParam("image") MultipartFile file) {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        try {
+            accountService.saveProfileImage(currentUser.getId(), file);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/profile-image", produces = MediaType.IMAGE_JPEG_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST') or hasAuthority('ADMIN')")
+    public ResponseEntity<byte[]> getProfileImage() {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.find(currentUser.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found"));
+
+        byte[] profileImage = account.getProfileImage().getImageData();
+
+        return new ResponseEntity<>(profileImage, HttpStatus.OK);
     }
 }

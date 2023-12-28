@@ -41,6 +41,8 @@ public class Account implements UserDetails {
     private AccountRole role;
     @Column
     private boolean blocked;
+    @Embedded
+    private ProfileImage profileImage;
 
     @OneToMany
     private Collection<Review> reviews;
@@ -217,5 +219,13 @@ public class Account implements UserDetails {
 
     public void setFavoriteProperties(Set<Property> favoriteProperties) {
         this.favoriteProperties = favoriteProperties;
+    }
+
+    public ProfileImage getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
     }
 }

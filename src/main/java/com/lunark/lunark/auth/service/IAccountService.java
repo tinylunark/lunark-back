@@ -2,7 +2,9 @@ package com.lunark.lunark.auth.service;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.properties.model.Property;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -19,4 +21,5 @@ public interface IAccountService {
     Double getAverageGrade(Long id);
     Collection<Property> getFavoriteProperties(Long accountId);
     void removeFromFavorites(Long id, Property property);
+    void saveProfileImage(Long accountId, MultipartFile file) throws IOException;
 }

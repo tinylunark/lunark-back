@@ -2,7 +2,9 @@ package com.lunark.lunark.auth.service;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
+import com.lunark.lunark.auth.model.ProfileImage;
 import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
@@ -14,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -31,7 +35,6 @@ public class AccountService implements IAccountService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
 
 
     @Override
@@ -65,14 +68,17 @@ public class AccountService implements IAccountService {
     @Override
     public Account update(Account account) {
         Optional<Account> oldAccountOptional = accountRepository.findById(account.getId());
-        if(oldAccountOptional.isEmpty()) {
+        if (oldAccountOptional.isEmpty()) {
             return null;
         }
         Account oldAccount = oldAccountOptional.get();
-        if(account.getPassword() == null) {
+        if (account.getPassword() == null) {
             account.setPassword(oldAccount.getPassword());
         } else {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
+        if (oldAccount.getProfileImage() != null) {
+            account.setProfileImage(oldAccount.getProfileImage());
         }
         return accountRepository.saveAndFlush(account);
     }
@@ -80,12 +86,14 @@ public class AccountService implements IAccountService {
     @Override
     public boolean delete(Long id) {
         Optional<Account> accountToRemove = accountRepository.findById(id);
-        if (accountToRemove.isEmpty()) { return false; }
+        if (accountToRemove.isEmpty()) {
+            return false;
+        }
         Account account = accountToRemove.get();
         AccountRole accountRole = account.getRole();
 
         if (isGuestAccount(accountRole)) {
-             handleUserAccountDeletion(id);
+            handleUserAccountDeletion(id);
         } else {
             List<Property> propertiesList = propertyService.findAllPropertiesForHost(account.getId());
             handleHostAccountDeletion(id, propertiesList);
@@ -106,13 +114,13 @@ public class AccountService implements IAccountService {
     }
 
     private void handleHostAccountDeletion(Long hostId, List<Property> propertiesList) {
-         List<Reservation> reservationList = reservationService.getAllReservationsForPropertiesList(propertiesList);
-         if (noAcceptedReservations(reservationList)) {
-             for (Property property : propertiesList) {
-                 propertyService.delete(property.getId());
-             }
-             accountRepository.deleteById(hostId);
-         }
+        List<Reservation> reservationList = reservationService.getAllReservationsForPropertiesList(propertiesList);
+        if (noAcceptedReservations(reservationList)) {
+            for (Property property : propertiesList) {
+                propertyService.delete(property.getId());
+            }
+            accountRepository.deleteById(hostId);
+        }
     }
 
     public static boolean noAcceptedReservations(List<Reservation> reservationList) {
@@ -122,7 +130,7 @@ public class AccountService implements IAccountService {
     @Override
     public boolean updatePassword(Long accountId, String oldPassword, String newPassword) {
         Optional<Account> accountToUpdate = accountRepository.findById(accountId);
-        if ( accountToUpdate.isEmpty() || !isOldPasswordCorrect(accountToUpdate.get(), oldPassword)) {
+        if (accountToUpdate.isEmpty() || !isOldPasswordCorrect(accountToUpdate.get(), oldPassword)) {
             return false;
         }
         updateAccountPassword(accountToUpdate.get(), newPassword);
@@ -169,6 +177,30 @@ public class AccountService implements IAccountService {
         }, () -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
         });
+    }
+
+    @Override
+    public void saveProfileImage(Long accountId, MultipartFile file) throws IOException {
+        Optional<Account> account = this.find(accountId);
+        if (account.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
+        }
+
+        byte[] byteObjects = new byte[file.getBytes().length];
+
+        int i = 0;
+
+        for (byte b : file.getBytes()) {
+            byteObjects[i++] = b;
+        }
+
+        ProfileImage profileImage = new ProfileImage();
+        profileImage.setImageData(byteObjects);
+        profileImage.setMimeType(file.getContentType());
+
+        account.get().setProfileImage(profileImage);
+
+        accountRepository.save(account.get());
     }
 
     private Double calculateAverageGrade(Account account) {
