@@ -41,6 +41,7 @@ public class Account implements UserDetails {
     private AccountRole role;
     @Column
     private boolean blocked;
+    @Embedded
     private ProfileImage profileImage;
 
     @OneToMany
