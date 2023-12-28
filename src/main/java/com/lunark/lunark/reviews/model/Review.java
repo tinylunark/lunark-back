@@ -21,7 +21,7 @@ public class Review {
     private Long id;
     private int rating;
     private String description;
-    private boolean approved;
+    private boolean approved = false;
 
     private LocalDateTime date;
     private ReviewType type;

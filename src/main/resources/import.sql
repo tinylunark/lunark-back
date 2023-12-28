@@ -57,11 +57,11 @@ insert into property_availability_entry(date, price, is_reserved, property_id) v
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2023-12-1', 1000, false, 1);
 
 -- Connect reviews and properties
-insert into property_reviews(property_id, reviews_id) values (4, 1)
-insert into property_reviews(property_id, reviews_id) values (4, 2)
-insert into property_reviews(property_id, reviews_id) values (4, 3)
-insert into property_reviews(property_id, reviews_id) values (5, 4)
-insert into property_reviews(property_id, reviews_id) values (5, 5)
+insert into property_reviews(property_id, reviews_id) values (4, 1);
+insert into property_reviews(property_id, reviews_id) values (4, 2);
+insert into property_reviews(property_id, reviews_id) values (4, 3);
+insert into property_reviews(property_id, reviews_id) values (5, 4);
+insert into property_reviews(property_id, reviews_id) values (5, 5);
 
 
 -- Amenity imports
@@ -73,6 +73,14 @@ insert into amenity(name, icon) values ('Medical Services', 'medical_services');
 insert into amenity(name, icon) values ('Dedicated workspace', 'desk');
 
 --Verification link imports
-insert into verification_link (used, account_id, created) values (false, 6, '2023-12-17 18:05:06')
+insert into verification_link (used, account_id, created) values (false, 6, '2023-12-17 18:05:06');
+
+-- Reservation imports
+-- Statuses 0: pending 1: accepted 2: rejected 3: cancelled
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2023-12-25', 3, 10000, 1, 1, 4);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2023-12-25', 3, 10000, 1, 1, 6);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-11-10', '2023-11-13', 3, 10000, 1, 1, 5);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2023-12-25', 3, 10000, 0, 1, 8);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2023-12-25', 3, 10000, 3, 1, 7);
 
 

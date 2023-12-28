@@ -1,7 +1,11 @@
 package com.lunark.lunark.reviews.controller;
 
+import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.mapper.ReviewDtoMapper;
 import com.lunark.lunark.reviews.dto.ReviewApprovalDto;
 import com.lunark.lunark.reviews.dto.ReviewDto;
+import com.lunark.lunark.reviews.dto.PropertyReviewEligibilityDto;
+import com.lunark.lunark.reviews.dto.ReviewRequestDto;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.reviews.service.ReviewService;
 import org.modelmapper.ModelMapper;
@@ -9,8 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -23,6 +33,9 @@ public class ReviewController {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    Clock clock;
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Review> getReview(@PathVariable("id") Long id) {
@@ -52,19 +65,16 @@ public class ReviewController {
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
-
-    //reviews?type=property&id=<property_id> or ?type=host&id=<host_id>
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Review> createReview(@RequestBody ReviewDto reviewDto,
-                                               @RequestParam(value = "type", defaultValue = "property") String reviewType,
-                                               @RequestParam(value = "id") Long propertyOrHostId) {
-        try {
-            Review newReview = reviewService.create(reviewDto.toReview(reviewType));
-            // TODO: Add review to host or property
-            return new ResponseEntity<>(newReview, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    @PreAuthorize("hasAuthority('GUEST')")
+    @PostMapping(value = "/property/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReviewDto> createPropertyReview(@RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
+        Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!this.reviewService.guestEligibleToReivew(guest.getId(), id)) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
+        Review review = ReviewDtoMapper.toPropertyReview(reviewDto, guest);
+        review = this.reviewService.createPropertyReview(review, id);
+        return new ResponseEntity<>(ReviewDtoMapper.toDto(review), HttpStatus.OK);
     }
 
 
@@ -104,6 +114,18 @@ public class ReviewController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "property-review-eligibility/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PropertyReviewEligibilityDto> checkEligibilityToReviewProperty(@PathVariable("id") Long id) {
+        Account guest;
+        try {
+            guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (ClassCastException e) {
+            return new ResponseEntity<>(new PropertyReviewEligibilityDto(false, null, id), HttpStatus.OK);
+        }
+        PropertyReviewEligibilityDto propertyReviewEligibilityDto = new PropertyReviewEligibilityDto(reviewService.guestEligibleToReivew(guest.getId(), id), guest.getId(), id);
+        return new ResponseEntity<>(propertyReviewEligibilityDto, HttpStatus.OK);
     }
 
 }
