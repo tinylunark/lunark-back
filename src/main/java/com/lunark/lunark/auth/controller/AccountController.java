@@ -181,4 +181,15 @@ public class AccountController {
 
         return new ResponseEntity<>(profileImage, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/{id}/profile-image", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable("id") Long userId) {
+        Optional<Account> account = this.accountService.find(userId);
+        if (account.isEmpty() || account.get().getProfileImage() == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        byte[] profileImage = account.get().getProfileImage().getImageData();
+        return new ResponseEntity<>(profileImage, HttpStatus.OK);
+    }
 }
