@@ -78,8 +78,16 @@ public class ReviewController {
     }
 
 
+    @PreAuthorize("hasAuthority('GUEST')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Review> deleteReview(@PathVariable("id") Long id){
+        Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (reviewService.find(id).isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (!reviewService.isBy(guest, id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         reviewService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

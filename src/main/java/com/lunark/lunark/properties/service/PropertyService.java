@@ -156,16 +156,16 @@ public class PropertyService implements IPropertyService {
             return null;
         }
         Property foundProperty = property.get();
-        return calculateAverageGrade(foundProperty);
+        // TODO: Convert average calculation to JPQL
+        return calculateAverageGrade(foundProperty.getReviews());
     }
 
-    private Double calculateAverageGrade(Property property) {
-        ArrayList<Review> reviewList = (ArrayList<Review>) property.getReviews();
-        if (reviewList.isEmpty()) {
+    private Double calculateAverageGrade(Collection<Review> reviews) {
+        if (reviews.isEmpty()) {
             return 0.0;
         }
-        double sum = reviewList.stream().mapToDouble(Review::getRating).sum();
-        return sum / reviewList.size();
+        double sum = reviews.stream().mapToDouble(Review::getRating).sum();
+        return sum / reviews.size();
     }
 
     @Override

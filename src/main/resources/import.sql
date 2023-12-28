@@ -21,7 +21,7 @@ INSERT INTO account (email, password, name, surname, address, phone_number, veri
 INSERT INTO account (email, password, name, surname, address, phone_number, verified, role, blocked) VALUES ('user7@example.com', '$2a$10$GdwvPv72sNBVe.4QhUY7/OdLzRb8RH8Oo4/LR8nWF7NW83/CM4oPy', 'Chloe', 'Baker', '567 Hail St', '9990001111', true, 1, false);
 
 -- Review imports
-INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (4, 'Great host!', true, '2023-01-10T12:30:00', 0, 1);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Great host!', true, '2023-01-10T12:30:00', 0, 1);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 1, 4);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 0, 5);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 1, 6);

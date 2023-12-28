@@ -78,6 +78,11 @@ public class ReviewService implements IReviewService<Review> {
         reviewRepository.deleteById(id);
     }
 
+    public boolean isBy(Account guest, Long id) {
+        Optional<Review> review = this.reviewRepository.findById(id);
+        return review.isPresent() && review.get().getAuthor().getId().equals(guest.getId());
+    }
+
     @Override
     public boolean guestEligibleToReivew(Long guestId, Long propertyId) {
         Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtPropertyForGuestAfterDate(guestId, propertyId, LocalDate.now(clock).minusDays(reviewDeadline));
