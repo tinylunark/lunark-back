@@ -1,5 +1,6 @@
 package com.lunark.lunark.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
 import lombok.Data;
@@ -11,6 +12,7 @@ import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
 public class ProfileImage {
     @Lob
     @JdbcType(VarbinaryJdbcType.class)
+    @JsonIgnore
     byte[] imageData;
     String mimeType;
 }

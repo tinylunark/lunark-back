@@ -170,4 +170,15 @@ public class AccountController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping(value = "/profile-image", produces = MediaType.IMAGE_JPEG_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST') or hasAuthority('ADMIN')")
+    public ResponseEntity<byte[]> getProfileImage() {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.find(currentUser.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found"));
+
+        byte[] profileImage = account.getProfileImage().getImageData();
+
+        return new ResponseEntity<>(profileImage, HttpStatus.OK);
+    }
 }
