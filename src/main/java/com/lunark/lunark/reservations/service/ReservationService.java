@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,6 +73,11 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
+    public Optional<Reservation> findById(Long id) {
+        return reservationRepository.findById(id);
+    }
+
+    @Override
     public List<Reservation> getAllReservationsForPropertiesList(List<Property> propertiesList) {
         List<Reservation> reservationsForProperties = new ArrayList<>();
         List<Reservation> allReservations = reservationRepository.findAll();
@@ -87,6 +89,30 @@ public class ReservationService implements IReservationService {
             }
         }
         return reservationsForProperties;
+    }
+
+    @Override
+    public List<Reservation> getIncomingReservationsForHostId(Long hostId) {
+        List<Property> properties = propertyRepository.findAll().stream().filter(property -> Objects.equals(property.getHost().getId(), hostId)).toList();
+        List<Reservation> reservationsForProperties = new ArrayList<>();
+        for(Property property: properties) {
+            List<Reservation> reservationForProperty = reservationRepository.findByPropertyId(property.getId());
+            reservationsForProperties.addAll(reservationForProperty);
+        }
+        return reservationsForProperties;
+    }
+
+
+    @Override
+    public void save(Reservation reservation) {
+        Optional<Reservation> reservationUpdate = findById(reservation.getId());
+        if (reservationUpdate.isPresent()) {
+            Reservation existingReservation = reservationUpdate.get();
+            existingReservation.copyFields(reservation);
+            reservationRepository.saveAndFlush(existingReservation);
+        } else {
+            throw new RuntimeException("Reservation not found with id: " + reservation.getId());
+        }
     }
 
     @Override
