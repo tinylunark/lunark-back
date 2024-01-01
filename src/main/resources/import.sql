@@ -78,7 +78,7 @@ insert into verification_link (used, account_id, created) values (false, 6, '202
 -- Reservation imports
 -- Statuses 0: pending 1: accepted 2: rejected 3: cancelled
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-12-20', '2024-12-25', 3, 10000, 1, 1, 1);
-insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-12-20', '2024-12-25', 3, 10000, 1, 1, 2);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-1-2', '2024-1-10', 3, 10000, 1, 1, 2);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-11-10', '2024-11-13', 3, 10000, 1, 1, 3);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-5-20', '2024-5-25', 3, 10000, 0, 1, 4);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-5-20', '2024-5-25', 3, 10000, 3, 1, 5);
