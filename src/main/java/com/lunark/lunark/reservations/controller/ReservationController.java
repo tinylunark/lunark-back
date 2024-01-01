@@ -64,12 +64,13 @@ public class ReservationController {
 
     @PostMapping(path = "/accept/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReservationDto> acceptReservation(@PathVariable("reservation_id") Long id) {
-        return reservationService.findById(id).map(reservation -> statusChangeAndSaveReservation(reservation, ReservationStatus.ACCEPTED)).orElse(notFoundResponse());
+        return reservationService.findById(id).map(reservation -> acceptOrRejectReservation(reservation, ReservationStatus.ACCEPTED)).orElse(notFoundResponse());
     }
 
-    private ResponseEntity<ReservationDto> statusChangeAndSaveReservation(Reservation reservation, ReservationStatus status) {
+    private ResponseEntity<ReservationDto> acceptOrRejectReservation(Reservation reservation, ReservationStatus status) {
         reservation.setStatus(status);
         reservationService.save(reservation);
+        if(status == ReservationStatus.ACCEPTED) {reservationService.updateReservations(reservation);}
         return ResponseEntity.ok().build();
     }
 
@@ -80,7 +81,7 @@ public class ReservationController {
 
     @PostMapping(path = "/reject/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReservationDto> rejectReservation(@PathVariable("reservation_id") Long id) {
-        return reservationService.findById(id).map(reservation -> statusChangeAndSaveReservation(reservation, ReservationStatus.REJECTED)).orElse(notFoundResponse());
+        return reservationService.findById(id).map(reservation -> acceptOrRejectReservation(reservation, ReservationStatus.REJECTED)).orElse(notFoundResponse());
     }
 
 
