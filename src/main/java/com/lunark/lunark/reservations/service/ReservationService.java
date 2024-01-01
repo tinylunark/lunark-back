@@ -116,6 +116,27 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
+    public void updateReservations(Reservation reservation) {
+        Long propertyId = reservation.getProperty().getId();
+        List<Reservation> allPropertyReservations = reservationRepository.findByPropertyId(propertyId);
+
+        for (Reservation existingReservation : allPropertyReservations) {
+            if (doDatesOverlap(reservation, existingReservation)) {
+                existingReservation.setStatus(ReservationStatus.REJECTED);
+                reservationRepository.save(existingReservation);
+            }
+        }
+    }
+
+    private boolean doDatesOverlap(Reservation newReservation, Reservation existingReservation) {
+        return newReservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
+                existingReservation.getStartDate().isBefore(newReservation.getEndDate()) ||
+                newReservation.getStartDate().isEqual(existingReservation.getEndDate()) ||
+                newReservation.getEndDate().isEqual(existingReservation.getStartDate());
+    }
+
+
+    @Override
     public List<Reservation> getAllReservationsForUser(Long userId) {
         Account account = this.accountRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guest not found"));
         return account.getReservations().stream().toList();
@@ -129,4 +150,5 @@ public class ReservationService implements IReservationService {
                 .mapToDouble(PropertyAvailabilityEntry::getPrice)
                 .sum();
     }
+
 }

@@ -19,4 +19,6 @@ public interface IReservationService {
     public List<Reservation> getIncomingReservationsForHostId(Long hostId);
 
     void save(Reservation reservation);
+
+    void updateReservations(Reservation reservation);
 }
