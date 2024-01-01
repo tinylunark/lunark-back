@@ -1,8 +1,10 @@
 package com.lunark.lunark.reservations.service;
 
 import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
 import com.lunark.lunark.reservations.model.Reservation;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +19,11 @@ public interface IReservationService {
     List<Reservation> getAllReservationsForUser(Long userId);
 
     public List<Reservation> getIncomingReservationsForHostId(Long hostId);
+    public List<Reservation> getAllAcceptedReservations(Long guestId);
 
     void save(Reservation reservation);
 
     void updateReservations(Reservation reservation);
+
+    boolean cancelReservation(Reservation reservation);
 }

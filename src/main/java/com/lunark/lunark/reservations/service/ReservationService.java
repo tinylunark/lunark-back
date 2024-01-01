@@ -5,6 +5,7 @@ import com.lunark.lunark.auth.repository.IAccountRepository;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
+import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,6 +104,10 @@ public class ReservationService implements IReservationService {
         return reservationsForProperties;
     }
 
+    @Override
+    public List<Reservation> getAllAcceptedReservations(Long guestId) {
+        return reservationRepository.findAll().stream().filter(reservation -> Objects.equals(reservation.getGuest().getId(), guestId) && reservation.getStatus() == ReservationStatus.ACCEPTED).toList();
+    }
 
     @Override
     public void save(Reservation reservation) {
@@ -126,6 +132,23 @@ public class ReservationService implements IReservationService {
                 reservationRepository.save(existingReservation);
             }
         }
+    }
+
+    @Override
+    public boolean cancelReservation(Reservation reservation) {
+        if (isPastCancellationDeadline(reservation)) {
+            return false;
+        }
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        save(reservation);
+        return true;
+    }
+
+    private boolean isPastCancellationDeadline(Reservation reservation) {
+        Property property = reservation.getProperty();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime cancellationDeadline = reservation.getStartDate().minusDays(property.getCancellationDeadline()).atStartOfDay();
+        return currentDateTime.isAfter(cancellationDeadline);
     }
 
     private boolean doDatesOverlap(Reservation newReservation, Reservation existingReservation) {
