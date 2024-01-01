@@ -108,6 +108,13 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
+    public Double calculateAverageRating(Long propertyId) {
+        find(propertyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property does not exist"));
+
+        return propertyRepository.calculateAverageRating(propertyId);
+    }
+
+    @Override
     public boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability) {
         Optional<Property> propertyOptional = this.find(id);
         if (propertyOptional.isEmpty()){
