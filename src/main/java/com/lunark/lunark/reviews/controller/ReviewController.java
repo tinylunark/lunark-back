@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/reviews")
@@ -48,12 +49,12 @@ public class ReviewController {
     }
 
     @GetMapping(value = "/host/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<Review>> getReviewForHost(@PathVariable("id") Long id) {
+    public ResponseEntity<Collection<ReviewDto>> getReviewForHost(@PathVariable("id") Long id) {
         Collection<Review> reviews = reviewService.getAllReviewsForHost(id);
-        if(reviews.isEmpty()){
+        if(reviews == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+        return new ResponseEntity<>(reviews.stream().map(ReviewDtoMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @GetMapping(value = "/property/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

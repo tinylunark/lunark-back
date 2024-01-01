@@ -63,6 +63,10 @@ insert into property_reviews(property_id, reviews_id) values (4, 3);
 insert into property_reviews(property_id, reviews_id) values (5, 4);
 insert into property_reviews(property_id, reviews_id) values (5, 5);
 
+--Connect reviews and hosts
+insert into account_reviews(account_id, reviews_id) values (2, 7);
+insert into account_reviews(account_id, reviews_id) values (2, 9);
+
 
 -- Amenity imports
 insert into amenity(name, icon) values ('Free parking', 'local_parking');
