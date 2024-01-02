@@ -10,10 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Optional;
 
 @DataJpaTest
-public class ReviewRepositoryTest {
+public class ReservationRepositoryTest {
     @Autowired
     IReservationRepository reservationRepository;
 
