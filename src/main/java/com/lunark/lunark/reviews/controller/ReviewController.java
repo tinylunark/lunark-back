@@ -72,6 +72,18 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDtoMapper.toDto(review), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('GUEST')")
+    @PostMapping(value = "/host/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReviewDto> createHostReview(@RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
+        Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!this.reviewService.guestEligibleToReviewHost(guest.getId(), id)) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+        Review review = ReviewDtoMapper.toHostReview(reviewDto, guest);
+        review = this.reviewService.createHostReview(review, id);
+        return new ResponseEntity<>(ReviewDtoMapper.toDto(review), HttpStatus.OK);
+    }
+
 
     @PreAuthorize("hasAuthority('GUEST')")
     @DeleteMapping(value = "/{id}")

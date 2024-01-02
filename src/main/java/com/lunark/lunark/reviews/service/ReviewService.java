@@ -63,9 +63,15 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     @Override
-    public Review createHostReview(Review review, Long propertyId) {
+    public Review createHostReview(Review review, Long hostId) {
         //TODO: Create host reveiews
-        return null;
+        Account host = this.accountService.find(hostId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Host not found"));
+        if (!this.guestEligibleToReviewHost(review.getAuthor().getId(), hostId)) {
+            throw new RuntimeException("Review author not eligible to review host");
+        }
+        host.getReviews().add(review);
+        this.accountService.update(host);
+        return review;
     }
 
     @Override
