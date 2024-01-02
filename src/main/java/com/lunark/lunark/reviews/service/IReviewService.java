@@ -1,7 +1,5 @@
 package com.lunark.lunark.reviews.service;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -13,5 +11,6 @@ public interface IReviewService<Review> {
     Review createHostReview(Review review, Long propertyId);
     Review update(Review review);
     void delete(Long id);
-    boolean guestEligibleToReivew(Long guestId, Long propertyId);
+    boolean guestEligibleToReviewProperty(Long guestId, Long propertyId);
+    boolean guestEligibleToReviewHost(Long guestId, Long hostId);
 }

@@ -2,10 +2,7 @@ package com.lunark.lunark.reviews.controller;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.mapper.ReviewDtoMapper;
-import com.lunark.lunark.reviews.dto.ReviewApprovalDto;
-import com.lunark.lunark.reviews.dto.ReviewDto;
-import com.lunark.lunark.reviews.dto.PropertyReviewEligibilityDto;
-import com.lunark.lunark.reviews.dto.ReviewRequestDto;
+import com.lunark.lunark.reviews.dto.*;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.reviews.service.ReviewService;
 import org.modelmapper.ModelMapper;
@@ -18,9 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,7 +64,7 @@ public class ReviewController {
     @PostMapping(value = "/property/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewDto> createPropertyReview(@RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
         Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!this.reviewService.guestEligibleToReivew(guest.getId(), id)) {
+        if (!this.reviewService.guestEligibleToReviewProperty(guest.getId(), id)) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
         Review review = ReviewDtoMapper.toPropertyReview(reviewDto, guest);
@@ -133,8 +127,20 @@ public class ReviewController {
         } catch (ClassCastException e) {
             return new ResponseEntity<>(new PropertyReviewEligibilityDto(false, null, id), HttpStatus.OK);
         }
-        PropertyReviewEligibilityDto propertyReviewEligibilityDto = new PropertyReviewEligibilityDto(reviewService.guestEligibleToReivew(guest.getId(), id), guest.getId(), id);
+        PropertyReviewEligibilityDto propertyReviewEligibilityDto = new PropertyReviewEligibilityDto(reviewService.guestEligibleToReviewProperty(guest.getId(), id), guest.getId(), id);
         return new ResponseEntity<>(propertyReviewEligibilityDto, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "host-review-eligibility/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<HostReviewEligibilityDto> checkEligibilityToReviewHost(@PathVariable("id") Long id) {
+        Account guest;
+        try {
+            guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (ClassCastException e) {
+            return new ResponseEntity<>(new HostReviewEligibilityDto(false, null, id), HttpStatus.OK);
+        }
+        HostReviewEligibilityDto hostReviewEligibilityDto = new HostReviewEligibilityDto(reviewService.guestEligibleToReviewHost(guest.getId(), id), guest.getId(), id);
+        return new ResponseEntity<>(hostReviewEligibilityDto, HttpStatus.OK);
     }
 
 }

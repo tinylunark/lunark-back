@@ -84,10 +84,20 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     @Override
-    public boolean guestEligibleToReivew(Long guestId, Long propertyId) {
+    public boolean guestEligibleToReviewProperty(Long guestId, Long propertyId) {
         Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtPropertyForGuestAfterDate(guestId, propertyId, LocalDate.now(clock).minusDays(reviewDeadline));
         Optional<Account> guest = accountService.find(guestId);
         if (guest.isEmpty() || guest.get().getRole() != AccountRole.GUEST || propertyRepository.findPropertyReviewByGuest(propertyId, guestId).isPresent()) {
+            return false;
+        }
+        return !eligibleReservations.isEmpty();
+    }
+
+    @Override
+    public boolean guestEligibleToReviewHost(Long guestId, Long hostId) {
+        Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtHostAfterDate(guestId, hostId, LocalDate.now(clock).minusDays(reviewDeadline));
+        Optional<Account> guest = accountService.find(guestId);
+        if (guest.isEmpty() || guest.get().getRole() != AccountRole.GUEST || reviewRepository.findHostReviewByGuest(hostId, guestId).isPresent()) {
             return false;
         }
         return !eligibleReservations.isEmpty();
