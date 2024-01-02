@@ -12,7 +12,4 @@ public interface IPropertyRepository extends JpaRepository<Property, Long>, JpaS
     Optional<Property> findById(Long id);
     @Query("select r from Property p join p.reviews r where p.id = ?1 and r.author.id = ?2")
     Optional<Review> findPropertyReviewByGuest(Long propertyId, Long guestId);
-
-    @Query("select avg(r.rating) from Property p join p.reviews r where p.id = ?1 and r.approved = true")
-    Double calculateAverageRating(Long propertyId);
 }

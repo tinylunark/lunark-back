@@ -227,10 +227,4 @@ public class PropertyController {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
-
-    @GetMapping(value = "/{id}/average")
-    public @ResponseBody Double getAverageRating(@PathVariable("id") Long id) {
-
-        return propertyService.calculateAverageRating(id);
-    }
 }

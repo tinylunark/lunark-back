@@ -30,5 +30,4 @@ public interface IPropertyService {
 
     List<Property> findAllPropertiesForHost(Long hostId);
     Property deleteImages(Long id);
-    Double calculateAverageRating(Long propertyId);
 }
