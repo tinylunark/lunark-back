@@ -34,4 +34,5 @@ public class PropertyResponseDto {
     List<ReviewDto> reviews;
     Property.PropertyType type;
     AccountDto host;
+    Double averageRating;
 }
