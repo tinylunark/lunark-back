@@ -11,6 +11,6 @@ public class NotificationResponseDto {
     Long id;
     String text;
     Date date;
-    boolean received;
+    boolean read;
     Long accountId;
 }

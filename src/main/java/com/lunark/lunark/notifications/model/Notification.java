@@ -1,24 +1,37 @@
 package com.lunark.lunark.notifications.model;
 
 import com.lunark.lunark.auth.model.Account;
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
 
+@Entity
 public class Notification {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String text;
+    @Column
     private Date date;
-    private boolean received;
+    @Column
+    private boolean read;
+
+    @ManyToOne
+    @JoinColumn(name = "recipient_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account;
 
     public Notification() {
     }
 
-    public Notification(Long id, String text, Date date, boolean received, Account account) {
+    public Notification(Long id, String text, Date date, boolean read, Account account) {
         this.id = id;
         this.text = text;
         this.date = date;
-        this.received = received;
+        this.read = read;
         this.account = account;
     }
 
@@ -54,11 +67,11 @@ public class Notification {
         return account;
     }
 
-    public boolean isReceived() {
-        return received;
+    public boolean isRead() {
+        return read;
     }
 
-    public void setReceived(boolean received) {
-        this.received = received;
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }
