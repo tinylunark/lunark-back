@@ -22,6 +22,7 @@ import lombok.Getter;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -90,6 +91,9 @@ public class Property {
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @Formula("(select avg(r.rating) from review r join property_reviews pr on pr.reviews_id = r.id where pr.property_id = id and r.approved = true)")
+    private Double averageRating;
 
     public Property(Long id, String name, int minGuests, int maxGuests, String description, double latitude, double longitude, Address address, Collection<PropertyImage> images, boolean approved, PricingMode pricingMode, int cancellationDeadline, boolean autoApproveEnabled, Collection<Review> reviews, Collection<PropertyAvailabilityEntry> availabilityEntries, Collection<Amenity> amenities, Clock clock, PropertyType type, Account host) {
         this.id = id;

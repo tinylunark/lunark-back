@@ -32,4 +32,5 @@ public class PropertyResponseDto {
     Collection<AvailabilityEntryDto> availabilityEntries;
     List<ReviewDto> reviews;
     Property.PropertyType type;
+    Double averageRating;
 }
