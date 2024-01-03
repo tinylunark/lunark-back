@@ -28,11 +28,21 @@ public class ReviewDtoMapper {
         return modelMapper.map(reviewDto, Review.class);
     }
     public static Review toPropertyReview(ReviewRequestDto reviewRequestDto, Account author) {
-        Review propertyReview =  modelMapper.map(reviewRequestDto, Review.class);
-        propertyReview.setDate(LocalDateTime.now(clock));
+        Review propertyReview = modelMapper.map(reviewRequestDto, Review.class);
         propertyReview.setType(Review.ReviewType.PROPERTY);
-        propertyReview.setAuthor(author);
         return propertyReview;
+    }
+    public static Review toHostReview(ReviewRequestDto reviewRequestDto, Account author) {
+        Review hostReview = toReview(reviewRequestDto, author);
+        hostReview.setType(Review.ReviewType.HOST);
+        return hostReview;
+    }
+
+    private static Review toReview(ReviewRequestDto reviewRequestDto, Account author)  {
+        Review review =  modelMapper.map(reviewRequestDto, Review.class);
+        review.setDate(LocalDateTime.now(clock));
+        review.setAuthor(author);
+        return review;
     }
     public static ReviewDto toDto(Review review) {
         return new ReviewDto(review.getRating(), review.getDescription(), review.getDate(), review.getAuthor().getName() + " " + review.getAuthor().getSurname(), review.getAuthor().getId(), review.getId());

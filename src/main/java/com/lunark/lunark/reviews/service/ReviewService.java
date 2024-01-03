@@ -63,9 +63,15 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     @Override
-    public Review createHostReview(Review review, Long propertyId) {
+    public Review createHostReview(Review review, Long hostId) {
         //TODO: Create host reveiews
-        return null;
+        Account host = this.accountService.find(hostId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Host not found"));
+        if (!this.guestEligibleToReviewHost(review.getAuthor().getId(), hostId)) {
+            throw new RuntimeException("Review author not eligible to review host");
+        }
+        host.getReviews().add(review);
+        this.accountService.update(host);
+        return review;
     }
 
     @Override
@@ -84,10 +90,20 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     @Override
-    public boolean guestEligibleToReivew(Long guestId, Long propertyId) {
+    public boolean guestEligibleToReviewProperty(Long guestId, Long propertyId) {
         Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtPropertyForGuestAfterDate(guestId, propertyId, LocalDate.now(clock).minusDays(reviewDeadline));
         Optional<Account> guest = accountService.find(guestId);
         if (guest.isEmpty() || guest.get().getRole() != AccountRole.GUEST || propertyRepository.findPropertyReviewByGuest(propertyId, guestId).isPresent()) {
+            return false;
+        }
+        return !eligibleReservations.isEmpty();
+    }
+
+    @Override
+    public boolean guestEligibleToReviewHost(Long guestId, Long hostId) {
+        Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtHostAfterDate(guestId, hostId, LocalDate.now(clock).minusDays(reviewDeadline));
+        Optional<Account> guest = accountService.find(guestId);
+        if (guest.isEmpty() || guest.get().getRole() != AccountRole.GUEST || reviewRepository.findHostReviewByGuest(hostId, guestId).isPresent()) {
             return false;
         }
         return !eligibleReservations.isEmpty();

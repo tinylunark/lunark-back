@@ -5,6 +5,8 @@ import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,7 +46,7 @@ public class Account implements UserDetails {
     @Embedded
     private ProfileImage profileImage;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Collection<Review> reviews;
     @ManyToMany
     private Set<Property> favoriteProperties;
