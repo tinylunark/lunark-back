@@ -1,20 +1,28 @@
 package com.lunark.lunark.notifications.controller;
 
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.notifications.dto.NotificationResponseDto;
 import com.lunark.lunark.notifications.dto.UnreadNotificationCountDto;
+import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.repository.INotificationRepository;
+import com.lunark.lunark.notifications.service.INotificationService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/notifications")
@@ -23,21 +31,34 @@ public class NotificationController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    private INotificationRepository notificationRepository;
+    private INotificationService notificationService;
+    private ModelMapper modelMapper = new ModelMapper();
 
     @EventListener
-    private void handleSessionSubscribed(SessionSubscribeEvent event) {
+    void handleSessionSubscribed(SessionSubscribeEvent event) {
         Map<String, String> message = new HashMap<>();
         String email = event.getUser().getName();
-        long unreadNotificationCount = notificationRepository.countByAccount_EmailAndRead(email, false);
+        long unreadNotificationCount = notificationService.getUnreadNotificationCount(email);
         message.put("unreadNotificationCount", Long.toString(unreadNotificationCount));
         System.out.println("Sending message");
         simpMessagingTemplate.convertAndSendToUser(email, "/socket-publisher",  message);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<List<NotificationResponseDto>> findAllForUser(@PathVariable("id") Long userId) {
-        return new ResponseEntity<>(List.of(new NotificationResponseDto()), HttpStatus.OK);
+        Collection<Notification> notifications = notificationService.getAllNotifications(userId);
+        List<NotificationResponseDto> notificationDtos = notifications.stream().map(notification -> modelMapper.map(notification, NotificationResponseDto.class)).collect(Collectors.toList());
+        return new ResponseEntity<>(notificationDtos, HttpStatus.OK);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
+    public ResponseEntity<List<NotificationResponseDto>> findAllForCurrentUser() {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Collection<Notification> notifications = notificationService.getAllNotifications(account.getId());
+        List<NotificationResponseDto> notificationDtos = notifications.stream().map(notification -> modelMapper.map(notification, NotificationResponseDto.class)).collect(Collectors.toList());
+        return new ResponseEntity<>(notificationDtos, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")

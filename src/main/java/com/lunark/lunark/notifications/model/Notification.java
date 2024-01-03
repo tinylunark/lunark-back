@@ -18,6 +18,8 @@ public class Notification {
     private Date date;
     @Column
     private boolean read;
+    @Column
+    private NotificationType type;
 
     @ManyToOne
     @JoinColumn(name = "recipient_id")
@@ -27,11 +29,12 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(Long id, String text, Date date, boolean read, Account account) {
+    public Notification(Long id, String text, Date date, boolean read, NotificationType type, Account account) {
         this.id = id;
         this.text = text;
         this.date = date;
         this.read = read;
+        this.type = type;
         this.account = account;
     }
 
@@ -73,5 +76,13 @@ public class Notification {
 
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
     }
 }
