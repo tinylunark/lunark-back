@@ -1,6 +1,7 @@
 package com.lunark.lunark.properties.dto;
 
 import com.lunark.lunark.amenities.dto.AmenityResponseDto;
+import com.lunark.lunark.auth.dto.AccountDto;
 import com.lunark.lunark.properties.model.Address;
 import com.lunark.lunark.properties.model.PricingMode;
 import com.lunark.lunark.properties.model.Property;
@@ -32,4 +33,5 @@ public class PropertyResponseDto {
     Collection<AvailabilityEntryDto> availabilityEntries;
     List<ReviewDto> reviews;
     Property.PropertyType type;
+    AccountDto host;
 }
