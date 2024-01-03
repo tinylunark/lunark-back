@@ -2,6 +2,7 @@ package com.lunark.lunark.notifications.controller;
 
 import com.lunark.lunark.notifications.dto.NotificationResponseDto;
 import com.lunark.lunark.notifications.dto.UnreadNotificationCountDto;
+import com.lunark.lunark.notifications.repository.INotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,17 @@ public class NotificationController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    private INotificationRepository notificationRepository;
+
     @EventListener
     private void handleSessionSubscribed(SessionSubscribeEvent event) {
         Map<String, String> message = new HashMap<>();
-        message.put("unreadNotificationCount", "5");
+        String email = event.getUser().getName();
+        long unreadNotificationCount = notificationRepository.countByAccount_EmailAndRead(email, false);
+        message.put("unreadNotificationCount", Long.toString(unreadNotificationCount));
         System.out.println("Sending message");
-        simpMessagingTemplate.convertAndSendToUser(event.getUser().getName(), "/socket-publisher",  message);
+        simpMessagingTemplate.convertAndSendToUser(email, "/socket-publisher",  message);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

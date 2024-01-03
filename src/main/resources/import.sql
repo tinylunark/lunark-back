@@ -88,4 +88,9 @@ insert into reservation(start_date, end_date, number_of_guests, price, status, g
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 3, 1, 7);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 3, 4, 7);
 
+--Notification imports
+insert into notification (read, date, recipient_id, text) values (false, '2023-12-12', 1, 'dalskfjsldk');
+insert into notification (read, date, recipient_id, text) values (false, '2023-12-12', 1, 'dalskfjsldk');
+insert into notification (read, date, recipient_id, text) values (false, '2023-12-12', 2, 'dalskfjsldk');
+
 
