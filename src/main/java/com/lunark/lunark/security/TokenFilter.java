@@ -35,10 +35,14 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
-        String username;
         String authToken = tokenUtil.getToken(request);
 
+        setAuthentication(authToken);
+        chain.doFilter(request, response);
+    }
+
+    public TokenBasedAuth setAuthentication(String authToken) {
+        String username;
         try {
 
             if (authToken != null) {
@@ -50,6 +54,7 @@ public class TokenFilter extends OncePerRequestFilter {
                         TokenBasedAuth authentication = new TokenBasedAuth(userDetails);
                         authentication.setToken(authToken);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                        return authentication;
                     }
                 }
             }
@@ -60,6 +65,6 @@ public class TokenFilter extends OncePerRequestFilter {
         catch (SignatureException ex) {
             logger.debug("Unsigned token passed");
         }
-        chain.doFilter(request, response);
+        return null;
     }
 }
