@@ -38,11 +38,17 @@ public class NotificationService implements INotificationService {
 
     @Override
     public Notification create(Notification notification) {
-        // TODO: Notify controller to send notification
-        // TODO: Take notification settings into account
+        if(!this.shouldSendNotification(notification)) {
+            return null;
+        }
         Notification newNotification = this.notificationRepository.saveAndFlush(notification);
         this.subscribers.forEach(subscriber -> subscriber.notify(newNotification));
         return newNotification;
+    }
+
+    private boolean shouldSendNotification(Notification notification) {
+        // TODO: Check if notification should be sent based on the notification settings of the recipient and type of notification
+        return true;
     }
 
     @Override
