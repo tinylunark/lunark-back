@@ -6,6 +6,8 @@ import com.lunark.lunark.notifications.dto.UnreadNotificationCountDto;
 import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.repository.INotificationRepository;
 import com.lunark.lunark.notifications.service.INotificationService;
+import com.lunark.lunark.notifications.service.ISubscriber;
+import org.aspectj.weaver.ast.Not;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,13 +29,18 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/notifications")
-public class NotificationController {
-    @Autowired
+public class NotificationController implements ISubscriber {
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @Autowired
     private INotificationService notificationService;
     private ModelMapper modelMapper = new ModelMapper();
+
+    @Autowired
+    public NotificationController(SimpMessagingTemplate simpMessagingTemplate, INotificationService notificationService) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.notificationService = notificationService;
+        this.notificationService.subscribe(this);
+    }
 
     @EventListener
     void handleSessionSubscribed(SessionSubscribeEvent event) {
@@ -64,5 +72,20 @@ public class NotificationController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<NotificationResponseDto> delete(@PathVariable("id") Long id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public void notify(Notification notification) {
+        String recipient = notification.getAccount().getEmail();
+        Map<String, String> message = this.createMessage(notification);
+        this.simpMessagingTemplate.convertAndSendToUser(recipient, "/socket-publisher", message);
+    }
+
+    public Map<String, String> createMessage(Notification notification) {
+        Map<String, String> message = new HashMap<>();
+        message.put("type", notification.getType().toString());
+        message.put("text", notification.getText());
+        message.put("date", notification.getDate().toString());
+        return message;
     }
 }

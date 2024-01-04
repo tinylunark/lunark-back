@@ -13,4 +13,5 @@ public interface INotificationService {
     Notification createPropertyReviewNotification(Property property);
 
     long getUnreadNotificationCount(String email);
+    void subscribe(ISubscriber subscriber);
 }

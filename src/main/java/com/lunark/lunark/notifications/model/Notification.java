@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -15,7 +17,7 @@ public class Notification {
     @Column
     private String text;
     @Column
-    private Date date;
+    private ZonedDateTime date;
     @Column
     private boolean read;
     @Column
@@ -29,7 +31,7 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(String text, Date date, NotificationType type, Account account) {
+    public Notification(String text, ZonedDateTime date, NotificationType type, Account account) {
         this.id = null;
         this.text = text;
         this.date = date;
@@ -50,10 +52,6 @@ public class Notification {
         this.text = text;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public void setAccount(Account account) {
         this.account = account;
     }
@@ -61,13 +59,16 @@ public class Notification {
     public String getText() {
         return text;
     }
+    public Account getAccount() {
+        return account;
+    }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public Account getAccount() {
-        return account;
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
     }
 
     public boolean isRead() {
