@@ -94,6 +94,7 @@ public class NotificationController implements ISubscriber {
 
     public Map<String, Object> createMessage(Notification notification) {
         Map<String, Object> message = new HashMap<>();
+        message.put("id", notification.getId());
         message.put("type", notification.getType().toString());
         message.put("text", notification.getText());
         message.put("date", notification.getDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
