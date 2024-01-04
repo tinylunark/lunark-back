@@ -28,7 +28,7 @@ public class ReviewDtoMapper {
         return modelMapper.map(reviewDto, Review.class);
     }
     public static Review toPropertyReview(ReviewRequestDto reviewRequestDto, Account author) {
-        Review propertyReview = modelMapper.map(reviewRequestDto, Review.class);
+        Review propertyReview = toReview(reviewRequestDto, author);
         propertyReview.setType(Review.ReviewType.PROPERTY);
         return propertyReview;
     }
