@@ -1,6 +1,7 @@
 package com.lunark.lunark.configuration;
 
 import com.lunark.lunark.security.TokenBasedAuth;
+import com.lunark.lunark.security.TokenFilter;
 import com.lunark.lunark.util.TokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -27,13 +28,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
-    private final UserDetailsService userDetailsService;
-    private final TokenUtils tokenUtil;
+    private final TokenFilter tokenFilter;
 
     @Autowired
-    public WebSocketConfiguration(TokenUtils tokenUtil, UserDetailsService userDetailsService) {
-        this.tokenUtil = tokenUtil;
-        this.userDetailsService = userDetailsService;
+    public WebSocketConfiguration(TokenFilter tokenFilter) {
+        this.tokenFilter = tokenFilter;
     }
 
     @Override
@@ -63,20 +62,9 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                     assert authorizationHeader != null;
                     String authToken = authorizationHeader.substring(7);
 
+                    TokenBasedAuth authentication = tokenFilter.setAuthentication(authToken);
+                    accessor.setUser(authentication);
 
-                    if (authToken != null) {
-                        String username = tokenUtil.getUsernameFromToken(authToken);
-                        if (username != null) {
-                            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                            if (tokenUtil.validateToken(authToken, userDetails)) {
-                                TokenBasedAuth authentication = new TokenBasedAuth(userDetails);
-                                authentication.setToken(authToken);
-                                SecurityContextHolder.getContext().setAuthentication(authentication);
-                                accessor.setUser(authentication);
-                            }
-                        }
-                    }
                 }
                 return message;
             }
