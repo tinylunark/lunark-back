@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +86,8 @@ public class NotificationController implements ISubscriber {
         Map<String, String> message = new HashMap<>();
         message.put("type", notification.getType().toString());
         message.put("text", notification.getText());
-        message.put("date", notification.getDate().toString());
+        message.put("date", notification.getDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         return message;
     }
+
 }
