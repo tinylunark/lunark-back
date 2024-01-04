@@ -88,4 +88,14 @@ insert into reservation(start_date, end_date, number_of_guests, price, status, g
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 3, 1, 7);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 3, 4, 7);
 
+--Notification imports
+insert into notification (read, date, recipient_id, text, type) values (false, '2024-01-03T23:06:00+01:00', 1, 'New property review', 0);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'New host review', 1);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation request received', 2);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation canceled', 3);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation accepted', 4);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation rejected', 5);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation accepted', 4);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation rejected', 5);
+
 
