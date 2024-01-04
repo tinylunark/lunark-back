@@ -51,14 +51,6 @@ public class NotificationController implements ISubscriber {
         simpMessagingTemplate.convertAndSendToUser(email, "/socket-publisher",  message);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
-    public ResponseEntity<List<NotificationResponseDto>> findAllForUser(@PathVariable("id") Long userId) {
-        Collection<Notification> notifications = notificationService.getAllNotifications(userId);
-        List<NotificationResponseDto> notificationDtos = notifications.stream().map(notification -> modelMapper.map(notification, NotificationResponseDto.class)).collect(Collectors.toList());
-        return new ResponseEntity<>(notificationDtos, HttpStatus.OK);
-    }
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<List<NotificationResponseDto>> findAllForCurrentUser() {
