@@ -3,6 +3,8 @@ package com.lunark.lunark.reviews.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
+import com.lunark.lunark.notifications.model.Notification;
+import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.reservations.model.Reservation;
@@ -37,6 +39,9 @@ public class ReviewService implements IReviewService<Review> {
     IReservationRepository reservationRepository;
 
     @Autowired
+    INotificationService notificationService;
+
+    @Autowired
     Clock clock;
 
     @Override
@@ -59,6 +64,7 @@ public class ReviewService implements IReviewService<Review> {
         Property property = this.propertyRepository.findById(propertyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
         property.getReviews().add(review);
         this.propertyRepository.saveAndFlush(property);
+        this.notificationService.createPropertyReviewNotification(property);
         return review;
     }
 

@@ -29,11 +29,11 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(Long id, String text, Date date, boolean read, NotificationType type, Account account) {
-        this.id = id;
+    public Notification(String text, Date date, NotificationType type, Account account) {
+        this.id = null;
         this.text = text;
         this.date = date;
-        this.read = read;
+        this.read = false;
         this.type = type;
         this.account = account;
     }
