@@ -4,6 +4,7 @@ import com.lunark.lunark.notifications.model.NotificationType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Data
@@ -11,7 +12,7 @@ import java.util.Date;
 public class NotificationResponseDto {
     private Long id;
     private String text;
-    private Date date;
+    private ZonedDateTime date;
     private boolean read;
     private Long accountId;
     private String type;
