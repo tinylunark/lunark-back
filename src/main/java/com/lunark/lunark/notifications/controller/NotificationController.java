@@ -78,15 +78,16 @@ public class NotificationController implements ISubscriber {
     @Override
     public void notify(Notification notification) {
         String recipient = notification.getAccount().getEmail();
-        Map<String, String> message = this.createMessage(notification);
+        Map<String, Object> message = this.createMessage(notification);
         this.simpMessagingTemplate.convertAndSendToUser(recipient, "/socket-publisher", message);
     }
 
-    public Map<String, String> createMessage(Notification notification) {
-        Map<String, String> message = new HashMap<>();
+    public Map<String, Object> createMessage(Notification notification) {
+        Map<String, Object> message = new HashMap<>();
         message.put("type", notification.getType().toString());
         message.put("text", notification.getText());
         message.put("date", notification.getDate().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        message.put("read", notification.isRead());
         return message;
     }
 
