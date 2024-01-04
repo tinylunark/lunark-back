@@ -4,6 +4,7 @@ import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.notifications.repository.INotificationRepository;
 import com.lunark.lunark.properties.model.Property;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,11 @@ public class NotificationService implements INotificationService {
     }
 
     @Override
+    @Transactional
     public Collection<Notification> getAllNotifications(Long accountId) {
-        return this.notificationRepository.findByAccount_IdOrderByDateDesc(accountId);
+        Collection<Notification> notifications = this.notificationRepository.findByAccount_IdOrderByDateDesc(accountId);
+        this.notificationRepository.markAllNotificationsAsRead(accountId);
+        return notifications;
     }
 
     @Override
