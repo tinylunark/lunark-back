@@ -93,9 +93,9 @@ insert into notification (read, date, recipient_id, text, type) values (false, '
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'New host review', 1);
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation request received', 2);
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation canceled', 3);
-insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation rejected', 4);
-insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation accepted', 5);
-insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation accepted', 5);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation accepted', 4);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation rejected', 5);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation accepted', 4);
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation rejected', 5);
 
 

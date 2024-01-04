@@ -14,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,10 +23,7 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -68,6 +66,18 @@ public class NotificationController implements ISubscriber {
         Collection<Notification> notifications = notificationService.getAllNotifications(account.getId());
         List<NotificationResponseDto> notificationDtos = notifications.stream().map(notification -> modelMapper.map(notification, NotificationResponseDto.class)).collect(Collectors.toList());
         return new ResponseEntity<>(notificationDtos, HttpStatus.OK);
+    }
+
+    @MessageMapping("/notification/read")
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
+    public String markNotificationAsRead(Long id) {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<Notification> notificationOptional = this.notificationService.findById(id);
+        if (notificationOptional.isEmpty() && notificationOptional.get().getAccount() != account) {
+            return "Could not mark notification as read";
+        }
+        this.notificationService.markAsRead(id);
+        return "Notification " + id + " marked as read";
     }
 
     @DeleteMapping(value = "/{id}")

@@ -15,4 +15,7 @@ public interface INotificationRepository extends JpaRepository<Notification, Lon
     @Query("update Notification n set n.read=true where n.account.id = ?1")
     @Modifying
     void markAllNotificationsAsRead(Long accountId);
+    @Query("update Notification n set n.read=true where n.id = ?1")
+    @Modifying
+    void markAllNotificationAsRead(Long id);
 }

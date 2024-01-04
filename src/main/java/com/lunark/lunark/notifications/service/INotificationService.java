@@ -5,6 +5,7 @@ import com.lunark.lunark.properties.model.Property;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface INotificationService {
     Collection<Notification> getAllNotifications(Long accountId);
@@ -14,4 +15,8 @@ public interface INotificationService {
 
     long getUnreadNotificationCount(String email);
     void subscribe(ISubscriber subscriber);
+
+    void markAsRead(Long id);
+
+    Optional<Notification> findById(Long id);
 }

@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NotificationService implements INotificationService {
@@ -62,5 +63,16 @@ public class NotificationService implements INotificationService {
     @Override
     public void subscribe(ISubscriber subscriber) {
         this.subscribers.add(subscriber);
+    }
+
+    @Override
+    @Transactional
+    public void markAsRead(Long id) {
+        this.notificationRepository.markAllNotificationAsRead(id);
+    }
+
+    @Override
+    public Optional<Notification> findById(Long id) {
+        return this.notificationRepository.findById(id);
     }
 }
