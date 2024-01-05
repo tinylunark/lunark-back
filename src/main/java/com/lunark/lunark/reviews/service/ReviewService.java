@@ -3,7 +3,6 @@ package com.lunark.lunark.reviews.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
-import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
@@ -19,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -82,7 +80,7 @@ public class ReviewService implements IReviewService<Review> {
 
     @Override
     public Review update(Review review) {
-        return reviewRepository.save(review);
+        return reviewRepository.saveAndFlush(review);
     }
 
     @Override
@@ -116,12 +114,15 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     public Collection<Review> getAllReviewsForHost(Long hostId) {
-        Optional<Account> host = accountService.find(hostId);
-        return host.map(Account::getReviews).orElse(null);
+        return reviewRepository.findApprovedReviewsForHost(hostId);
     }
 
     public Collection<Review> getALlReviewsForProperty(Long propertyId) {
-       Optional<Property> property = propertyRepository.findById(propertyId);
-       return property.map(Property::getReviews).orElse(Collections.emptyList());
+        return reviewRepository.findApprovedReviewsForProperty(propertyId);
+    }
+
+    @Override
+    public Collection<Review> findAllUnapproved() {
+        return this.reviewRepository.findAllByApproved(false);
     }
 }

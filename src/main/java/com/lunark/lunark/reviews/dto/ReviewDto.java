@@ -17,7 +17,11 @@ public class ReviewDto {
     private LocalDateTime date;
     private String author;
     private Long authorId;
+    private Review.ReviewType type;
     private Long id;
+
+    public ReviewDto(int rating, String description, LocalDateTime date, String s, Long id, Long id1) {
+    }
 
     public Review toReview(String reviewType){
         return new Review(null,

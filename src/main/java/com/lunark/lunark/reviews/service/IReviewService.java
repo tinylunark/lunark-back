@@ -1,5 +1,7 @@
 package com.lunark.lunark.reviews.service;
 
+import com.lunark.lunark.reviews.model.Review;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -13,4 +15,6 @@ public interface IReviewService<Review> {
     void delete(Long id);
     boolean guestEligibleToReviewProperty(Long guestId, Long propertyId);
     boolean guestEligibleToReviewHost(Long guestId, Long hostId);
+
+    Collection<com.lunark.lunark.reviews.model.Review> findAllUnapproved();
 }

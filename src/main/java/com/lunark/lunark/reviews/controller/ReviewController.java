@@ -7,6 +7,7 @@ import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.reviews.service.ReviewService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Clock;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -54,7 +56,7 @@ public class ReviewController {
     @GetMapping(value = "/property/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<ReviewDto>> getReviewForProperty(@PathVariable("id") Long id) {
         Collection<Review> reviews = reviewService.getALlReviewsForProperty(id);
-        if(reviews.isEmpty()){
+        if(reviews == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(reviews.stream().map(ReviewDtoMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);
@@ -85,8 +87,8 @@ public class ReviewController {
     }
 
 
-    @PreAuthorize("hasAuthority('GUEST')")
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<Review> deleteReview(@PathVariable("id") Long id){
         Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (reviewService.find(id).isEmpty()) {
@@ -114,7 +116,17 @@ public class ReviewController {
         }
     }
 
+
+    @GetMapping(path="/unapproved", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<ReviewDto>> getUnapprovedReviews(SpringDataWebProperties.Pageable pageable) {
+        List<Review> unapprovedReviews = reviewService.findAllUnapproved().stream().toList();
+        List<ReviewDto> reviewDtos = unapprovedReviews.stream().map(ReviewDtoMapper::toDto).toList();
+        return new ResponseEntity<>(reviewDtos, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/{id}/approve", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ReviewApprovalDto> approveReview(@PathVariable("id") Long id) {
         Optional<Review> existingReview = reviewService.find(id);
         if(existingReview.isEmpty()) {

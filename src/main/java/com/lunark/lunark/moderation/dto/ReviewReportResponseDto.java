@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record ReviewReportResponseDto(
         Long id,
         LocalDateTime date,
-        Account reporter,
-        Review review
+        Long reporterId,
+        Long reviewId
 ) {
 }
