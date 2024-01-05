@@ -35,13 +35,13 @@ public class ReviewController {
     Clock clock;
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Review> getReview(@PathVariable("id") Long id) {
+    public ResponseEntity<ReviewDto> getReview(@PathVariable("id") Long id) {
         Optional<Review> review = reviewService.find(id);
         if (review.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(review.get(), HttpStatus.OK);
+        return new ResponseEntity<ReviewDto>(ReviewDtoMapper.toDto(review.get()), HttpStatus.OK);
     }
 
     @GetMapping(value = "/host/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
