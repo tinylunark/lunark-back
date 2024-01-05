@@ -33,11 +33,6 @@ public class ReviewReport {
         this.review = review;
     }
 
-    // Static factory method to create instances
-    public static ReviewReport createReviewReport(Long id, LocalDateTime date, Account reporter, Review review) {
-        return new ReviewReport(id, date, reporter, review);
-    }
-
     // No-args constructor for JPA
     protected ReviewReport() {
     }
