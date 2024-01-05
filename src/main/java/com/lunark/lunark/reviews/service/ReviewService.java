@@ -74,8 +74,8 @@ public class ReviewService implements IReviewService<Review> {
             throw new RuntimeException("Review author not eligible to review host");
         }
         host.getReviews().add(review);
-        review.setHost(host);
         this.accountService.update(host);
+        review.setHost(host);
         return review;
     }
 
