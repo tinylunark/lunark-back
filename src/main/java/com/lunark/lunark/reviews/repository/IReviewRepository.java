@@ -12,4 +12,6 @@ public interface IReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findHostReviewByGuest(Long hostId, Long guestId);
     @Query("select r from Property p join p.reviews r where p.id = ?1 and r.approved = true")
     Collection<Review> findApprovedReviewsForProperty(Long id);
+    @Query("select r from Account a join a.reviews r where a.id = ?1 and r.approved = true")
+    Collection<Review> findApprovedReviewsForHost(Long id);
 }

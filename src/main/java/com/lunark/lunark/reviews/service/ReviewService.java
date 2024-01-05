@@ -116,8 +116,7 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     public Collection<Review> getAllReviewsForHost(Long hostId) {
-        Optional<Account> host = accountService.find(hostId);
-        return host.map(Account::getReviews).orElse(null);
+        return reviewRepository.findApprovedReviewsForHost(hostId);
     }
 
     public Collection<Review> getALlReviewsForProperty(Long propertyId) {
