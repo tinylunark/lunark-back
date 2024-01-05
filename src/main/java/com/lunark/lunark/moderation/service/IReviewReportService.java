@@ -9,7 +9,7 @@ import java.util.List;
 public interface IReviewReportService {
     ReviewReport getById(Long id);
     List<ReviewReport> getAll();
-    ReviewReport create(ReviewReportRequestDto dto);
-    ReviewReport update(Long id, ReviewReportRequestDto dto);
+    ReviewReport create(ReviewReport report);
+    ReviewReport update(ReviewReport report);
     void delete(Long id);
 }

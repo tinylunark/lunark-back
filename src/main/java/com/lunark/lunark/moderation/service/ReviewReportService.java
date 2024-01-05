@@ -31,12 +31,12 @@ public class ReviewReportService implements IReviewReportService {
     }
 
     @Override
-    public ReviewReport create(ReviewReportRequestDto dto) {
-        return null;
+    public ReviewReport create(ReviewReport report) {
+        return this.reviewReportRepository.saveAndFlush(report);
     }
 
     @Override
-    public ReviewReport update(Long id, ReviewReportRequestDto dto) {
+    public ReviewReport update(ReviewReport report) {
         return null;
     }
 

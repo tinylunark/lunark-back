@@ -33,6 +33,12 @@ public class ReviewReport {
         this.review = review;
     }
 
+    public ReviewReport(LocalDateTime date, Account reporter, Review review) {
+        this.date = date;
+        this.reporter = reporter;
+        this.review = review;
+    }
+
     // No-args constructor for JPA
     protected ReviewReport() {
     }
