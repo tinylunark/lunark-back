@@ -56,7 +56,7 @@ public class ReviewController {
     @GetMapping(value = "/property/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<ReviewDto>> getReviewForProperty(@PathVariable("id") Long id) {
         Collection<Review> reviews = reviewService.getALlReviewsForProperty(id);
-        if(reviews.isEmpty()){
+        if(reviews == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(reviews.stream().map(ReviewDtoMapper::toDto).collect(Collectors.toList()), HttpStatus.OK);

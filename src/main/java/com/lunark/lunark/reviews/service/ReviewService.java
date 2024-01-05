@@ -121,7 +121,6 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     public Collection<Review> getALlReviewsForProperty(Long propertyId) {
-       Optional<Property> property = propertyRepository.findById(propertyId);
-       return property.map(Property::getReviews).orElse(Collections.emptyList());
+        return reviewRepository.findApprovedReviewsForProperty(propertyId);
     }
 }
