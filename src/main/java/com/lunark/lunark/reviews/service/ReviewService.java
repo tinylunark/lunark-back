@@ -77,6 +77,7 @@ public class ReviewService implements IReviewService<Review> {
         host.getReviews().add(review);
         review.setHost(host);
         this.accountService.update(host);
+        this.notificationService.createNotification(review);
         return review;
     }
 
