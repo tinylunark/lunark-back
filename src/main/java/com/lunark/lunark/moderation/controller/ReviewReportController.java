@@ -8,6 +8,7 @@ import com.lunark.lunark.moderation.model.ReviewReport;
 import com.lunark.lunark.moderation.service.ReviewReportService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,8 @@ public class ReviewReportController {
             return new ResponseEntity<>(modelMapper.map(savedReport, ReviewReportResponseDto.class), HttpStatus.CREATED);
         } catch (UnauthorizedReportException ex) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (DataIntegrityViolationException ex) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 

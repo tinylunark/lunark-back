@@ -21,7 +21,7 @@ public class ReviewReport {
     @JoinColumn(name = "reporter_id")
     private Account reporter;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "review_id")
     private Review review;
 
