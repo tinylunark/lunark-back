@@ -1,6 +1,7 @@
 package com.lunark.lunark.reviews.model;
 
 import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.properties.model.Property;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -32,6 +33,22 @@ public class Review {
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="account_reviews",
+            joinColumns = {@JoinColumn(name = "reviews_id")},
+            inverseJoinColumns = {@JoinColumn(name = "account_id")}
+    )
+    @Transient
+    private Account host;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "property_reviews",
+            joinColumns = {@JoinColumn(name = "reviews_id")},
+            inverseJoinColumns = {@JoinColumn(name = "property_id")}
+    )
+    private Property property;
 
     public Review() {
 
@@ -105,5 +122,33 @@ public class Review {
 
     public void setAuthor(Account author) {
         this.author = author;
+    }
+
+    public Account getHost() {
+        if (this.type != ReviewType.HOST) {
+            throw new IllegalStateException("Cannot get host for non-host reviews");
+        }
+        return host;
+    }
+
+    public void setHost(Account host) {
+        if (this.type != ReviewType.HOST) {
+            throw new IllegalStateException("Cannot set host for non-host reviews");
+        }
+        this.host = host;
+    }
+
+    public Property getProperty() {
+        if (this.type != ReviewType.PROPERTY) {
+            throw new IllegalStateException("Cannot get property for non-property reviews");
+        }
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        if (this.type != ReviewType.PROPERTY) {
+            throw new IllegalStateException("Cannot set property for non-property reviews");
+        }
+        this.property = property;
     }
 }

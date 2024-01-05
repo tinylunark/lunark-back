@@ -62,7 +62,8 @@ public class ReviewService implements IReviewService<Review> {
         Property property = this.propertyRepository.findById(propertyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
         property.getReviews().add(review);
         this.propertyRepository.saveAndFlush(property);
-        this.notificationService.createPropertyReviewNotification(property);
+        review.setProperty(property);
+        this.notificationService.createNotification(review);
         return review;
     }
 
@@ -74,6 +75,7 @@ public class ReviewService implements IReviewService<Review> {
             throw new RuntimeException("Review author not eligible to review host");
         }
         host.getReviews().add(review);
+        review.setHost(host);
         this.accountService.update(host);
         return review;
     }

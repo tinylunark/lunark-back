@@ -73,6 +73,11 @@ public class Property {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JoinTable(
+            name = "property_reviews",
+            joinColumns = {@JoinColumn(name = "property_id")},
+            inverseJoinColumns = {@JoinColumn(name = "reviews_id")}
+    )
     private Collection<Review> reviews = new ArrayList<>();
     @OneToMany(
             cascade = CascadeType.ALL,
