@@ -25,14 +25,6 @@ public class ReviewReport {
     @JoinColumn(name = "review_id")
     private Review review;
 
-    // Private constructor
-    private ReviewReport(Long id, LocalDateTime date, Account reporter, Review review) {
-        this.id = id;
-        this.date = date;
-        this.reporter = reporter;
-        this.review = review;
-    }
-
     public ReviewReport(LocalDateTime date, Account reporter, Review review) {
         this.id = null;
         this.date = date;
