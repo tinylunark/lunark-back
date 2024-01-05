@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -79,6 +80,17 @@ public class ReservationController {
         reservationDtos.add(new ReservationDto(1L, 2L, "Hotel Oderberger", LocalDate.of(2024, 7, 14), LocalDate.of(2023, 7, 16), 15000, 1L, 1, "canceled", 1));
 
         return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/current")
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<List<ReservationResponseDto>> getReservationsForCurrentUser() {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<ReservationResponseDto> reservations = reservationService.getAllReservationsForUser(currentUser.getId()).stream()
+                .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
+                .toList();
+
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
 }
