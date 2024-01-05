@@ -40,7 +40,6 @@ public class Review {
             joinColumns = {@JoinColumn(name = "reviews_id")},
             inverseJoinColumns = {@JoinColumn(name = "account_id")}
     )
-    @Transient
     private Account host;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(
