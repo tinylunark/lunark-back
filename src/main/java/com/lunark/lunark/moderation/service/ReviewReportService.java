@@ -2,8 +2,10 @@ package com.lunark.lunark.moderation.service;
 
 import com.lunark.lunark.moderation.dto.ReviewReportRequestDto;
 import com.lunark.lunark.moderation.dto.ReviewReportResponseDto;
+import com.lunark.lunark.moderation.exception.UnauthorizedReportException;
 import com.lunark.lunark.moderation.model.ReviewReport;
 import com.lunark.lunark.moderation.repository.IReviewReportRepository;
+import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.reviews.repository.IReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class ReviewReportService implements IReviewReportService {
 
     @Override
     public ReviewReport create(ReviewReport report) {
+        if (!isReportAuthorized(report)) {
+            throw new UnauthorizedReportException("Hosts can not report reviews on properties of other hosts or on other profiles");
+        }
         return this.reviewReportRepository.saveAndFlush(report);
     }
 
@@ -45,5 +50,16 @@ public class ReviewReportService implements IReviewReportService {
         ReviewReport reviewReport = reviewReportRepository.findById(id).get();
         reviewRepository.deleteById(reviewReport.getReview().getId());
         reviewReportRepository.deleteById(id);
+    }
+
+    private boolean isReportAuthorized(ReviewReport report) {
+        Review reportedReview = report.getReview();
+        Long reporterId = report.getReporter().getId();
+        if (reportedReview.getType().equals(Review.ReviewType.HOST)) {
+            return reportedReview.getHost().getId().equals(reporterId);
+        } else if (reportedReview.getType().equals(Review.ReviewType.PROPERTY)) {
+            return reportedReview.getProperty().getHost().getId().equals(reporterId);
+        }
+        return false;
     }
 }

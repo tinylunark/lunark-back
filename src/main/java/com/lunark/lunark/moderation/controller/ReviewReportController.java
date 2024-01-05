@@ -3,6 +3,7 @@ package com.lunark.lunark.moderation.controller;
 import com.lunark.lunark.mapper.ReviewReportDtoMapper;
 import com.lunark.lunark.moderation.dto.ReviewReportRequestDto;
 import com.lunark.lunark.moderation.dto.ReviewReportResponseDto;
+import com.lunark.lunark.moderation.exception.UnauthorizedReportException;
 import com.lunark.lunark.moderation.model.ReviewReport;
 import com.lunark.lunark.moderation.service.ReviewReportService;
 import org.modelmapper.ModelMapper;
@@ -53,8 +54,12 @@ public class ReviewReportController {
         if (reviewReport.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        ReviewReport savedReport = this.reviewReportService.create(reviewReport.get());
-        return new ResponseEntity<>(modelMapper.map(savedReport, ReviewReportResponseDto.class), HttpStatus.CREATED);
+        try {
+            ReviewReport savedReport = this.reviewReportService.create(reviewReport.get());
+            return new ResponseEntity<>(modelMapper.map(savedReport, ReviewReportResponseDto.class), HttpStatus.CREATED);
+        } catch (UnauthorizedReportException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
