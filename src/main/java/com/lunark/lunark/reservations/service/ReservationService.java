@@ -6,11 +6,14 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
+import com.lunark.lunark.reservations.dto.ReservationSearchDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
+import com.lunark.lunark.reservations.specification.ReservationSpecification;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -93,6 +96,13 @@ public class ReservationService implements IReservationService {
     public List<Reservation> getAllReservationsForUser(Long userId) {
         Account account = this.accountRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guest not found"));
         return account.getReservations().stream().toList();
+    }
+
+    @Override
+    public List<Reservation> findByFilter(ReservationSearchDto dto) {
+        Specification<Reservation> specification = new ReservationSpecification(dto);
+
+        return reservationRepository.findAll(specification);
     }
 
     private double calculatePrice(LocalDate start, LocalDate end, Collection<PropertyAvailabilityEntry> entries) {

@@ -2,6 +2,7 @@ package com.lunark.lunark.reservations.dto;
 
 import com.lunark.lunark.properties.dto.PropertyResponseDto;
 import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.reservations.model.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,5 @@ public class ReservationResponseDto {
     LocalDate endDate;
     double price;
     int numberOfGuests;
+    ReservationStatus status;
 }

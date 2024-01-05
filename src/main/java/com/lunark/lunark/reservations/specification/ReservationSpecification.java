@@ -45,6 +45,12 @@ public class ReservationSpecification implements Specification<Reservation> {
             predicate = criteriaBuilder.and(predicate, statusPredicate);
         }
 
+        if (filter.getAccountId() != null) {
+            Predicate accountIdPredicate = criteriaBuilder.equal(root.get("guest").get("id"), filter.getAccountId());
+
+            predicate = criteriaBuilder.and(predicate, accountIdPredicate);
+        }
+
         return predicate;
     }
 }
