@@ -82,7 +82,7 @@ public class ReviewService implements IReviewService<Review> {
 
     @Override
     public Review update(Review review) {
-        return reviewRepository.save(review);
+        return reviewRepository.saveAndFlush(review);
     }
 
     @Override
