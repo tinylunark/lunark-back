@@ -127,4 +127,11 @@ public class ReviewService implements IReviewService<Review> {
     public Collection<Review> findAllUnapproved() {
         return this.reviewRepository.findAllByApproved(false);
     }
+
+    @Override
+    public Review approveReview(Review review) {
+        review.setApproved(true);
+        Review approvedReview = this.update(review);
+        return approvedReview;
+    }
 }

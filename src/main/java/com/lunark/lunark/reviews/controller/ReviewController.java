@@ -134,9 +134,7 @@ public class ReviewController {
         }
 
         try {
-            Review reviewToApprove = existingReview.get();
-            reviewToApprove.setApproved(true);
-            Review approvedReview = reviewService.update(existingReview.get());
+            Review approvedReview = this.reviewService.approveReview(existingReview.get());
             return new ResponseEntity<>(modelMapper.map(approvedReview, ReviewApprovalDto.class), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
