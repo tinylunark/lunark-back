@@ -63,7 +63,6 @@ public class ReviewService implements IReviewService<Review> {
         property.getReviews().add(review);
         this.propertyRepository.saveAndFlush(property);
         review.setProperty(property);
-        this.notificationService.createNotification(review);
         return review;
     }
 
@@ -77,7 +76,6 @@ public class ReviewService implements IReviewService<Review> {
         host.getReviews().add(review);
         review.setHost(host);
         this.accountService.update(host);
-        this.notificationService.createNotification(review);
         return review;
     }
 
@@ -133,6 +131,7 @@ public class ReviewService implements IReviewService<Review> {
     public Review approveReview(Review review) {
         review.setApproved(true);
         Review approvedReview = this.update(review);
+        this.notificationService.createNotification(review);
         return approvedReview;
     }
 }
