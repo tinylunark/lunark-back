@@ -120,7 +120,7 @@ public class ReviewController {
     @GetMapping(path="/unapproved", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<ReviewDto>> getUnapprovedReviews(SpringDataWebProperties.Pageable pageable) {
-        List<Review> unapprovedReviews = reviewService.findAll().stream().filter(review -> !review.isApproved()).toList();
+        List<Review> unapprovedReviews = reviewService.findAllUnapproved().stream().toList();
         List<ReviewDto> reviewDtos = unapprovedReviews.stream().map(ReviewDtoMapper::toDto).toList();
         return new ResponseEntity<>(reviewDtos, HttpStatus.OK);
     }

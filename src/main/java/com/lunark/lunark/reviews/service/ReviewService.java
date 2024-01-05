@@ -3,7 +3,6 @@ package com.lunark.lunark.reviews.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
-import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
@@ -19,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -121,5 +119,10 @@ public class ReviewService implements IReviewService<Review> {
 
     public Collection<Review> getALlReviewsForProperty(Long propertyId) {
         return reviewRepository.findApprovedReviewsForProperty(propertyId);
+    }
+
+    @Override
+    public Collection<Review> findAllUnapproved() {
+        return this.reviewRepository.findAllByApproved(false);
     }
 }
