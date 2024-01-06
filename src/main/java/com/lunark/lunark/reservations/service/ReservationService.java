@@ -127,6 +127,8 @@ public class ReservationService implements IReservationService {
         List<Reservation> allPropertyReservations = reservationRepository.findByPropertyId(propertyId);
 
         for (Reservation existingReservation : allPropertyReservations) {
+            if(existingReservation.getId().equals(reservation.getId()))
+                continue;
             if (doDatesOverlap(reservation, existingReservation)) {
                 existingReservation.setStatus(ReservationStatus.REJECTED);
                 reservationRepository.save(existingReservation);
