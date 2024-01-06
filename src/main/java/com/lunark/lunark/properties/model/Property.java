@@ -132,7 +132,9 @@ public class Property {
         this.setLatitude(other.getLatitude());
         this.setType(other.getType());
         this.setHost(other.getHost());
-        this.setAvailabilityEntries(other.getAvailabilityEntries());
+        if(!this.setAvailabilityEntries(other.getAvailabilityEntries())) {
+            throw new RuntimeException("Conflict between new and old availability entries");
+        }
         this.availabilityEntries.forEach(propertyAvailabilityEntry -> propertyAvailabilityEntry.setProperty(this));
     }
 
