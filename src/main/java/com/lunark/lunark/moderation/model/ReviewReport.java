@@ -21,13 +21,12 @@ public class ReviewReport {
     @JoinColumn(name = "reporter_id")
     private Account reporter;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "review_id")
     private Review review;
 
-    // Private constructor
-    private ReviewReport(Long id, LocalDateTime date, Account reporter, Review review) {
-        this.id = id;
+    public ReviewReport(LocalDateTime date, Account reporter, Review review) {
+        this.id = null;
         this.date = date;
         this.reporter = reporter;
         this.review = review;

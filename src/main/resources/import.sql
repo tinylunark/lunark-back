@@ -23,7 +23,7 @@ INSERT INTO account (email, password, name, surname, address, phone_number, veri
 -- Review imports
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Great host!', true, '2023-01-10T12:30:00', 0, 1);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 1, 4);
-INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 0, 5);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Average experience', true, '2023-03-20T10:15:00', 0, 5);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 1, 6);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (2, 'Not satisfied', false, '2023-05-30T18:20:00', 0, 7);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (4, 'Enjoyed my stay', true, '2023-06-05T22:00:00', 1, 8);
@@ -66,6 +66,7 @@ insert into property_reviews(property_id, reviews_id) values (5, 5);
 --Connect reviews and hosts
 insert into account_reviews(account_id, reviews_id) values (2, 7);
 insert into account_reviews(account_id, reviews_id) values (2, 9);
+insert into account_reviews(account_id, reviews_id) values (2, 3);
 
 
 -- Amenity imports
@@ -97,7 +98,6 @@ insert into notification (read, date, recipient_id, text, type) values (false, '
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation rejected', 5);
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation accepted', 4);
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation rejected', 5);
-
 
 INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (3, '2023-03-20T10:15:00', 3, 3);
 INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (4, '2023-10-28T20:45:00', 4, 4);
