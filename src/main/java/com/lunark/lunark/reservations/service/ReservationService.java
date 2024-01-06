@@ -133,8 +133,7 @@ public class ReservationService implements IReservationService {
             if(existingReservation.getId().equals(reservation.getId()))
                 continue;
             if (doDatesOverlap(reservation, existingReservation)) {
-                existingReservation.setStatus(ReservationStatus.REJECTED);
-                reservationRepository.save(existingReservation);
+                this.acceptOrRejectReservation(existingReservation, ReservationStatus.REJECTED);
             }
         }
     }
