@@ -132,6 +132,8 @@ public class Property {
         this.setLatitude(other.getLatitude());
         this.setType(other.getType());
         this.setHost(other.getHost());
+        this.setAvailabilityEntries(other.getAvailabilityEntries());
+        this.availabilityEntries.forEach(propertyAvailabilityEntry -> propertyAvailabilityEntry.setProperty(this));
     }
 
     public void setApproved(boolean approved) {
