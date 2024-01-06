@@ -9,19 +9,14 @@ import com.lunark.lunark.reservations.dto.ReservationRequestDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class ReservationService implements IReservationService {
@@ -76,6 +71,11 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
+    public Optional<Reservation> findById(Long id) {
+        return reservationRepository.findById(id);
+    }
+
+    @Override
     public List<Reservation> getAllReservationsForPropertiesList(List<Property> propertiesList) {
         List<Reservation> reservationsForProperties = new ArrayList<>();
         List<Reservation> allReservations = reservationRepository.findAll();
@@ -87,6 +87,99 @@ public class ReservationService implements IReservationService {
             }
         }
         return reservationsForProperties;
+    }
+
+    @Override
+    public List<Reservation> getIncomingReservationsForHostId(Long hostId) {
+        List<Property> properties = propertyRepository.findAll().stream().filter(property -> Objects.equals(property.getHost().getId(), hostId)).toList();
+        List<Reservation> reservationsForProperties = new ArrayList<>();
+        for(Property property: properties) {
+            List<Reservation> reservationForProperty = reservationRepository.findByPropertyId(property.getId());
+            reservationsForProperties.addAll(reservationForProperty);
+        }
+        return reservationsForProperties;
+    }
+
+    @Override
+    public List<Reservation> getAllAcceptedReservations(Long guestId) {
+        return reservationRepository.findAll().stream().filter(reservation -> Objects.equals(reservation.getGuest().getId(), guestId) && reservation.getStatus() == ReservationStatus.ACCEPTED).toList();
+    }
+
+    @Override
+    public void save(Reservation reservation) {
+        Optional<Reservation> reservationUpdate = findById(reservation.getId());
+        if (reservationUpdate.isPresent()) {
+            Reservation existingReservation = reservationUpdate.get();
+            existingReservation.copyFields(reservation);
+            reservationRepository.saveAndFlush(existingReservation);
+        } else {
+            throw new RuntimeException("Reservation not found with id: " + reservation.getId());
+        }
+    }
+
+    @Override
+    public void updateReservations(Reservation reservation) {
+        Long propertyId = reservation.getProperty().getId();
+        List<Reservation> allPropertyReservations = reservationRepository.findByPropertyId(propertyId);
+
+        for (Reservation existingReservation : allPropertyReservations) {
+            if(existingReservation.getId().equals(reservation.getId()))
+                continue;
+            if (doDatesOverlap(reservation, existingReservation)) {
+                existingReservation.setStatus(ReservationStatus.REJECTED);
+                reservationRepository.save(existingReservation);
+            }
+        }
+    }
+
+    private boolean doDatesOverlap(Reservation newReservation, Reservation existingReservation) {
+        return newReservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
+                existingReservation.getStartDate().isBefore(newReservation.getEndDate()) ||
+                newReservation.getStartDate().isEqual(existingReservation.getEndDate()) ||
+                newReservation.getEndDate().isEqual(existingReservation.getStartDate());
+    }
+
+    @Override
+    public void acceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted) {
+        reservation.setStatus(isAccepted);
+        if(isAccepted == ReservationStatus.ACCEPTED) {
+            updatePropertyAvailability(reservation, true);
+            updateReservations(reservation);
+        }
+        save(reservation);
+    }
+
+    @Override
+    public boolean cancelReservation(Reservation reservation) {
+        if (isPastCancellationDeadline(reservation)) {
+            return false;
+        }
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        updatePropertyAvailability(reservation, false);
+        save(reservation);
+        return true;
+    }
+
+    private boolean isPastCancellationDeadline(Reservation reservation) {
+        Property property = reservation.getProperty();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime cancellationDeadline = reservation.getStartDate().minusDays(property.getCancellationDeadline()).atStartOfDay();
+        return currentDateTime.isAfter(cancellationDeadline);
+    }
+
+    public void updatePropertyAvailability(Reservation reservation, boolean isrReserved) {
+        Property property = reservation.getProperty();
+        LocalDate startDate = reservation.getStartDate();
+        LocalDate endDate = reservation.getEndDate();
+
+        for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries())  {
+            LocalDate entryDate = entry.getDate();
+            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(entryDate)) {
+                entry.setReserved(isrReserved);
+            }
+
+        }
+        propertyRepository.save(property);
     }
 
     @Override
@@ -107,4 +200,5 @@ public class ReservationService implements IReservationService {
                 .mapToDouble(PropertyAvailabilityEntry::getPrice)
                 .sum();
     }
+
 }
