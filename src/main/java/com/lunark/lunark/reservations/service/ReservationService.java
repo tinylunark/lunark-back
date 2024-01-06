@@ -5,22 +5,18 @@ import com.lunark.lunark.auth.repository.IAccountRepository;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
-import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationService implements IReservationService {
@@ -136,12 +132,30 @@ public class ReservationService implements IReservationService {
         }
     }
 
+    private boolean doDatesOverlap(Reservation newReservation, Reservation existingReservation) {
+        return newReservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
+                existingReservation.getStartDate().isBefore(newReservation.getEndDate()) ||
+                newReservation.getStartDate().isEqual(existingReservation.getEndDate()) ||
+                newReservation.getEndDate().isEqual(existingReservation.getStartDate());
+    }
+
+    @Override
+    public void acceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted) {
+        reservation.setStatus(isAccepted);
+        save(reservation);
+        if(isAccepted == ReservationStatus.ACCEPTED) {
+            updatePropertyAvailability(reservation, true);
+            updateReservations(reservation);
+        }
+
+    }
     @Override
     public boolean cancelReservation(Reservation reservation) {
         if (isPastCancellationDeadline(reservation)) {
             return false;
         }
         reservation.setStatus(ReservationStatus.CANCELLED);
+        updatePropertyAvailability(reservation, false);
         save(reservation);
         return true;
     }
@@ -153,13 +167,20 @@ public class ReservationService implements IReservationService {
         return currentDateTime.isAfter(cancellationDeadline);
     }
 
-    private boolean doDatesOverlap(Reservation newReservation, Reservation existingReservation) {
-        return newReservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
-                existingReservation.getStartDate().isBefore(newReservation.getEndDate()) ||
-                newReservation.getStartDate().isEqual(existingReservation.getEndDate()) ||
-                newReservation.getEndDate().isEqual(existingReservation.getStartDate());
-    }
+    public void updatePropertyAvailability(Reservation reservation, boolean isrReserved) {
+        Property property = reservation.getProperty();
+        LocalDate startDate = reservation.getStartDate();
+        LocalDate endDate = reservation.getEndDate();
 
+        for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries())  {
+            LocalDate entryDate = entry.getDate();
+            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(entryDate)) {
+                entry.setReserved(isrReserved);
+            }
+
+        }
+        propertyRepository.save(property);
+    }
 
     @Override
     public List<Reservation> getAllReservationsForUser(Long userId) {

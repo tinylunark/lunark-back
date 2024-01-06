@@ -4,6 +4,7 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
 import com.lunark.lunark.reservations.model.Reservation;
+import com.lunark.lunark.reservations.model.ReservationStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public interface IReservationService {
     void save(Reservation reservation);
 
     void updateReservations(Reservation reservation);
+
+    void acceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted);
 
     boolean cancelReservation(Reservation reservation);
 }
