@@ -21,4 +21,7 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
     List<Reservation> findByPropertyId(Long propertyId);
     @Query("select r from Reservation r where r.guest.id = :guest_id and r.property.host.id = :host_id and r.status = 1 and r.endDate between :from and CURRENT_DATE")
     Collection<Reservation> findAllPastReservationsAtHostAfterDate(@Param("guest_id") Long guestId, @Param("host_id") Long hostId, @Param("from") LocalDate from);
+
+    @Query("select count(r) > 0 from Reservation r where r.guest.id = :guest_id and r.property.host.id = :host_id and r.status = 1 and r.endDate < CURRENT_DATE")
+    boolean hasPastReservationsAtHost(@Param("guest_id") Long guestId, @Param("host_id") Long hostId);
 }

@@ -220,4 +220,8 @@ public class ReservationService implements IReservationService {
                 .sum();
     }
 
+    @Override
+    public boolean hasPastReservationsAtHost(Long guestId, Long hostId) {
+        return this.reservationRepository.hasPastReservationsAtHost(guestId, hostId);
+    }
 }
