@@ -25,6 +25,8 @@ public class ReservationService implements IReservationService {
     private final IPropertyRepository propertyRepository;
     private final IAccountRepository accountRepository;
     private final INotificationService notificationService;
+    private Clock clock;
+
 
     @Autowired
     public ReservationService(IReservationRepository reservationRepository, IPropertyRepository propertyRepository, IAccountRepository accountRepository, INotificationService notificationService) {
@@ -167,7 +169,7 @@ public class ReservationService implements IReservationService {
 
     private boolean isPastCancellationDeadline(Reservation reservation) {
         Property property = reservation.getProperty();
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now(clock);
         LocalDateTime cancellationDeadline = reservation.getStartDate().minusDays(property.getCancellationDeadline()).atStartOfDay();
         return currentDateTime.isAfter(cancellationDeadline);
     }
