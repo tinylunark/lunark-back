@@ -5,6 +5,8 @@ import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.notifications.repository.INotificationRepository;
 import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.reservations.model.Reservation;
+import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,12 +65,66 @@ public class NotificationService implements INotificationService {
         return this.create(notification);
     }
 
+
     private String createReviewNotificationMessage(Review review) {
         if (review.getType().equals(Review.ReviewType.HOST)) {
             return "New host review";
         }
         return "New property review for " + review.getProperty().getName();
     }
+
+    @Override
+    public Notification createNotification(Reservation reservation) {
+        String message = createReservationNotificationMessage(reservation);
+        Account account = determineAccountForNotification(reservation);
+        NotificationType notificationType = determineNotificationType(reservation);
+
+        Notification notification = new Notification(
+                message,
+                ZonedDateTime.now(clock),
+                notificationType,
+                account
+        );
+
+        return this.create(notification);
+    }
+
+    private Account determineAccountForNotification(Reservation reservation) {
+        if (reservation.getStatus().equals(ReservationStatus.ACCEPTED) ||
+                reservation.getStatus().equals(ReservationStatus.REJECTED)) {
+            return reservation.getGuest();
+        } else if (reservation.getStatus().equals(ReservationStatus.CANCELLED)) {
+            return reservation.getProperty().getHost();
+        }
+        throw new IllegalArgumentException("Invalid reservation status");
+    }
+
+    private NotificationType determineNotificationType(Reservation reservation) {
+        switch (reservation.getStatus()) {
+            case ACCEPTED:
+                return NotificationType.RESERVATION_ACCEPTED;
+            case REJECTED:
+                return NotificationType.RESERVATION_REJECTED;
+            case CANCELLED:
+                return NotificationType.RESERVATION_CANCELED;
+            default:
+                throw new IllegalArgumentException("Invalid reservation status");
+        }
+    }
+
+    private String createReservationNotificationMessage(Reservation reservation) {
+        switch (reservation.getStatus()) {
+            case ACCEPTED:
+                return "Reservation at " + reservation.getProperty() + " has been accepted.";
+            case REJECTED:
+                return "Reservation at " + reservation.getProperty() + " has been rejected.";
+            case CANCELLED:
+                return "Reservation at " + reservation.getProperty() + " has been rejected by " + reservation.getGuest();
+            default:
+                throw new IllegalArgumentException("Invalid reservation status");
+        }
+    }
+
 
     @Override
     public long getUnreadNotificationCount(String email) {
