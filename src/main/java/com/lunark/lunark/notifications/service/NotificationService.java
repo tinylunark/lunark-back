@@ -115,11 +115,11 @@ public class NotificationService implements INotificationService {
     private String createReservationNotificationMessage(Reservation reservation) {
         switch (reservation.getStatus()) {
             case ACCEPTED:
-                return "Reservation at has been accepted.";
+                return "Reservation at " + reservation.getProperty().getName() + " has been accepted.";
             case REJECTED:
-                return "Reservation at has been rejected.";
+                return "Reservation at " + reservation.getProperty().getName() + " has been rejected.";
             case CANCELLED:
-                return "Reservation at has been cancelled." ;
+                return "Reservation at " + reservation.getProperty().getName() + " has been cancelled by " + reservation.getGuest().getName() + " " + reservation.getGuest().getSurname();
             default:
                 throw new IllegalArgumentException("Invalid reservation status");
         }
