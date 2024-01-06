@@ -1,5 +1,6 @@
 package com.lunark.lunark.moderation.service;
 
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.moderation.model.AccountReport;
 
 import java.util.List;
@@ -10,6 +11,8 @@ public interface IAccountReportService {
     List<AccountReport> getAll();
 
     AccountReport create(AccountReport report);
+
+    boolean isGuestEligibleToReport(Account guest, Long hostId);
 
     void block(Long id);
 }

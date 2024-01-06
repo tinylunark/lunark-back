@@ -45,13 +45,24 @@ public class AccountReportService implements IAccountReportService {
     }
 
     private boolean isUnauthorized(AccountReport report) {
-        if (report.getReporter().getRole().equals(AccountRole.GUEST) && !this.reservationService.hasPastReservationsAtHost(report.getReporter().getId(), report.getReported().getId())) {
+        if (report.getReporter().getRole().equals(AccountRole.GUEST) && !this.isGuestEligibleToReport(report.getReporter(), report.getReported().getId())) {
             return true;
         }
         else if (report.getReporter().getRole().equals(AccountRole.HOST)) {
             //TODO: Implement checking if a guest report is authorized
             return true;
         } else if (report.getReporter().getRole().equals(AccountRole.ADMIN)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isGuestEligibleToReport(Account guest, Long hostId) {
+        if (accountService.find(hostId).isEmpty()) {
+            throw new RuntimeException("Could not find host with given id");
+        }
+        if (guest.getRole().equals(AccountRole.GUEST) && this.reservationService.hasPastReservationsAtHost(guest.getId(), hostId)) {
             return true;
         }
         return false;
