@@ -40,7 +40,7 @@ public class AccountReportController {
     public ResponseEntity<List<AccountReportResponseDto>> getAll() {
         List<AccountReport> accountReports = accountReportService.getAll();
         List<AccountReportResponseDto> reportResponseDtos = accountReports.stream()
-                .map(report -> new AccountReportResponseDto(report.getId(), report.getDate(), report.getReporter().getId(), report.getReported().getId()))
+                .map(report -> accountReportDtoMapper.toDto(report))
                 .collect(Collectors.toList());
 
         return accountReports.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(reportResponseDtos, HttpStatus.OK );

@@ -26,10 +26,10 @@ public class AccountReportDtoMapper {
             throw new RuntimeException("Reported id is not valid");
         }
 
-        return new AccountReport(null, dto.date(), reporter, reported.get());
+        return new AccountReport(null, dto.date(), reporter, reported.get(), dto.reason());
     }
 
     public AccountReportResponseDto toDto(AccountReport report) {
-        return new AccountReportResponseDto(report.getId(), report.getDate(), report.getReporter().getId(), report.getReported().getId());
+        return new AccountReportResponseDto(report.getId(), report.getDate(), report.getReporter().getId(), report.getReported().getId(), report.getReason());
     }
 }

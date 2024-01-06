@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record AccountReportRequestDto(
         LocalDateTime date,
-        Long reportedId
+        Long reportedId,
+        String reason
 ) {
 }
