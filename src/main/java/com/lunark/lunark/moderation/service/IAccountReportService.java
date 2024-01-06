@@ -8,5 +8,8 @@ import java.util.Optional;
 public interface IAccountReportService {
     Optional<AccountReport> getById(Long id);
     List<AccountReport> getAll();
+
+    AccountReport create(AccountReport report);
+
     void block(Long id);
 }
