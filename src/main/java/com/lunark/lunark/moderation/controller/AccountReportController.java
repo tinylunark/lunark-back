@@ -4,6 +4,7 @@ import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.mapper.AccountReportDtoMapper;
 import com.lunark.lunark.moderation.dto.AccountReportRequestDto;
 import com.lunark.lunark.moderation.dto.AccountReportResponseDto;
+import com.lunark.lunark.moderation.dto.HostReportEligibilityDto;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.service.IAccountReportService;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,5 +65,17 @@ public class AccountReportController {
     public ResponseEntity<AccountReportResponseDto> block(@PathVariable Long id) {
         accountReportService.block(accountReportService.getById(id).get().getReported().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/host-report-eligibility/{hostId}")
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<HostReportEligibilityDto> isCurrentGuestEligibleToReport(@PathVariable Long hostId) {
+        Account reporter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            boolean eligible = accountReportService.isGuestEligibleToReport(reporter, hostId);
+            return new ResponseEntity<>(new HostReportEligibilityDto(hostId, eligible), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
