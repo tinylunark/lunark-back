@@ -17,4 +17,6 @@ public interface IReviewService<Review> {
     boolean guestEligibleToReviewHost(Long guestId, Long hostId);
 
     Collection<com.lunark.lunark.reviews.model.Review> findAllUnapproved();
+
+    com.lunark.lunark.reviews.model.Review approveReview(com.lunark.lunark.reviews.model.Review review);
 }

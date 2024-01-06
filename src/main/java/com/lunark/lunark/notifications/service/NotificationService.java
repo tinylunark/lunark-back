@@ -1,9 +1,11 @@
 package com.lunark.lunark.notifications.service;
 
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.notifications.model.Notification;
 import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.notifications.repository.INotificationRepository;
 import com.lunark.lunark.properties.model.Property;
+import com.lunark.lunark.reviews.model.Review;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,15 +52,22 @@ public class NotificationService implements INotificationService {
         // TODO: Check if notification should be sent based on the notification settings of the recipient and type of notification
         return true;
     }
-
     @Override
-    public Notification createPropertyReviewNotification(Property property) {
+    public Notification createNotification(Review review)  {
+        String message = createReviewNotificationMessage(review);
         Notification notification = new Notification(
-                "New property review for " + property.getName(),
+                message,
                 ZonedDateTime.now(clock),
-                NotificationType.PROPERTY_REVIEW,
-                property.getHost());
+                review.getType().equals(Review.ReviewType.PROPERTY) ? NotificationType.PROPERTY_REVIEW : NotificationType.HOST_REVIEW,
+                review.getType().equals(Review.ReviewType.PROPERTY)? review.getProperty().getHost() : review.getHost());
         return this.create(notification);
+    }
+
+    private String createReviewNotificationMessage(Review review) {
+        if (review.getType().equals(Review.ReviewType.HOST)) {
+            return "New host review";
+        }
+        return "New property review for " + review.getProperty().getName();
     }
 
     @Override
@@ -81,4 +90,5 @@ public class NotificationService implements INotificationService {
     public Optional<Notification> findById(Long id) {
         return this.notificationRepository.findById(id);
     }
+
 }
