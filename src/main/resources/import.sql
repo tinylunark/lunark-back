@@ -99,7 +99,12 @@ insert into notification (read, date, recipient_id, text, type) values (false, '
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation accepted', 4);
 insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation rejected', 5);
 
+INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (3, '2023-03-20T10:15:00', 3, 3);
+INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (4, '2023-10-28T20:45:00', 4, 4);
+INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (5, '2023-05-30T18:20:00', 5, 5);
 
-INSERT INTO review_report(date, reporter_id, review_id) VALUES ('2023-03-20T10:15:00', 2, 3);
-INSERT INTO review_report(date, reporter_id, review_id) VALUES ('2023-10-28T20:45:00', 4, 4);
-INSERT INTO review_report(date, reporter_id, review_id) VALUES ('2023-05-30T18:20:00', 5, 5);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (1, '2023-03-20T10:15:00', 3, 4);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (2, '2023-10-28T20:45:00', 3, 6);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (3, '2023-05-30T18:20:00', 3, 8);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (4, '2023-03-20T10:15:00', 2, 4);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (5, '2023-10-28T20:45:00', 1, 7);

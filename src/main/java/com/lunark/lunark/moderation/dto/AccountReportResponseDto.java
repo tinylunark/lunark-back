@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record AccountReportResponseDto (
     Long id,
     LocalDateTime date,
-    Account reporter,
-    Account reported
+    Long reporterId,
+    Long reportedId
 ) {
 }
