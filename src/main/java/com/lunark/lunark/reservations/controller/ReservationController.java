@@ -86,7 +86,7 @@ public class ReservationController {
     }
 
     @GetMapping(value = "/current")
-    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<List<ReservationResponseDto>> getReservationsForCurrentUser(
             @RequestParam(required = false) String propertyName,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
