@@ -45,6 +45,11 @@ public class Account implements UserDetails {
     private ProfileImage profileImage;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name="account_reviews",
+            joinColumns = {@JoinColumn(name = "account_id")},
+            inverseJoinColumns = {@JoinColumn(name = "reviews_id")}
+    )
     private Collection<Review> reviews;
     @ManyToMany
     private Set<Property> favoriteProperties;

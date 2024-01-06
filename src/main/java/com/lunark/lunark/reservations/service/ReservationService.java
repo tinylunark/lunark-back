@@ -105,6 +105,10 @@ public class ReservationService implements IReservationService {
         return reservationRepository.findAll(specification);
     }
 
+    public Reservation saveOrUpdate(Reservation reservation) {
+        return reservationRepository.save(reservation);
+    }
+
     private double calculatePrice(LocalDate start, LocalDate end, Collection<PropertyAvailabilityEntry> entries) {
         Collection<LocalDate> datesToBook = start.datesUntil(end.plusDays(1)).toList();
 

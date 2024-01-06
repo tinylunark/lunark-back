@@ -73,6 +73,11 @@ public class Property {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JoinTable(
+            name = "property_reviews",
+            joinColumns = {@JoinColumn(name = "property_id")},
+            inverseJoinColumns = {@JoinColumn(name = "reviews_id")}
+    )
     private Collection<Review> reviews = new ArrayList<>();
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -132,6 +137,10 @@ public class Property {
         this.setLatitude(other.getLatitude());
         this.setType(other.getType());
         this.setHost(other.getHost());
+        if(!this.setAvailabilityEntries(other.getAvailabilityEntries())) {
+            throw new RuntimeException("Conflict between new and old availability entries");
+        }
+        this.availabilityEntries.forEach(propertyAvailabilityEntry -> propertyAvailabilityEntry.setProperty(this));
     }
 
     public void setApproved(boolean approved) {
