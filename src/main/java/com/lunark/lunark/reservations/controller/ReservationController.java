@@ -107,7 +107,7 @@ public class ReservationController {
 
     @GetMapping(value="/incoming-reservations", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<List<ReservationDto>> getIncomingReservations(@RequestParam("hostId") Long hostId, SpringDataWebProperties pageable) {
+    public ResponseEntity<List<ReservationDto>> getIncomingReservations(@RequestParam("hostId") Long hostId) {
         List<Reservation> reservations = reservationService.getIncomingReservationsForHostId(hostId).stream().filter(reservation -> ReservationStatus.PENDING.equals(reservation.getStatus())).toList();
         if(reservations.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -118,7 +118,7 @@ public class ReservationController {
 
     @GetMapping(value="/accepted-reservations", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('GUEST')")
-    public ResponseEntity<List<ReservationDto>> getAcceptedReservations(@RequestParam("guestId") Long guestId, SpringDataWebProperties pageable) {
+    public ResponseEntity<List<ReservationDto>> getAcceptedReservations(@RequestParam("guestId") Long guestId) {
         List<Reservation> reservations = reservationService.getAllAcceptedReservations(guestId);
         if(reservations.isEmpty()) { return new ResponseEntity<>(HttpStatus.NOT_FOUND); }
         List<ReservationDto> reservationDtos = reservations.stream().map(ReservationDtoMapper::fromReservationToDto) .toList();
