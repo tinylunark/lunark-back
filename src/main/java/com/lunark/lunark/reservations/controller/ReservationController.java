@@ -63,23 +63,24 @@ public class ReservationController {
     @PostMapping(path = "/accept/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ReservationDto> acceptReservation(@PathVariable("reservation_id") Long id) {
-        return reservationService.findById(id).map(reservation -> acceptOrRejectReservation(reservation, ReservationStatus.ACCEPTED)).orElse(notFoundResponse());
+        Optional<Reservation>  reservationOptional = reservationService.findById(id);
+        if(reservationOptional.isPresent()) {
+            Reservation reservation = reservationOptional.get();
+            reservationService.acceptOrRejectReservation(reservation, ReservationStatus.ACCEPTED);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping(path = "/reject/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<ReservationDto> rejectReservation(@PathVariable("reservation_id") Long id) {
-        return reservationService.findById(id).map(reservation -> acceptOrRejectReservation(reservation, ReservationStatus.REJECTED)).orElse(notFoundResponse());
-    }
-
-    private ResponseEntity<ReservationDto> acceptOrRejectReservation(Reservation reservation, ReservationStatus status) {
-        reservation.setStatus(status);
-        reservationService.save(reservation);
-        if(status == ReservationStatus.ACCEPTED) {reservationService.updateReservations(reservation);}
-        return ResponseEntity.ok().build();
-    }
-
-    private ResponseEntity<ReservationDto> notFoundResponse() {
+        Optional<Reservation>  reservationOptional = reservationService.findById(id);
+        if(reservationOptional.isPresent()) {
+            Reservation reservation = reservationOptional.get();
+            reservationService.acceptOrRejectReservation(reservation, ReservationStatus.REJECTED);
+            return ResponseEntity.ok().build();
+        }
         return ResponseEntity.notFound().build();
     }
 
