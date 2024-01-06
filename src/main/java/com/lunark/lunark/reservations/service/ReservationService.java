@@ -142,13 +142,13 @@ public class ReservationService implements IReservationService {
     @Override
     public void acceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted) {
         reservation.setStatus(isAccepted);
-        save(reservation);
         if(isAccepted == ReservationStatus.ACCEPTED) {
             updatePropertyAvailability(reservation, true);
             updateReservations(reservation);
         }
-
+        save(reservation);
     }
+
     @Override
     public boolean cancelReservation(Reservation reservation) {
         if (isPastCancellationDeadline(reservation)) {
