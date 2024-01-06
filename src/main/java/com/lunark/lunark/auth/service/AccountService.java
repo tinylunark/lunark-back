@@ -128,6 +128,16 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    public void cancelAllReservations(List<Reservation> reservationList) {
+        for(Reservation reservation: reservationList) {
+            if(reservation.getStatus() != ReservationStatus.CANCELLED) {
+                reservation.setStatus(ReservationStatus.CANCELLED);
+                reservationService.saveOrUpdate(reservation);
+            }
+        }
+    }
+
+    @Override
     public boolean updatePassword(Long accountId, String oldPassword, String newPassword) {
         Optional<Account> accountToUpdate = accountRepository.findById(accountId);
         if (accountToUpdate.isEmpty() || !isOldPasswordCorrect(accountToUpdate.get(), oldPassword)) {
@@ -201,6 +211,11 @@ public class AccountService implements IAccountService {
         account.get().setProfileImage(profileImage);
 
         accountRepository.save(account.get());
+    }
+
+    @Override
+    public void saveAndFlush(Account account) {
+        accountRepository.saveAndFlush(account);
     }
 
     private Double calculateAverageGrade(Account account) {

@@ -65,6 +65,7 @@ public class PropertyDtoMapper {
                 .map(review -> ReviewDtoMapper.toDto(review))
                 .toList();
         propertyResponseDto.setReviews(reviews);
+        propertyResponseDto.setHost(AccountDtoMapper.fromAccountToDTO(property.getHost()));
 
         return propertyResponseDto;
     }

@@ -188,6 +188,10 @@ public class ReservationService implements IReservationService {
         return account.getReservations().stream().toList();
     }
 
+    public Reservation saveOrUpdate(Reservation reservation) {
+        return reservationRepository.save(reservation);
+    }
+
     private double calculatePrice(LocalDate start, LocalDate end, Collection<PropertyAvailabilityEntry> entries) {
         Collection<LocalDate> datesToBook = start.datesUntil(end.plusDays(1)).toList();
 

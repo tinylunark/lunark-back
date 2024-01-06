@@ -3,6 +3,7 @@ package com.lunark.lunark.reviews.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
+import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.reservations.model.Reservation;
@@ -17,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -35,6 +35,9 @@ public class ReviewService implements IReviewService<Review> {
 
     @Autowired
     IReservationRepository reservationRepository;
+
+    @Autowired
+    INotificationService notificationService;
 
     @Autowired
     Clock clock;
@@ -57,20 +60,26 @@ public class ReviewService implements IReviewService<Review> {
     @Override
     public Review createPropertyReview(Review review, Long propertyId) {
         Property property = this.propertyRepository.findById(propertyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
-        property.getReviews().add(review);
-        this.propertyRepository.saveAndFlush(property);
-        return review;
+        if (!this.guestEligibleToReviewProperty(review.getAuthor().getId(), propertyId)) {
+            throw new RuntimeException("Review author not eligible to review property");
+        }
+        review.setProperty(property);
+        return reviewRepository.saveAndFlush(review);
     }
 
     @Override
-    public Review createHostReview(Review review, Long propertyId) {
-        //TODO: Create host reveiews
-        return null;
+    public Review createHostReview(Review review, Long hostId) {
+        Account host = this.accountService.find(hostId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Host not found"));
+        if (!this.guestEligibleToReviewHost(review.getAuthor().getId(), hostId)) {
+            throw new RuntimeException("Review author not eligible to review host");
+        }
+        review.setHost(host);
+        return reviewRepository.saveAndFlush(review);
     }
 
     @Override
     public Review update(Review review) {
-        return reviewRepository.save(review);
+        return reviewRepository.saveAndFlush(review);
     }
 
     @Override
@@ -84,7 +93,7 @@ public class ReviewService implements IReviewService<Review> {
     }
 
     @Override
-    public boolean guestEligibleToReivew(Long guestId, Long propertyId) {
+    public boolean guestEligibleToReviewProperty(Long guestId, Long propertyId) {
         Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtPropertyForGuestAfterDate(guestId, propertyId, LocalDate.now(clock).minusDays(reviewDeadline));
         Optional<Account> guest = accountService.find(guestId);
         if (guest.isEmpty() || guest.get().getRole() != AccountRole.GUEST || propertyRepository.findPropertyReviewByGuest(propertyId, guestId).isPresent()) {
@@ -93,13 +102,34 @@ public class ReviewService implements IReviewService<Review> {
         return !eligibleReservations.isEmpty();
     }
 
+    @Override
+    public boolean guestEligibleToReviewHost(Long guestId, Long hostId) {
+        Collection<Reservation> eligibleReservations = reservationRepository.findAllPastReservationsAtHostAfterDate(guestId, hostId, LocalDate.now(clock).minusDays(reviewDeadline));
+        Optional<Account> guest = accountService.find(guestId);
+        if (guest.isEmpty() || guest.get().getRole() != AccountRole.GUEST || reviewRepository.findHostReviewByGuest(hostId, guestId).isPresent()) {
+            return false;
+        }
+        return !eligibleReservations.isEmpty();
+    }
+
     public Collection<Review> getAllReviewsForHost(Long hostId) {
-        Optional<Account> host = accountService.find(hostId);
-        return host.map(Account::getReviews).orElse(Collections.emptyList());
+        return reviewRepository.findApprovedReviewsForHost(hostId);
     }
 
     public Collection<Review> getALlReviewsForProperty(Long propertyId) {
-       Optional<Property> property = propertyRepository.findById(propertyId);
-       return property.map(Property::getReviews).orElse(Collections.emptyList());
+        return reviewRepository.findApprovedReviewsForProperty(propertyId);
+    }
+
+    @Override
+    public Collection<Review> findAllUnapproved() {
+        return this.reviewRepository.findAllByApproved(false);
+    }
+
+    @Override
+    public Review approveReview(Review review) {
+        review.setApproved(true);
+        Review approvedReview = this.update(review);
+        this.notificationService.createNotification(review);
+        return approvedReview;
     }
 }
