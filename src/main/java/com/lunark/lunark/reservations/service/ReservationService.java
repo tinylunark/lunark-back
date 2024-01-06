@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,11 +30,12 @@ public class ReservationService implements IReservationService {
 
 
     @Autowired
-    public ReservationService(IReservationRepository reservationRepository, IPropertyRepository propertyRepository, IAccountRepository accountRepository, INotificationService notificationService) {
+    public ReservationService(IReservationRepository reservationRepository, IPropertyRepository propertyRepository, IAccountRepository accountRepository, INotificationService notificationService, Clock clock) {
         this.reservationRepository = reservationRepository;
         this.propertyRepository = propertyRepository;
         this.accountRepository = accountRepository;
         this.notificationService = notificationService;
+        this.clock = clock;
     }
 
     @Override
