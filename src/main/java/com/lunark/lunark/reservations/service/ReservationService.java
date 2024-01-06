@@ -2,6 +2,7 @@ package com.lunark.lunark.reservations.service;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.repository.IAccountRepository;
+import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -23,13 +25,17 @@ public class ReservationService implements IReservationService {
     private final IReservationRepository reservationRepository;
     private final IPropertyRepository propertyRepository;
     private final IAccountRepository accountRepository;
+    private final INotificationService notificationService;
     private Clock clock;
 
+
     @Autowired
-    public ReservationService(IReservationRepository reservationRepository, IPropertyRepository propertyRepository, IAccountRepository accountRepository) {
+    public ReservationService(IReservationRepository reservationRepository, IPropertyRepository propertyRepository, IAccountRepository accountRepository, INotificationService notificationService, Clock clock) {
         this.reservationRepository = reservationRepository;
         this.propertyRepository = propertyRepository;
         this.accountRepository = accountRepository;
+        this.notificationService = notificationService;
+        this.clock = clock;
     }
 
     @Override
@@ -127,8 +133,7 @@ public class ReservationService implements IReservationService {
             if(existingReservation.getId().equals(reservation.getId()))
                 continue;
             if (doDatesOverlap(reservation, existingReservation)) {
-                existingReservation.setStatus(ReservationStatus.REJECTED);
-                reservationRepository.save(existingReservation);
+                this.acceptOrRejectReservation(existingReservation, ReservationStatus.REJECTED);
             }
         }
     }
@@ -147,6 +152,7 @@ public class ReservationService implements IReservationService {
             updatePropertyAvailability(reservation, true);
             updateReservations(reservation);
         }
+        notificationService.createNotification(reservation);
         save(reservation);
     }
 
@@ -157,6 +163,7 @@ public class ReservationService implements IReservationService {
         }
         reservation.setStatus(ReservationStatus.CANCELLED);
         updatePropertyAvailability(reservation, false);
+        notificationService.createNotification(reservation);
         save(reservation);
         return true;
     }
