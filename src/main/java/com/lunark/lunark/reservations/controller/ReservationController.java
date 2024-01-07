@@ -1,16 +1,19 @@
 package com.lunark.lunark.reservations.controller;
 
 import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.mapper.ReservationDtoMapper;
 import com.lunark.lunark.reservations.dto.ReservationResponseDto;
 import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
+import com.lunark.lunark.reservations.dto.ReservationSearchDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.service.IReservationService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,4 +128,30 @@ public class ReservationController {
         List<ReservationDto> reservationDtos = reservations.stream().map(ReservationDtoMapper::fromReservationToDto) .toList();
         return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
     }
+    @GetMapping(value = "/current")
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
+    public ResponseEntity<List<ReservationResponseDto>> getReservationsForCurrentUser(
+            @RequestParam(required = false) String propertyName,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) ReservationStatus status
+            ) {
+        Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean isHost = currentUser.getRole() == AccountRole.HOST;
+
+        ReservationSearchDto dto = ReservationSearchDto.builder()
+                .propertyName(propertyName)
+                .startDate(startDate)
+                .endDate(endDate)
+                .status(status)
+                .accountId(currentUser.getId())
+                .build();
+
+        List<ReservationResponseDto> reservations = reservationService.findByFilter(dto, isHost).stream()
+                .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
+                .toList();
+
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.lunark.lunark.reservations.service;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
+import com.lunark.lunark.reservations.dto.ReservationSearchDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public interface IReservationService {
     List<Reservation> getAllReservationsForPropertiesList(List<Property> propertiesList);
 
     List<Reservation> getAllReservationsForUser(Long userId);
+    List<Reservation> findByFilter(ReservationSearchDto dto, boolean isHost);
 
     public List<Reservation> getIncomingReservationsForHostId(Long hostId);
     public List<Reservation> getAllAcceptedReservations(Long guestId);
