@@ -2,6 +2,7 @@ package com.lunark.lunark.reservations.controller;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
+import com.lunark.lunark.mapper.ReservationDtoMapper;
 import com.lunark.lunark.reservations.dto.ReservationResponseDto;
 import com.lunark.lunark.reservations.dto.ReservationDto;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
+
     private final IReservationService reservationService;
     private final ModelMapper modelMapper;
 
@@ -60,22 +65,40 @@ public class ReservationController {
     }
 
     @PostMapping(path = "/accept/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDto> acceptReservation(@RequestHeader("x-access-token") String hostToken, @PathVariable("reservation_id") Long id) {
-        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "accepted", 0);
-        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ReservationDto> acceptReservation(@PathVariable("reservation_id") Long id) {
+        Optional<Reservation>  reservationOptional = reservationService.findById(id);
+        if(reservationOptional.isPresent()) {
+            Reservation reservation = reservationOptional.get();
+            reservationService.acceptOrRejectReservation(reservation, ReservationStatus.ACCEPTED);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping(path = "/reject/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDto> rejectReservation(@RequestHeader("x-access-token") String hostToken, @PathVariable("reservation_id") Long id) {
-        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "cancelled", 0);
-        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ReservationDto> rejectReservation(@PathVariable("reservation_id") Long id) {
+        Optional<Reservation>  reservationOptional = reservationService.findById(id);
+        if(reservationOptional.isPresent()) {
+            Reservation reservation = reservationOptional.get();
+            reservationService.acceptOrRejectReservation(reservation, ReservationStatus.REJECTED);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
-
     @PostMapping(path = "/cancel/{reservation_id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReservationDto> cancelReservation(@RequestHeader("x-access-token") String guest, @PathVariable("reservation_id") Long id) {
-        ReservationDto reservationDto = new ReservationDto(2L, 1L, "Vila Golija", LocalDate.of(2024, 6, 14), LocalDate.of(2023, 6, 16), 9959, 1L, 3, "rejected", 0);
-        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<ReservationDto> cancelReservation(@PathVariable("reservation_id") Long id) {
+        Optional<Reservation> reservation = reservationService.findById(id);
+        if (reservation.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (reservationService.cancelReservation(reservation.get()) == false) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+        return ResponseEntity.ok(ReservationDtoMapper.fromReservationToDto(reservation.get()));
     }
 
     @GetMapping(value="")
@@ -86,6 +109,25 @@ public class ReservationController {
         return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
     }
 
+    @GetMapping(value="/incoming-reservations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<List<ReservationDto>> getIncomingReservations(@RequestParam("hostId") Long hostId) {
+        List<Reservation> reservations = reservationService.getIncomingReservationsForHostId(hostId).stream().filter(reservation -> ReservationStatus.PENDING.equals(reservation.getStatus())).toList();
+        if(reservations.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<ReservationDto> reservationDtos = reservations.stream().map(ReservationDtoMapper::fromReservationToDto) .toList();
+        return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value="/accepted-reservations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<List<ReservationDto>> getAcceptedReservations(@RequestParam("guestId") Long guestId) {
+        List<Reservation> reservations = reservationService.getAllAcceptedReservations(guestId);
+        if(reservations.isEmpty()) { return new ResponseEntity<>(HttpStatus.NOT_FOUND); }
+        List<ReservationDto> reservationDtos = reservations.stream().map(ReservationDtoMapper::fromReservationToDto) .toList();
+        return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
+    }
     @GetMapping(value = "/current")
     @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<List<ReservationResponseDto>> getReservationsForCurrentUser(

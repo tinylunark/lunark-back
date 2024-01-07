@@ -53,4 +53,16 @@ public class Reservation {
         this.property = property;
         this.guest = guest;
     }
+
+    public void copyFields(Reservation other) {
+        this.setId(other.getId());
+        this.setStartDate((other.getStartDate()));
+        this.setEndDate(other.getEndDate());
+        this.setNumberOfGuests(other.getNumberOfGuests());
+        this.setStatus(other.getStatus());
+        this.setPrice(other.getPrice());
+        this.setProperty(other.getProperty());
+        this.setGuest(other.getGuest());
+        this.setDeleted(other.isDeleted());
+    }
 }
