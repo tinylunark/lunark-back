@@ -10,9 +10,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ReservationSpecification implements Specification<Reservation> {
     private final ReservationSearchDto filter;
+    private final boolean isHost;
 
-    public ReservationSpecification(ReservationSearchDto filter) {
+    public ReservationSpecification(ReservationSearchDto filter, boolean isHost) {
         this.filter = filter;
+        this.isHost = isHost;
     }
 
 
@@ -46,7 +48,12 @@ public class ReservationSpecification implements Specification<Reservation> {
         }
 
         if (filter.getAccountId() != null) {
-            Predicate accountIdPredicate = criteriaBuilder.equal(root.get("guest").get("id"), filter.getAccountId());
+            Predicate accountIdPredicate;
+            if (isHost) {
+                accountIdPredicate = criteriaBuilder.equal(root.get("property").get("host").get("id"), filter.getAccountId());
+            } else {
+                accountIdPredicate = criteriaBuilder.equal(root.get("guest").get("id"), filter.getAccountId());
+            }
 
             predicate = criteriaBuilder.and(predicate, accountIdPredicate);
         }

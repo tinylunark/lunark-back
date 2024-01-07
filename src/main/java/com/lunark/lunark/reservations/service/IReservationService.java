@@ -13,5 +13,5 @@ public interface IReservationService {
     List<Reservation> getAllReservationsForPropertiesList(List<Property> propertiesList);
 
     List<Reservation> getAllReservationsForUser(Long userId);
-    List<Reservation> findByFilter(ReservationSearchDto dto);
+    List<Reservation> findByFilter(ReservationSearchDto dto, boolean isHost);
 }

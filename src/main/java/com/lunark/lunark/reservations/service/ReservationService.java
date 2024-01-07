@@ -99,8 +99,8 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public List<Reservation> findByFilter(ReservationSearchDto dto) {
-        Specification<Reservation> specification = new ReservationSpecification(dto);
+    public List<Reservation> findByFilter(ReservationSearchDto dto, boolean isHost) {
+        Specification<Reservation> specification = new ReservationSpecification(dto, isHost);
 
         return reservationRepository.findAll(specification);
     }
