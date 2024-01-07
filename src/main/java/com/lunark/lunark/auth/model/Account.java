@@ -6,6 +6,7 @@ import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import lombok.Data;
+import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,6 +48,11 @@ public class Account implements UserDetails {
     private ProfileImage profileImage;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name="account_reviews",
+            joinColumns = {@JoinColumn(name = "account_id")},
+            inverseJoinColumns = {@JoinColumn(name = "reviews_id")}
+    )
     private Collection<Review> reviews;
     @ManyToMany
     private Set<Property> favoriteProperties;
@@ -55,6 +61,17 @@ public class Account implements UserDetails {
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @Formula("(select count(*) from reservation r where r.status = 3 and r.guest_id = id)")
+    private int cancelCount;
+
+    public int getCancelCount() {
+        return cancelCount;
+    }
+
+    public void setCancelCount(int cancelCount) {
+        this.cancelCount = cancelCount;
+    }
 
     @Formula("(select avg(r.rating) from review r join account_reviews ar on ar.reviews_id = r.id where ar.account_id = id and r.approved = true)")
     private Double averageRating;

@@ -23,7 +23,7 @@ INSERT INTO account (email, password, name, surname, address, phone_number, veri
 -- Review imports
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Great host!', true, '2023-01-10T12:30:00', 0, 1);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Amazing property!', true, '2023-02-15T15:45:00', 1, 4);
-INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Average experience', false, '2023-03-20T10:15:00', 0, 5);
+INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (3, 'Average experience', true, '2023-03-20T10:15:00', 0, 5);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (5, 'Highly recommended!', true, '2023-04-25T08:00:00', 1, 6);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (2, 'Not satisfied', false, '2023-05-30T18:20:00', 0, 7);
 INSERT INTO Review (rating, description, approved, date, type, author_id) VALUES (4, 'Enjoyed my stay', true, '2023-06-05T22:00:00', 1, 8);
@@ -66,6 +66,7 @@ insert into property_reviews(property_id, reviews_id) values (5, 5);
 --Connect reviews and hosts
 insert into account_reviews(account_id, reviews_id) values (2, 7);
 insert into account_reviews(account_id, reviews_id) values (2, 9);
+insert into account_reviews(account_id, reviews_id) values (2, 3);
 
 
 -- Amenity imports
@@ -81,6 +82,31 @@ insert into verification_link (used, account_id, created) values (false, 6, '202
 
 -- Reservation imports
 -- Statuses 0: pending 1: accepted 2: rejected 3: cancelled
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-12-20', '2024-12-25', 3, 10000, 1, 1, 1);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-1-2', '2024-1-10', 3, 10000, 1, 1, 2);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-11-10', '2024-11-13', 3, 10000, 1, 1, 3);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-5-20', '2024-5-25', 3, 10000, 0, 1, 4);
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-5-20', '2024-5-25', 3, 10000, 3, 1, 5);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-26', '2024-5-29', 3, 10000, 0, 4, 6);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-27', '2024-5-30', 3, 10000, 0, 5, 7);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-28', '2024-5-31', 3, 10000, 0, 6, 8);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-26', '2024-5-29', 3, 10000, 0, 7, 9);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-27', '2024-5-30', 3, 10000, 0, 8, 1);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-28', '2024-12-31', 3, 10000, 0, 9, 2);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-26', '2024-12-29', 3, 10000, 0, 1, 3);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-27', '2024-12-30', 3, 10000, 0, 4, 4);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-28', '2024-12-31', 3, 10000, 0, 5, 5);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-26', '2024-12-29', 3, 10000, 0, 6, 6);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-27', '2024-12-30', 3, 10000, 0, 7, 8);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-7-28', '2024-7-31', 3, 10000, 0, 8, 8);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-7-26', '2024-7-29', 3, 10000, 0, 9, 9);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-7-27', '2024-7-30', 3, 10000, 0, 1, 10);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-7-28', '2024-7-31', 3, 10000, 0, 4, 1);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-26', '2024-12-29', 3, 10000, 0, 5, 2);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-27', '2024-12-30', 3, 10000, 0, 6, 3);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-28', '2024-12-31', 3, 10000, 0, 7, 4);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-26', '2024-12-29', 3, 10000, 0, 8, 5);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-27', '2024-12-30', 3, 10000, 0, 9, 5);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 1, 1, 4);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 1, 1, 6);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-11-10', '2023-11-13', 3, 10000, 1, 1, 5);
@@ -88,4 +114,22 @@ insert into reservation(start_date, end_date, number_of_guests, price, status, g
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 3, 1, 7);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-20', '2024-01-01', 3, 10000, 3, 4, 7);
 
+--Notification imports
+insert into notification (read, date, recipient_id, text, type) values (false, '2024-01-03T23:06:00+01:00', 1, 'New property review', 0);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'New host review', 1);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation request received', 2);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation canceled', 3);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation accepted', 4);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 1, 'Reservation rejected', 5);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation accepted', 4);
+insert into notification (read, date, recipient_id, text, type) values (false, '2023-12-12', 2, 'Reservation rejected', 5);
 
+INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (3, '2023-03-20T10:15:00', 3, 3);
+INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (4, '2023-10-28T20:45:00', 4, 4);
+INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (5, '2023-05-30T18:20:00', 5, 5);
+
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (1, '2023-03-20T10:15:00', 3, 4);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (2, '2023-10-28T20:45:00', 3, 6);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (3, '2023-05-30T18:20:00', 3, 8);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (4, '2023-03-20T10:15:00', 2, 4);
+INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (5, '2023-10-28T20:45:00', 1, 7);

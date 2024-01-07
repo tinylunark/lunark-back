@@ -28,7 +28,7 @@ public class ReviewDtoMapper {
         return modelMapper.map(reviewDto, Review.class);
     }
     public static Review toPropertyReview(ReviewRequestDto reviewRequestDto, Account author) {
-        Review propertyReview = modelMapper.map(reviewRequestDto, Review.class);
+        Review propertyReview = toReview(reviewRequestDto, author);
         propertyReview.setType(Review.ReviewType.PROPERTY);
         return propertyReview;
     }
@@ -45,6 +45,13 @@ public class ReviewDtoMapper {
         return review;
     }
     public static ReviewDto toDto(Review review) {
-        return new ReviewDto(review.getRating(), review.getDescription(), review.getDate(), review.getAuthor().getName() + " " + review.getAuthor().getSurname(), review.getAuthor().getId(), review.getId());
+        return new ReviewDto(review.getRating(),
+                review.getDescription(),
+                review.getDate(),
+                review.getAuthor().getName() + " " + review.getAuthor().getSurname(),
+                review.getAuthor().getId(),
+                review.getType(),
+                review.getId()
+                );
     }
 }
