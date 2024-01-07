@@ -4,11 +4,10 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import lombok.Data;
 import lombok.Getter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +20,7 @@ import java.util.*;
         + "SET deleted = true "
         + "WHERE id = ?")
 @Where(clause = "deleted = false")
+@Data
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +55,9 @@ public class Account implements UserDetails {
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @Formula("(select avg(r.rating) from review r join account_reviews ar on ar.reviews_id = r.id where ar.account_id = id and r.approved = true)")
+    private Double averageRating;
 
     public Set<Reservation> getReservations() {
         return reservations;
