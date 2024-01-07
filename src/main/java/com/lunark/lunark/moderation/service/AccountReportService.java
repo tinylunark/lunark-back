@@ -44,16 +44,21 @@ public class AccountReportService implements IAccountReportService {
         return this.accountReportRepository.saveAndFlush(report);
     }
 
+    private boolean canReportEachOther(Account guest, Account host) {
+        return this.accountReportRepository.canReportEachOther(guest.getId(), host.getId());
+    }
+
     private boolean isUnauthorized(AccountReport report) {
-        if (report.getReporter().getRole().equals(AccountRole.GUEST) && !this.isGuestEligibleToReport(report.getReporter(), report.getReported().getId())) {
-            return true;
+        Account reporter = report.getReporter();
+        Account reported = report.getReported();
+        switch (report.getReporter().getRole()) {
+            case GUEST:
+                return !this.canReportEachOther(reporter, reported);
+            case HOST:
+                return !this.canReportEachOther(reported, reporter);
+            default:
+                return true;
         }
-        else if (report.getReporter().getRole().equals(AccountRole.HOST) && !this.accountReportRepository.canReportEachOther(report.getReported().getId(), report.getReporter().getId())) {
-            return true;
-        } else if (report.getReporter().getRole().equals(AccountRole.ADMIN)) {
-            return true;
-        }
-        return false;
     }
 
     @Override
