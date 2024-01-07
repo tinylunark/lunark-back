@@ -48,8 +48,7 @@ public class AccountReportService implements IAccountReportService {
         if (report.getReporter().getRole().equals(AccountRole.GUEST) && !this.isGuestEligibleToReport(report.getReporter(), report.getReported().getId())) {
             return true;
         }
-        else if (report.getReporter().getRole().equals(AccountRole.HOST)) {
-            //TODO: Implement checking if a guest report is authorized
+        else if (report.getReporter().getRole().equals(AccountRole.HOST) && !this.accountReportRepository.canReportEachOther(report.getReported().getId(), report.getReporter().getId())) {
             return true;
         } else if (report.getReporter().getRole().equals(AccountRole.ADMIN)) {
             return true;
