@@ -62,7 +62,7 @@ public class AccountReportService implements IAccountReportService {
         if (accountService.find(hostId).isEmpty()) {
             throw new RuntimeException("Could not find host with given id");
         }
-        if (guest.getRole().equals(AccountRole.GUEST) && this.reservationService.hasPastReservationsAtHost(guest.getId(), hostId)) {
+        if (guest.getRole().equals(AccountRole.GUEST) && this.accountReportRepository.canReportEachOther(guest.getId(), hostId)) {
             return true;
         }
         return false;
