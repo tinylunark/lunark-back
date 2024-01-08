@@ -14,17 +14,17 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ReservationServiceTests {
@@ -40,7 +40,8 @@ public class ReservationServiceTests {
     @InjectMocks
     private ReservationService service;
 
-    private Property property;
+    private Property property, property1, property2;
+    private Reservation reservation1, reservation2;
 
     private ReservationRequestDto dto;
 
@@ -58,6 +59,7 @@ public class ReservationServiceTests {
                 .maxGuests(5)
                 .availabilityEntries(entries)
                 .build();
+
     }
 
     @Test
@@ -67,7 +69,7 @@ public class ReservationServiceTests {
         Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.create(dto, "user");
         });
-        Assertions.assertTrue(exception.getMessage().contains("property"));
+        assertTrue(exception.getMessage().contains("property"));
     }
 
     @ParameterizedTest
@@ -79,7 +81,7 @@ public class ReservationServiceTests {
             service.create(param, "user");
         });
 
-        Assertions.assertTrue(exception.getMessage().contains("date"));
+        assertTrue(exception.getMessage().contains("date"));
     }
 
     static List<ReservationRequestDto> invalidDatesSource() {
@@ -97,7 +99,7 @@ public class ReservationServiceTests {
         Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.create(param, "user");
         });
-        Assertions.assertTrue(exception.getMessage().contains("guest"));
+        assertTrue(exception.getMessage().contains("guest"));
     }
 
     static List<ReservationRequestDto> invalidGuestsSource() {
@@ -118,7 +120,7 @@ public class ReservationServiceTests {
             service.create(dto, "user");
         });
 
-        Assertions.assertTrue(exception.getMessage().contains("user"));
+        assertTrue(exception.getMessage().contains("user"));
     }
 
     @Test
@@ -150,7 +152,7 @@ public class ReservationServiceTests {
 
         Optional<Reservation> result = service.findById(1L);
 
-        Assertions.assertTrue(result.isPresent());
+        assertTrue(result.isPresent());
         Assertions.assertEquals(result.get().getId(), Long.valueOf(1L));
         Mockito.verify(reservationRepository, Mockito.times(1)).findById(1L);
     }
@@ -161,4 +163,91 @@ public class ReservationServiceTests {
         Optional<Reservation> result = service.findById(1L);
         assertFalse(result.isPresent());
     }
+
+    @Test
+    void testGetAllReservationsForPropertiesListEmptyPropertiesList() {
+        List<Property> propertiesList = new ArrayList<>();
+        List<Reservation> result = service.getAllReservationsForPropertiesList(propertiesList);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetAllReservationsForPropertiesListWithNoReservations() {
+        Property property1 = new Property();
+        Property property2 = new Property();
+        List<Property> propertiesList = List.of(property1, property2);
+
+        Mockito.when(reservationRepository.findAll()).thenReturn(new ArrayList<>());
+
+        List<Reservation> result = service.getAllReservationsForPropertiesList(propertiesList);
+
+        Assertions.assertTrue(result.isEmpty());
+        Mockito.verify(reservationRepository).findAll();
+    }
+
+    @Test
+    void testGetAllReservationsForPropertiesListWithReservations() {
+        Property property1 = new Property();
+        property1.setId(1L);
+
+        Property property2 = new Property();
+        property2.setId(2L);
+
+        Reservation reservation1 = new Reservation();
+        reservation1.setProperty(property1);
+
+        Reservation reservation2 = new Reservation();
+        reservation2.setProperty(property2);
+
+        Mockito.when(reservationRepository.findAll()).thenReturn(List.of(reservation1, reservation2));
+        List<Property> propertiesList = List.of(property1, property2);
+
+        List<Reservation> result = service.getAllReservationsForPropertiesList(propertiesList);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(reservation1));
+        assertTrue(result.contains(reservation2));
+        Mockito.verify(reservationRepository).findAll();
+    }
+
+    @Test
+    void testGetAllReservationsForPropertiesListWithNullProperty() {
+        Property property1 = new Property();
+        property1.setId(1L);
+
+        Reservation reservation1 = new Reservation();
+        reservation1.setProperty(null);
+        Reservation reservation2 = new Reservation();
+        reservation1.setProperty(property1);
+
+        List<Property> propertiesList = List.of(property1);
+        List<Reservation> reservations = List.of(reservation1, reservation2);
+        Mockito.when(reservationRepository.findAll()).thenReturn(reservations);
+
+        List<Reservation> result = service.getAllReservationsForPropertiesList(propertiesList);
+
+        Assertions.assertEquals(result.size(), 1);
+        Mockito.verify(reservationRepository).findAll();
+    }
+
+    @Test
+    void testNoReservationsForPropertiesList() {
+        Property property1 = new Property();
+        property1.setId(1L);
+
+        Property property2 = new Property();
+        property2.setId(2L);
+
+        Reservation reservation1 = new Reservation();
+        reservation1.setProperty(property1);
+
+        List<Property> propertiesList = List.of(property2);
+        List<Reservation> reservations = List.of(reservation1);
+
+        Mockito.when(reservationRepository.findAll()).thenReturn(reservations);
+        List<Reservation> result = service.getAllReservationsForPropertiesList(propertiesList);
+
+        Assertions.assertTrue(result.isEmpty());
+    }
+
 }
