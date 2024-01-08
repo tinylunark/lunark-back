@@ -410,4 +410,43 @@ public class ReservationServiceTests {
         List<Reservation> result = service.getAllAcceptedReservations(guestId);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void testSaveWithExistingReservation() {
+        Reservation existingReservation = new Reservation();
+        existingReservation.setId(1L);
+        existingReservation.setStatus(ReservationStatus.PENDING);
+
+        Reservation updatedReservation = new Reservation();
+        updatedReservation.setId(1L);
+        updatedReservation.setStatus(ReservationStatus.ACCEPTED);
+
+        when(reservationRepository.findById(1L)).thenReturn(Optional.of(existingReservation));
+
+        service.save(updatedReservation);
+
+        assertEquals(ReservationStatus.ACCEPTED, updatedReservation.getStatus());
+        verify(reservationRepository).saveAndFlush(existingReservation);
+    }
+    @Test
+    void testSaveWithReservationNotFound() {
+        Reservation newReservation = new Reservation();
+        newReservation.setId(1L);
+        newReservation.setStatus(ReservationStatus.PENDING);
+
+        when(reservationRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.save(newReservation),
+                "Expected save to throw RuntimeException"
+        );
+
+        assertEquals("Reservation not found with id: 1", exception.getMessage());
+    }
+
+
+
+
+
 }
