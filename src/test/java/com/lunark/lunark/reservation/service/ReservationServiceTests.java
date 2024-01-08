@@ -16,12 +16,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -250,4 +249,48 @@ public class ReservationServiceTests {
         Assertions.assertTrue(result.isEmpty());
     }
 
+    @Test
+    void testGetAllReservationsForUserSuccess() {
+        Long userId = 1L;
+        Account mockAccount = new Account();
+        Reservation reservation1 = Reservation.builder().id(1L).build();
+        Reservation reservation2 = Reservation.builder().id(2L).build();
+        mockAccount.setReservations(Set.of(reservation1, reservation2));
+        when(accountRepository.findById(userId)).thenReturn(Optional.of(mockAccount));
+
+        List<Reservation> result = service.getAllReservationsForUser(userId);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(reservation1));
+        assertTrue(result.contains(reservation2));
+    }
+
+    @Test
+    void testGetAllReservationsForUserWhenUserNotFound() {
+        Long userId = 1L;
+        Mockito.when(accountRepository.findById(userId)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> service.getAllReservationsForUser(userId),
+                "Expected ResponseStatusException to be thrown"
+        );
+
+        assertEquals("404 NOT_FOUND \"Guest not found\"", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Guest not found"), "Expected message to contain 'Guest not found'");
+    }
+
+    @Test
+    void testGetAllReservationsForUserWithNoReservations() {
+        Long userId = 1L;
+        Account mockAccount = new Account();
+        mockAccount.setId(userId);
+        mockAccount.setReservations(new HashSet<>());
+        Mockito.when(accountRepository.findById(userId)).thenReturn(Optional.of(mockAccount));
+
+        List<Reservation> result = service.getAllReservationsForUser(userId);
+
+        assertTrue(result.isEmpty());
+        Mockito.verify(accountRepository).findById(userId);
+    }
 }
