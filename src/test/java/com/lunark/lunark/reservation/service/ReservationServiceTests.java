@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 @ExtendWith(MockitoExtension.class)
 public class ReservationServiceTests {
     @Mock
@@ -59,21 +61,18 @@ public class ReservationServiceTests {
     }
 
     @Test
-    void Non_existent_property_should_throw_exception() {
+    void testNonExistentPropertyShouldThrowException() {
         dto = new ReservationRequestDto(2L, null, null, 2);
-
         Mockito.when(propertyRepository.findById(dto.getPropertyId())).thenReturn(Optional.empty());
-
         Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.create(dto, "user");
         });
-
         Assertions.assertTrue(exception.getMessage().contains("property"));
     }
 
     @ParameterizedTest
     @MethodSource(value = "invalidDatesSource")
-    void Invalid_date_range_should_throw_exception(ReservationRequestDto param) {
+    void testInvalidDateRangeShouldThrowException(ReservationRequestDto param) {
         Mockito.lenient().when(propertyRepository.findById(param.getPropertyId())).thenReturn(Optional.of(property));
 
         Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
@@ -83,20 +82,33 @@ public class ReservationServiceTests {
         Assertions.assertTrue(exception.getMessage().contains("date"));
     }
 
+    static List<ReservationRequestDto> invalidDatesSource() {
+        return List.of(
+                new ReservationRequestDto(1L, LocalDate.now(), LocalDate.now().plusDays(1), 2),
+                new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(5), 2)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource(value = "invalidGuestsSource")
-    void Invalid_number_of_guests_should_throw_exception(ReservationRequestDto param) {
+    void testInvalidNumberOfGuestsShouldThrowException(ReservationRequestDto param) {
         Mockito.lenient().when(propertyRepository.findById(param.getPropertyId())).thenReturn(Optional.of(property));
 
         Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.create(param, "user");
         });
-
         Assertions.assertTrue(exception.getMessage().contains("guest"));
     }
 
+    static List<ReservationRequestDto> invalidGuestsSource() {
+        return List.of(
+                new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 2),
+                new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 7)
+        );
+    }
+
     @Test
-    void Non_existent_user_should_throw_exception() {
+    void testNonExistentUserShouldThrowException() {
         dto = new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 3);
 
         Mockito.when(propertyRepository.findById(dto.getPropertyId())).thenReturn(Optional.of(property));
@@ -110,7 +122,7 @@ public class ReservationServiceTests {
     }
 
     @Test
-    void Creating_reservation_should_create_new_reservation() {
+    void testCreatingReservationShouldCreateNewReservation() {
         dto = new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(4), 3);
 
         Mockito.when(propertyRepository.findById(dto.getPropertyId())).thenReturn(Optional.of(property));
@@ -130,17 +142,23 @@ public class ReservationServiceTests {
         Assertions.assertEquals(3, reservation.getNumberOfGuests());
     }
 
-    static List<ReservationRequestDto> invalidDatesSource() {
-        return List.of(
-                new ReservationRequestDto(1L, LocalDate.now(), LocalDate.now().plusDays(1), 2),
-                new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(5), 2)
-        );
+    @Test
+    public void testFindByIdSuccess() {
+        Reservation mockReservation = new Reservation();
+        mockReservation.setId(1L);
+        Mockito.when(reservationRepository.findById(1L)).thenReturn(Optional.of(mockReservation));
+
+        Optional<Reservation> result = service.findById(1L);
+
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(result.get().getId(), Long.valueOf(1L));
+        Mockito.verify(reservationRepository, Mockito.times(1)).findById(1L);
     }
 
-    static List<ReservationRequestDto> invalidGuestsSource() {
-        return List.of(
-                new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 2),
-                new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 7)
-        );
+    @Test
+    public void testFindByIdNotFound() {
+        Mockito.when(reservationRepository.findById(1L)).thenReturn(Optional.empty());
+        Optional<Reservation> result = service.findById(1L);
+        assertFalse(result.isPresent());
     }
 }
