@@ -192,7 +192,7 @@ public class ReservationService implements IReservationService {
 
         for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries())  {
             LocalDate entryDate = entry.getDate();
-            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(entryDate)) {
+            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(endDate)) {
                 entry.setReserved(isrReserved);
             }
 
