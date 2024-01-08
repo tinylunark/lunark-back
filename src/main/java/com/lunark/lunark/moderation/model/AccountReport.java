@@ -20,15 +20,18 @@ public class AccountReport
         @ManyToOne
         @JoinColumn(name = "reported_id")
         private Account reported;
+        @Column
+        private String reason;
 
         public AccountReport() {
         }
 
-        public AccountReport(Long id, LocalDateTime date, Account reporter, Account reported) {
+        public AccountReport(Long id, LocalDateTime date, Account reporter, Account reported, String reason) {
                 this.id = id;
                 this.date = date;
                 this.reporter = reporter;
                 this.reported = reported;
+                this.reason = reason;
         }
 
         public Long getId() {
@@ -61,5 +64,13 @@ public class AccountReport
 
         public void setReported(Account reported) {
                 this.reported = reported;
+        }
+
+        public String getReason() {
+                return reason;
+        }
+
+        public void setReason(String reason) {
+                this.reason = reason;
         }
 }
