@@ -12,4 +12,5 @@ public class AvailabilityEntryDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private double price;
+    private boolean isReserved;
 }
