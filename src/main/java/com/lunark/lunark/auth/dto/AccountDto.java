@@ -21,5 +21,6 @@ public class AccountDto {
     private boolean verified;
     private boolean blocked;
     private ProfileImage profileImage;
+    private Double averageRating;
     private int cancelCount;
 }

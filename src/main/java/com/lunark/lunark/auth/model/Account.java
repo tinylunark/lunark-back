@@ -5,6 +5,8 @@ import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
+import lombok.Data;
+import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +21,7 @@ import java.util.*;
         + "SET deleted = true "
         + "WHERE id = ?")
 @Where(clause = "deleted = false")
+@Data
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +72,9 @@ public class Account implements UserDetails {
     public void setCancelCount(int cancelCount) {
         this.cancelCount = cancelCount;
     }
+
+    @Formula("(select avg(r.rating) from review r join account_reviews ar on ar.reviews_id = r.id where ar.account_id = id and r.approved = true)")
+    private Double averageRating;
 
     public Set<Reservation> getReservations() {
         return reservations;
