@@ -6,6 +6,7 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
+import com.lunark.lunark.reservations.dto.ReservationSearchDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
@@ -16,7 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -292,5 +293,121 @@ public class ReservationServiceTests {
 
         assertTrue(result.isEmpty());
         Mockito.verify(accountRepository).findById(userId);
+    }
+
+    @Test
+    void testGetIncomingReservationsForHostIdSuccess() {
+        Long hostId = 1L;
+        Property property = new Property();
+        property.setId(1L);
+        Account host = new Account();
+        host.setId(hostId);
+        property.setHost(host);
+        Reservation reservation = new Reservation();
+        reservation.setProperty(property);
+
+        when(propertyRepository.findAll()).thenReturn(Collections.singletonList(property));
+        when(reservationRepository.findByPropertyId(property.getId())).thenReturn(Collections.singletonList(reservation));
+
+        List<Reservation> result = service.getIncomingReservationsForHostId(hostId);
+
+        assertEquals(1, result.size());
+        assertEquals(reservation, result.get(0));
+        verify(propertyRepository).findAll();
+        verify(reservationRepository).findByPropertyId(property.getId());
+    }
+
+    @Test
+    void testGetIncomingReservationsForHostIdNoProperties() {
+        Long hostId = 1L;
+        when(propertyRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<Reservation> result = service.getIncomingReservationsForHostId(hostId);
+
+        assertTrue(result.isEmpty());
+        verify(propertyRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetIncomingReservationsForHostWithNoReservations() {
+        Long hostId = 1L;
+        Property property = new Property();
+        property.setId(1L);
+        Account host = new Account();
+        host.setId(hostId);
+        property.setHost(host);
+
+        when(propertyRepository.findAll()).thenReturn(Collections.singletonList(property));
+        when(reservationRepository.findByPropertyId(property.getId())).thenReturn(Collections.emptyList());
+
+        List<Reservation> result = service.getIncomingReservationsForHostId(hostId);
+
+        assertEquals(0, result.size());
+        verify(propertyRepository).findAll();
+        verify(reservationRepository).findByPropertyId(property.getId());
+    }
+
+    @Test
+    void testGetAllAcceptedReservationsSuccess() {
+        Long guestId = 1L;
+        Account guest = new Account();
+        guest.setId(guestId);
+        Reservation acceptedReservation = new Reservation();
+        acceptedReservation.setId(1L);
+        acceptedReservation.setGuest(guest);
+        acceptedReservation.setStatus(ReservationStatus.ACCEPTED);
+
+        when(reservationRepository.findAll()).thenReturn(Arrays.asList(acceptedReservation));
+
+        List<Reservation> result = service.getAllAcceptedReservations(guestId);
+
+        assertEquals(1, result.size());
+        assertEquals(acceptedReservation, result.get(0));
+        verify(reservationRepository).findAll();
+    }
+    @Test
+    void testGetAllAcceptedReservationsWithNoReservations() {
+        Long guestId = 1L;
+        when(reservationRepository.findAll()).thenReturn(Collections.emptyList());
+        List<Reservation> result = service.getAllAcceptedReservations(guestId);
+
+        assertTrue(result.isEmpty());
+        verify(reservationRepository).findAll();
+    }
+
+    @Test
+    void testGetAllAcceptedReservationsWithDifferentStatus() {
+        Long guestId = 1L;
+
+        Account guest = new Account();
+        guest.setId(guestId);
+        Reservation pendingReservation = new Reservation();
+        pendingReservation.setId(1L);
+        pendingReservation.setGuest(guest);
+        pendingReservation.setStatus(ReservationStatus.PENDING);
+
+        Reservation rejectedReservation = new Reservation();
+        rejectedReservation.setId(2L);
+        rejectedReservation.setGuest(guest);
+        rejectedReservation.setStatus(ReservationStatus.REJECTED);
+
+        Reservation cancelledReservation = new Reservation();
+        cancelledReservation.setId(3L);
+        cancelledReservation.setGuest(guest);
+        cancelledReservation.setStatus(ReservationStatus.CANCELLED);
+
+        when(reservationRepository.findAll()).thenReturn(Arrays.asList(pendingReservation, rejectedReservation));
+
+        List<Reservation> result = service.getAllAcceptedReservations(guestId);
+
+        assertTrue(result.isEmpty());
+        verify(reservationRepository).findAll();
+    }
+    @Test
+    void testGetAllAcceptedReservationsWhenGuestNotFound() {
+        Long guestId = 1L;
+        when(reservationRepository.findAll()).thenReturn(Collections.emptyList());
+        List<Reservation> result = service.getAllAcceptedReservations(guestId);
+        assertTrue(result.isEmpty());
     }
 }
