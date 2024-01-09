@@ -1,7 +1,7 @@
 package com.lunark.lunark.moderation.service;
 
 import com.lunark.lunark.auth.model.Account;
-import com.lunark.lunark.auth.repository.IAccountRepository;
+import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.repository.IAccountReportRepository;
@@ -34,6 +34,38 @@ public class AccountReportService implements IAccountReportService {
     @Override
     public List<AccountReport> getAll() {
         return accountReportRepository.findAll();
+    }
+
+    @Override
+    public AccountReport create(AccountReport report) {
+        if (isUnauthorized(report)) {
+            throw new RuntimeException("This report can not be made");
+        }
+        return this.accountReportRepository.saveAndFlush(report);
+    }
+
+    private boolean isUnauthorized(AccountReport report) {
+        if (report.getReporter().getRole().equals(AccountRole.GUEST) && !this.isGuestEligibleToReport(report.getReporter(), report.getReported().getId())) {
+            return true;
+        }
+        else if (report.getReporter().getRole().equals(AccountRole.HOST)) {
+            //TODO: Implement checking if a guest report is authorized
+            return true;
+        } else if (report.getReporter().getRole().equals(AccountRole.ADMIN)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isGuestEligibleToReport(Account guest, Long hostId) {
+        if (accountService.find(hostId).isEmpty()) {
+            throw new RuntimeException("Could not find host with given id");
+        }
+        if (guest.getRole().equals(AccountRole.GUEST) && this.accountReportRepository.canReportEachOther(guest.getId(), hostId)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

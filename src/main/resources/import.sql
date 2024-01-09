@@ -128,8 +128,8 @@ INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (3, '2023-03-
 INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (4, '2023-10-28T20:45:00', 4, 4);
 INSERT INTO review_report(id, date, reporter_id, review_id) VALUES (5, '2023-05-30T18:20:00', 5, 5);
 
-INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (1, '2023-03-20T10:15:00', 3, 4);
-INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (2, '2023-10-28T20:45:00', 3, 6);
-INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (3, '2023-05-30T18:20:00', 3, 8);
-INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (4, '2023-03-20T10:15:00', 2, 4);
-INSERT INTO account_report(id, date, reporter_id, reported_id) VALUES (5, '2023-10-28T20:45:00', 1, 7);
+INSERT INTO account_report(date, reporter_id, reported_id, reason) VALUES ('2023-03-20T10:15:00', 3, 4, 'Reason 1');
+INSERT INTO account_report(date, reporter_id, reported_id, reason) VALUES ('2023-10-28T20:45:00', 3, 6, 'Reason 2');
+INSERT INTO account_report(date, reporter_id, reported_id, reason) VALUES ('2023-05-30T18:20:00', 3, 8, 'Reason 3');
+INSERT INTO account_report(date, reporter_id, reported_id, reason) VALUES ('2023-03-20T10:15:00', 2, 4, 'Reason 4');
+INSERT INTO account_report(date, reporter_id, reported_id, reason) VALUES ('2023-10-28T20:45:00', 1, 7, 'Reason 5');
