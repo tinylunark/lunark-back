@@ -178,6 +178,15 @@ public class ReservationService implements IReservationService {
         return true;
     }
 
+    @Override
+    public void deleteReservation(Long reservationId, Long accountId) {
+        Reservation reservation = findById(reservationId)
+                .filter(r -> r.getStatus() != ReservationStatus.ACCEPTED && Objects.equals(r.getGuest().getId(), accountId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation does not exist or it is accepted."));
+
+        reservationRepository.delete(reservation);
+    }
+
     private boolean isPastCancellationDeadline(Reservation reservation) {
         Property property = reservation.getProperty();
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
