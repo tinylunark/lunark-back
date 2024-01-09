@@ -23,4 +23,5 @@ public class AccountDto {
     private ProfileImage profileImage;
     private Double averageRating;
     private int cancelCount;
+    private boolean notificationsEnabled;
 }

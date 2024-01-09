@@ -138,6 +138,16 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    public Account toggleNotifications(Long accountId) {
+        Optional<Account> account = find(accountId);
+
+        return account.map(a -> {
+            a.toggleNotifications();
+            return accountRepository.save(a);
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with this id does not exist."));
+    }
+
+    @Override
     public boolean updatePassword(Long accountId, String oldPassword, String newPassword) {
         Optional<Account> accountToUpdate = accountRepository.findById(accountId);
         if (accountToUpdate.isEmpty() || !isOldPasswordCorrect(accountToUpdate.get(), oldPassword)) {

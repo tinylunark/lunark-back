@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -191,5 +192,15 @@ public class AccountController {
 
         byte[] profileImage = account.get().getProfileImage().getImageData();
         return new ResponseEntity<>(profileImage, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "notifications", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
+    public ResponseEntity<AccountDto> toggleNotifications() {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account updatedAccount = accountService.toggleNotifications(account.getId());
+        AccountDto dto = AccountDtoMapper.fromAccountToDTO(updatedAccount);
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }

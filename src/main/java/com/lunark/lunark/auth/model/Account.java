@@ -253,4 +253,8 @@ public class Account implements UserDetails {
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
     }
+
+    public void toggleNotifications() {
+        setNotificationsEnabled(!isNotificationsEnabled());
+    }
 }

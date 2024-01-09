@@ -26,4 +26,5 @@ public interface IAccountService {
     void saveProfileImage(Long accountId, MultipartFile file) throws IOException;
     void saveAndFlush(Account account);
     public void cancelAllReservations(List<Reservation> reservationList);
+    Account toggleNotifications(Long accountId);
 }
