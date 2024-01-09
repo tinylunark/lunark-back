@@ -49,6 +49,7 @@ public class AccountReportController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
     public ResponseEntity<AccountReportResponseDto> createReport(@RequestBody AccountReportRequestDto reportRequestDto) {
         Account reporter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountReport report;
