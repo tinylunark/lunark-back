@@ -31,4 +31,5 @@ public interface IReservationService {
     void acceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted);
 
     boolean cancelReservation(Reservation reservation);
+    void deleteReservation(Long reservationId, Long accountId);
 }
