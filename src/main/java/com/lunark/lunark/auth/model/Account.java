@@ -62,6 +62,9 @@ public class Account implements UserDetails {
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
 
+    @Column(name = "notifications_enabled", columnDefinition = "boolean default true", nullable = false)
+    private boolean notificationsEnabled = true;
+
     @Formula("(select count(*) from reservation r where r.status = 3 and r.guest_id = id)")
     private int cancelCount;
 

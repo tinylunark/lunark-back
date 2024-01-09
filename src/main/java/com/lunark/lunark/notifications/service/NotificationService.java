@@ -51,8 +51,7 @@ public class NotificationService implements INotificationService {
     }
 
     private boolean shouldSendNotification(Notification notification) {
-        // TODO: Check if notification should be sent based on the notification settings of the recipient and type of notification
-        return true;
+        return notification.getAccount().isNotificationsEnabled();
     }
     @Override
     public Notification createNotification(Review review)  {
