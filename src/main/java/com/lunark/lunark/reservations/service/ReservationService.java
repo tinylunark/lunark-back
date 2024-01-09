@@ -72,13 +72,19 @@ public class ReservationService implements IReservationService {
                 .price(totalPrice)
                 .guest(guest.get())
                 .property(property.get())
-                .status(property.get().isAutoApproveEnabled() ? ReservationStatus.ACCEPTED : ReservationStatus.PENDING)
+                .status(ReservationStatus.PENDING)
                 .numberOfGuests(reservationDto.getNumberOfGuests())
                 .startDate(reservationDto.getStartDate())
                 .endDate(reservationDto.getEndDate())
                 .build();
 
-        return this.reservationRepository.save(reservation);
+        Reservation savedReservation = this.reservationRepository.save(reservation);
+
+        if (property.get().isAutoApproveEnabled()) {
+            acceptOrRejectReservation(savedReservation, ReservationStatus.ACCEPTED);
+        }
+
+        return savedReservation;
     }
 
     @Override
@@ -186,7 +192,7 @@ public class ReservationService implements IReservationService {
 
         for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries())  {
             LocalDate entryDate = entry.getDate();
-            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(entryDate)) {
+            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(endDate)) {
                 entry.setReserved(isrReserved);
             }
 
