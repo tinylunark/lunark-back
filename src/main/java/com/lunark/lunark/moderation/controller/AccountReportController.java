@@ -57,6 +57,7 @@ public class AccountReportController {
             report = this.accountReportService.create(report);
             return new ResponseEntity<>(accountReportDtoMapper.toDto(report), HttpStatus.CREATED);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
