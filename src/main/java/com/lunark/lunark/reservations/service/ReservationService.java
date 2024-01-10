@@ -79,6 +79,7 @@ public class ReservationService implements IReservationService {
                 .build();
 
         Reservation savedReservation = this.reservationRepository.save(reservation);
+        notificationService.createNotification(savedReservation);
 
         if (property.get().isAutoApproveEnabled()) {
             acceptOrRejectReservation(savedReservation, ReservationStatus.ACCEPTED);
