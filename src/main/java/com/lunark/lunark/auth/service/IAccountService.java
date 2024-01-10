@@ -1,6 +1,7 @@
 package com.lunark.lunark.auth.service;
 
 import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reservations.model.Reservation;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,4 +27,5 @@ public interface IAccountService {
     void saveProfileImage(Long accountId, MultipartFile file) throws IOException;
     void saveAndFlush(Account account);
     public void cancelAllReservations(List<Reservation> reservationList);
+    Account toggleNotifications(Long accountId, NotificationType type);
 }

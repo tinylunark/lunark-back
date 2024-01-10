@@ -3,6 +3,7 @@ package com.lunark.lunark.auth.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.model.ProfileImage;
+import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
@@ -135,6 +136,16 @@ public class AccountService implements IAccountService {
                 reservationService.saveOrUpdate(reservation);
             }
         }
+    }
+
+    @Override
+    public Account toggleNotifications(Long accountId, NotificationType type) {
+        Optional<Account> account = find(accountId);
+
+        return account.map(a -> {
+            a.toggleNotifications(type);
+            return accountRepository.save(a);
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with this id does not exist."));
     }
 
     @Override
