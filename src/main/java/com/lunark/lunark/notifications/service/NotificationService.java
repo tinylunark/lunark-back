@@ -42,7 +42,7 @@ public class NotificationService implements INotificationService {
 
     @Override
     public Notification create(Notification notification) {
-        if(!this.shouldSendNotification(notification)) {
+        if (!this.shouldSendNotification(notification)) {
             return null;
         }
         Notification newNotification = this.notificationRepository.saveAndFlush(notification);
@@ -54,14 +54,15 @@ public class NotificationService implements INotificationService {
         // TODO: Check if notification should be sent based on the notification settings of the recipient and type of notification
         return true;
     }
+
     @Override
-    public Notification createNotification(Review review)  {
+    public Notification createNotification(Review review) {
         String message = createReviewNotificationMessage(review);
         Notification notification = new Notification(
                 message,
                 ZonedDateTime.now(clock),
                 review.getType().equals(Review.ReviewType.PROPERTY) ? NotificationType.PROPERTY_REVIEW : NotificationType.HOST_REVIEW,
-                review.getType().equals(Review.ReviewType.PROPERTY)? review.getProperty().getHost() : review.getHost());
+                review.getType().equals(Review.ReviewType.PROPERTY) ? review.getProperty().getHost() : review.getHost());
         return this.create(notification);
     }
 
@@ -93,7 +94,8 @@ public class NotificationService implements INotificationService {
         if (reservation.getStatus().equals(ReservationStatus.ACCEPTED) ||
                 reservation.getStatus().equals(ReservationStatus.REJECTED)) {
             return reservation.getGuest();
-        } else if (reservation.getStatus().equals(ReservationStatus.CANCELLED)) {
+        } else if (reservation.getStatus().equals(ReservationStatus.CANCELLED) ||
+                reservation.getStatus().equals(ReservationStatus.PENDING)) {
             return reservation.getProperty().getHost();
         }
         throw new IllegalArgumentException("Invalid reservation status");
@@ -107,6 +109,8 @@ public class NotificationService implements INotificationService {
                 return NotificationType.RESERVATION_REJECTED;
             case CANCELLED:
                 return NotificationType.RESERVATION_CANCELED;
+            case PENDING:
+                return NotificationType.RESERVATION_CREATED;
             default:
                 throw new IllegalArgumentException("Invalid reservation status");
         }
@@ -120,6 +124,8 @@ public class NotificationService implements INotificationService {
                 return "Reservation at " + reservation.getProperty().getName() + " has been rejected.";
             case CANCELLED:
                 return "Reservation at " + reservation.getProperty().getName() + " has been cancelled by " + reservation.getGuest().getName() + " " + reservation.getGuest().getSurname();
+            case PENDING:
+                return "Reservation at " + reservation.getProperty().getName() + " has been created by " + reservation.getGuest().getName() + " " + reservation.getGuest().getSurname();
             default:
                 throw new IllegalArgumentException("Invalid reservation status");
         }
