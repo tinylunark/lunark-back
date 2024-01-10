@@ -51,7 +51,13 @@ public class NotificationService implements INotificationService {
     }
 
     private boolean shouldSendNotification(Notification notification) {
-        return notification.getAccount().isNotificationsEnabled();
+        return switch (notification.getType()) {
+            case PROPERTY_REVIEW -> notification.getAccount().getHostNotificationSettings().isNotifyOnPropertyReview();
+            case HOST_REVIEW -> notification.getAccount().getHostNotificationSettings().isNotifyOnHostReview();
+            case RESERVATION_CREATED -> notification.getAccount().getHostNotificationSettings().isNotifyOnReservationCreation();
+            case RESERVATION_CANCELED -> notification.getAccount().getHostNotificationSettings().isNotifyOnReservationCancellation();
+            case RESERVATION_ACCEPTED, RESERVATION_REJECTED -> notification.getAccount().getGuestNotificationSettings().isNotifyOnReservationRequestResponse();
+        };
     }
     @Override
     public Notification createNotification(Review review)  {

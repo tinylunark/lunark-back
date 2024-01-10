@@ -9,6 +9,7 @@ import com.lunark.lunark.auth.service.IAccountService;
 import com.lunark.lunark.auth.service.IVerificationService;
 import com.lunark.lunark.mapper.AccountDtoMapper;
 import com.lunark.lunark.mapper.PropertyDtoMapper;
+import com.lunark.lunark.notifications.dto.NotificationSettingsDto;
 import com.lunark.lunark.properties.dto.PropertyResponseDto;
 import com.lunark.lunark.properties.service.IPropertyService;
 import org.modelmapper.ModelMapper;
@@ -196,11 +197,12 @@ public class AccountController {
 
     @PutMapping(value = "notifications", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
-    public ResponseEntity<AccountDto> toggleNotifications() {
+    public ResponseEntity<AccountDto> toggleNotifications(@RequestBody NotificationSettingsDto dto) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account updatedAccount = accountService.toggleNotifications(account.getId());
-        AccountDto dto = AccountDtoMapper.fromAccountToDTO(updatedAccount);
+        Account updatedAccount = this.accountService.toggleNotifications(account.getId(), dto.getType());
 
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        AccountDto response = AccountDtoMapper.fromAccountToDTO(updatedAccount);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

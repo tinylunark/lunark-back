@@ -1,6 +1,8 @@
 package com.lunark.lunark.auth.dto;
 
 import com.lunark.lunark.auth.model.ProfileImage;
+import com.lunark.lunark.notifications.model.GuestNotificationSettings;
+import com.lunark.lunark.notifications.model.HostNotificationSettings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,5 +25,6 @@ public class AccountDto {
     private ProfileImage profileImage;
     private Double averageRating;
     private int cancelCount;
-    private boolean notificationsEnabled;
+    private GuestNotificationSettings guestNotificationSettings;
+    private HostNotificationSettings hostNotificationSettings;
 }
