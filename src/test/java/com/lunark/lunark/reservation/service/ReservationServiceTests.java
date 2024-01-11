@@ -20,7 +20,8 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
+import javax.security.auth.login.AccountLockedException;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -40,6 +41,8 @@ public class ReservationServiceTests {
 
     @Mock
     private INotificationService notificationService;
+    @Mock
+    private Clock clock;
 
     @InjectMocks
     private ReservationService service;
@@ -63,7 +66,6 @@ public class ReservationServiceTests {
                 .maxGuests(5)
                 .availabilityEntries(entries)
                 .build();
-
     }
 
     @Test
@@ -528,6 +530,48 @@ public class ReservationServiceTests {
         return Stream.of(
                 Arguments.of(reservation1, ReservationStatus.ACCEPTED, ReservationStatus.ACCEPTED),
                 Arguments.of(reservation2, ReservationStatus.REJECTED, ReservationStatus.REJECTED)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("cancelReservationSource")
+    void testCancelReservation(Reservation reservation, boolean expectedResult) {
+        LocalDateTime fixedLocalDateTime = LocalDateTime.now();
+        lenient().when(clock.instant()).thenReturn(fixedLocalDateTime.toInstant(ZoneOffset.UTC));
+        lenient().when(clock.getZone()).thenReturn(ZoneOffset.UTC);
+        Property property = new Property();
+        List<PropertyAvailabilityEntry> entries = List.of(
+                new PropertyAvailabilityEntry(LocalDate.now().plusDays(2), 100.0, property),
+                new PropertyAvailabilityEntry(LocalDate.now().plusDays(3), 100.0, property),
+                new PropertyAvailabilityEntry(LocalDate.now().plusDays(4), 100.0, property)
+        );
+        property.setAvailabilityEntries(entries);
+        reservation.setProperty(property);
+        lenient().when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+
+        boolean result = service.cancelReservation(reservation);
+
+        assertEquals(expectedResult, result);
+        ReservationStatus expectedStatus = expectedResult ? ReservationStatus.CANCELLED : reservation.getStatus();
+        assertEquals(expectedStatus, reservation.getStatus());
+    }
+
+    static Stream<Arguments> cancelReservationSource() {
+        Property property = Property.builder().id(1L).cancellationDeadline(2).build();
+
+        Reservation pastDeadlineReservation = new Reservation();
+        pastDeadlineReservation.setId(1L);
+        pastDeadlineReservation.setStartDate(LocalDate.now().minusDays(10));
+        pastDeadlineReservation.setProperty(property);
+
+        Reservation withinDeadlineReservation = new Reservation();
+        withinDeadlineReservation.setId(2L);
+        withinDeadlineReservation.setStartDate(LocalDate.now().plusDays(10));
+        withinDeadlineReservation.setProperty(property);
+
+        return Stream.of(
+                Arguments.of(pastDeadlineReservation, false),
+                Arguments.of(withinDeadlineReservation, true)
         );
     }
 }
