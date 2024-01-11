@@ -25,6 +25,6 @@ public class ReportService implements IReportService {
 
     @Override
     public Collection<MonthlyReport> generateMonthlyReports(Integer year, Long propertyId) {
-        return null;
+        return reservationRepository.generateMonthlyReports(propertyId, year);
     }
 }
