@@ -38,6 +38,7 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
             "where r.property.host.id = :host_id " +
             "and r.endDate >= :start_date " +
             "and r.endDate <= :end_date " +
+            "and r.endDate < current_date " +
             "and r.status = 1")
     GeneralReport generateGeneralReport(@Param("start_date") LocalDate startDate, @Param("end_date") LocalDate endDate, @Param("host_id") Long hostId);
 }
