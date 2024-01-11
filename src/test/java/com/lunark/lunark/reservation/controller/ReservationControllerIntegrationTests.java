@@ -47,10 +47,10 @@ public class ReservationControllerIntegrationTests {
         mockMvc.perform(get("/api/reservations/incoming-reservations")
                         .param("hostId", String.valueOf(hostId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(mockReservations.size()))
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(jsonPath("$").isArray())
+                        .andExpect(jsonPath("$.length()").value(mockReservations.size()))
         ;
     }
 
