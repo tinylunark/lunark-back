@@ -7,7 +7,6 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.reservations.dto.ReservationRequestDto;
-import com.lunark.lunark.reservations.dto.ReservationSearchDto;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
@@ -19,7 +18,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -457,7 +455,9 @@ public class ReservationServiceTests {
     void testUpdateReservationsWithOverlappingDays(Reservation paramReservation, Reservation existingReservation, ReservationStatus expectedStatus) {
         lenient().when(reservationRepository.findByPropertyId(anyLong())).thenReturn(List.of(paramReservation, existingReservation));
         lenient().when(reservationRepository.findById(existingReservation.getId())).thenReturn(Optional.of(existingReservation));
+
         service.updateReservations(paramReservation);
+
         assertEquals(expectedStatus, existingReservation.getStatus());
     }
 
@@ -495,5 +495,39 @@ public class ReservationServiceTests {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("acceptOrRejectReservationSource")
+    void testAcceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted, ReservationStatus expectedStatus) {
+        Property property = new Property();
+        List<PropertyAvailabilityEntry> entries = List.of(
+                new PropertyAvailabilityEntry(LocalDate.now().plusDays(2), 100.0, property),
+                new PropertyAvailabilityEntry(LocalDate.now().plusDays(3), 100.0, property),
+                new PropertyAvailabilityEntry(LocalDate.now().plusDays(4), 100.0, property)
+        );
+        property.setAvailabilityEntries(entries);
+        reservation.setProperty(property);
+        lenient().when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
+        service.acceptOrRejectReservation(reservation, isAccepted);
+
+        assertEquals(expectedStatus, reservation.getStatus());
+    }
+
+    static Stream<Arguments> acceptOrRejectReservationSource() {
+        Reservation reservation1 = new Reservation();
+        reservation1.setId(1L);
+        reservation1.setStartDate(LocalDate.of(2024, 1, 1));
+        reservation1.setEndDate(LocalDate.of(2024, 1, 5));
+
+        Reservation reservation2 = new Reservation();
+        reservation2.setId(2L);
+        reservation2.setStartDate(LocalDate.of(2024, 1, 3));
+        reservation2.setEndDate(LocalDate.of(2024, 1, 6));
+        reservation2.setStatus(ReservationStatus.PENDING);
+
+        return Stream.of(
+                Arguments.of(reservation1, ReservationStatus.ACCEPTED, ReservationStatus.ACCEPTED),
+                Arguments.of(reservation2, ReservationStatus.REJECTED, ReservationStatus.REJECTED)
+        );
+    }
 }
