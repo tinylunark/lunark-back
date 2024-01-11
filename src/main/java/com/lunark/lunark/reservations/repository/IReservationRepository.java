@@ -1,5 +1,6 @@
 package com.lunark.lunark.reservations.repository;
 
+import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reservations.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,12 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
             "group by extract(month from r.endDate) " +
             "order by extract(month from r.endDate) ")
     Collection<MonthlyReport> generateMonthlyReports(@Param("property_id") Long propertyId, @Param("year") Integer year);
+
+    @Query("select new com.lunark.lunark.reports.model.GeneralReport(count(*), sum(r.price)) " +
+            "from Reservation r " +
+            "where r.property.host.id = :host_id " +
+            "and r.endDate >= :start_date " +
+            "and r.endDate <= :end_date " +
+            "and r.status = 1")
+    GeneralReport generateGeneralReport(@Param("start_date") LocalDate startDate, @Param("end_date") LocalDate endDate, @Param("host_id") Long hostId);
 }
