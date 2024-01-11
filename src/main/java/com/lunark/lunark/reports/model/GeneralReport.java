@@ -9,6 +9,6 @@ import java.util.Collection;
 @Data
 @AllArgsConstructor
 public class GeneralReport {
-    Integer reservationCount;
+    Long reservationCount;
     Double profit;
 }
