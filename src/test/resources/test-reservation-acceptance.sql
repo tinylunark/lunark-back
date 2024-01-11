@@ -1,0 +1,9 @@
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-26', '2024-5-29', 3, 10000, 0, 4, 6);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-27', '2024-5-30', 3, 10000, 0, 5, 7);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-28', '2024-5-31', 3, 10000, 0, 6, 8);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-26', '2024-5-29', 3, 10000, 0, 7, 9);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-5-27', '2024-5-30', 3, 10000, 0, 8, 1);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-28', '2024-12-31', 3, 10000, 0, 9, 2);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-26', '2024-12-29', 3, 10000, 0, 1, 3);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-27', '2024-12-30', 3, 10000, 0, 4, 4);
+INSERT INTO reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) VALUES ('2024-12-28', '2024-12-31', 3, 10000, 0, 5, 5);
