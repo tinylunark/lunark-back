@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Import(TestConfiguration.class)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Sql("classpath:test-data-availability.sql")
 public class PropertyControllerPricesAndAvailabilityIntegrationTests {
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -118,7 +119,6 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
 
     @ParameterizedTest
     @MethodSource(value = "getPositiveRequests")
-    @Sql("classpath:test-data-availability.sql")
     @DisplayName("Should add new dates")
     public void testAddAvailabilitySuccessful(List<PropertyAvailabilityEntry> newPropertyAvailabilityEntries) {
         HttpEntity<List<AvailabilityEntryDto>> httpEntity = getHttpEntity(newPropertyAvailabilityEntries);
