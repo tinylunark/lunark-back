@@ -454,7 +454,7 @@ public class ReservationServiceTests {
 
     @ParameterizedTest
     @MethodSource("updateReservationsSource")
-    void testUpdateReservationsWithOverlappingDays(Reservation paramReservation, Reservation existingReservation, ReservationStatus expectedStatus) {
+    void testUpdateReservations(Reservation paramReservation, Reservation existingReservation, ReservationStatus expectedStatus) {
         lenient().when(reservationRepository.findByPropertyId(anyLong())).thenReturn(List.of(paramReservation, existingReservation));
         lenient().when(reservationRepository.findById(existingReservation.getId())).thenReturn(Optional.of(existingReservation));
 
