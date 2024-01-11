@@ -47,8 +47,7 @@ public class ReservationServiceTests {
     @InjectMocks
     private ReservationService service;
 
-    private Property property, property1, property2;
-    private Reservation reservation1, reservation2;
+    private Property property;
 
     private ReservationRequestDto dto;
 
