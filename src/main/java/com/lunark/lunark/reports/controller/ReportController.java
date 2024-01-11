@@ -40,9 +40,13 @@ public class ReportController {
         return new ResponseEntity<>(new GeneralReportResponseDto(result.getReservationCount(), result.getProfit()), HttpStatus.OK);
     }
 
-    @PostMapping("/property")
-    public ResponseEntity<PropertyReportResponseDto> generatePropertyReport(@RequestBody PropertyReportRequestDto dto) {
-        Collection<MonthlyReport> result = reportService.generateMonthlyReports(dto.getYear(), dto.getPropertyId());
+    @GetMapping("/property")
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<PropertyReportResponseDto> generatePropertyReport(
+            @RequestParam Integer year,
+            @RequestParam Long propertyId
+    ) {
+        Collection<MonthlyReport> result = reportService.generateMonthlyReports(year, propertyId);
 
         return new ResponseEntity<>(new PropertyReportResponseDto(result), HttpStatus.OK);
     }
