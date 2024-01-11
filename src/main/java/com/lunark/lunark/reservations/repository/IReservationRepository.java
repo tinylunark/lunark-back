@@ -1,16 +1,12 @@
 package com.lunark.lunark.reservations.repository;
 
-import com.lunark.lunark.auth.model.Account;
-import com.lunark.lunark.reports.dto.PropertyReportResponseDto;
 import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reservations.model.Reservation;
-import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.Year;
 import java.util.Optional;
 
 import java.time.LocalDate;
@@ -34,5 +30,5 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
             "and r.status = 1 " +
             "group by extract(month from r.endDate) " +
             "order by extract(month from r.endDate) ")
-    Collection<MonthlyReport> generatePropertyReport(@Param("property_id") Long propertyId, @Param("year") Integer year);
+    Collection<MonthlyReport> generateMonthlyReports(@Param("property_id") Long propertyId, @Param("year") Integer year);
 }
