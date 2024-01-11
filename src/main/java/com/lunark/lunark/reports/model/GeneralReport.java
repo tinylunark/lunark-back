@@ -11,5 +11,4 @@ import java.util.Collection;
 public class GeneralReport {
     Integer reservationCount;
     Double profit;
-    Collection<Reservation> reservations;
 }
