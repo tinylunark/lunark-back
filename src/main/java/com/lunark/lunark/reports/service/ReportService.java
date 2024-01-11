@@ -1,6 +1,7 @@
 package com.lunark.lunark.reports.service;
 
 import com.lunark.lunark.reports.dto.GeneralReportResponseDto;
+import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public GeneralReportResponseDto generateGeneralReport(LocalDate start, LocalDate end, Long hostId) {
-        return null;
+    public GeneralReport generateGeneralReport(LocalDate start, LocalDate end, Long hostId) {
+        return reservationRepository.generateGeneralReport(start, end, hostId);
     }
 
     @Override
