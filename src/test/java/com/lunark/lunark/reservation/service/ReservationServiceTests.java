@@ -2,6 +2,7 @@ package com.lunark.lunark.reservation.service;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.repository.IAccountRepository;
+import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
@@ -14,6 +15,7 @@ import com.lunark.lunark.reservations.service.ReservationService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +39,9 @@ public class ReservationServiceTests {
 
     @Mock
     private IAccountRepository accountRepository;
+
+    @Mock
+    private INotificationService notificationService;
 
     @InjectMocks
     private ReservationService service;
@@ -446,7 +452,48 @@ public class ReservationServiceTests {
     }
 
 
+    @ParameterizedTest
+    @MethodSource("updateReservationsSource")
+    void testUpdateReservationsWithOverlappingDays(Reservation paramReservation, Reservation existingReservation, ReservationStatus expectedStatus) {
+        lenient().when(reservationRepository.findByPropertyId(anyLong())).thenReturn(List.of(paramReservation, existingReservation));
+        lenient().when(reservationRepository.findById(existingReservation.getId())).thenReturn(Optional.of(existingReservation));
+        service.updateReservations(paramReservation);
+        assertEquals(expectedStatus, existingReservation.getStatus());
+    }
 
+    static Stream<Arguments> updateReservationsSource() {
+        Property property = Property.builder().id(1L).minGuests(3).maxGuests(5).build();
+        Reservation reservation1 = new Reservation();
+        reservation1.setId(1L);
+        reservation1.setStartDate(LocalDate.of(2024, 1, 1));
+        reservation1.setEndDate(LocalDate.of(2024, 1, 5));
+        reservation1.setProperty(property);
+
+        Reservation reservation2 = new Reservation();
+        reservation2.setId(2L);
+        reservation2.setStartDate(LocalDate.of(2024, 1, 3));
+        reservation2.setEndDate(LocalDate.of(2024, 1, 6));
+        reservation2.setStatus(ReservationStatus.PENDING);
+        reservation2.setProperty(property);
+
+        Reservation reservation3 = new Reservation();
+        reservation3.setId(3L);
+        reservation3.setStartDate(LocalDate.of(2024, 1, 7));
+        reservation3.setEndDate(LocalDate.of(2024, 1, 10));
+        reservation3.setProperty(property);
+
+        Reservation reservation4 = new Reservation();
+        reservation4.setId(4L);
+        reservation4.setStartDate(LocalDate.of(2024, 1, 1));
+        reservation4.setEndDate(LocalDate.of(2024, 1, 3));
+        reservation4.setStatus(ReservationStatus.PENDING);
+        reservation4.setProperty(property);
+
+        return Stream.of(
+                Arguments.of(reservation1, reservation2, ReservationStatus.REJECTED),
+                Arguments.of(reservation3 , reservation4, ReservationStatus.PENDING)
+        );
+    }
 
 
 }
