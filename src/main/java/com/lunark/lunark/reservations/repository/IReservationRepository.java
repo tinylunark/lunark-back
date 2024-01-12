@@ -1,6 +1,7 @@
 package com.lunark.lunark.reservations.repository;
 
-import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.reports.model.GeneralReport;
+import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reservations.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -21,4 +22,23 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
     List<Reservation> findByPropertyId(Long propertyId);
     @Query("select r from Reservation r where r.guest.id = :guest_id and r.property.host.id = :host_id and r.status = 1 and r.endDate between :from and CURRENT_DATE")
     Collection<Reservation> findAllPastReservationsAtHostAfterDate(@Param("guest_id") Long guestId, @Param("host_id") Long hostId, @Param("from") LocalDate from);
+
+    @Query("select new com.lunark.lunark.reports.model.MonthlyReport(extract(month from r.endDate), sum(r.price), count(*)) " +
+            "from Reservation r " +
+            "where extract(year from r.endDate) = :year " +
+            "and r.property.id = :property_id " +
+            "and r.endDate < current_date " +
+            "and r.status = 1 " +
+            "group by extract(month from r.endDate) " +
+            "order by extract(month from r.endDate) ")
+    Collection<MonthlyReport> generateMonthlyReports(@Param("property_id") Long propertyId, @Param("year") Integer year);
+
+    @Query("select new com.lunark.lunark.reports.model.GeneralReport(count(*), sum(r.price)) " +
+            "from Reservation r " +
+            "where r.property.host.id = :host_id " +
+            "and r.endDate >= :start_date " +
+            "and r.endDate <= :end_date " +
+            "and r.endDate < current_date " +
+            "and r.status = 1")
+    GeneralReport generateGeneralReport(@Param("start_date") LocalDate startDate, @Param("end_date") LocalDate endDate, @Param("host_id") Long hostId);
 }
