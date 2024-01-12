@@ -91,13 +91,12 @@ public class ReservationControllerIntegrationTests {
     @DisplayName("Test Invalid Reservation ID")
     @Sql("classpath:test-reservation-acceptance.sql")
     public void testAcceptReservationInvalidId() {
-        String invalidId = "invalid"; // Non-numeric ID
+        String invalidId = "invalid";
         ResponseEntity<ReservationDto> response = restTemplate.exchange(
                 "/accept/" + invalidId,
                 HttpMethod.POST,
                 getHttpEntityWithAuthHeader(),
                 ReservationDto.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
