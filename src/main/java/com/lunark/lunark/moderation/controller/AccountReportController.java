@@ -7,6 +7,7 @@ import com.lunark.lunark.moderation.dto.AccountReportResponseDto;
 import com.lunark.lunark.moderation.dto.HostReportEligibilityDto;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.service.IAccountReportService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class AccountReportController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('GUEST') or hasAuthority('HOST')")
-    public ResponseEntity<AccountReportResponseDto> createReport(@Valid @RequestBody AccountReportRequestDto reportRequestDto) {
+    public ResponseEntity<AccountReportResponseDto> createReport(@Valid @RequestBody AccountReportRequestDto reportRequestDto) throws ConstraintViolationException {
         Account reporter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountReport report;
         try {

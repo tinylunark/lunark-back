@@ -22,10 +22,6 @@ public class AccountReportDtoMapper {
 
     public AccountReport toAccountReport(AccountReportRequestDto dto, Account reporter) {
         Optional<Account> reported = accountRepository.findById(dto.reportedId());
-        if (reported.isEmpty()) {
-            throw new RuntimeException("Reported id is not valid");
-        }
-
         return new AccountReport(null, dto.date(), reporter, reported.get(), dto.reason());
     }
 

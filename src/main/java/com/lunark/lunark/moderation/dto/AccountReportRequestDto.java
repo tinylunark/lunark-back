@@ -14,6 +14,7 @@ public record AccountReportRequestDto(
         LocalDateTime date,
         @NotNull
         @PositiveOrZero
+        @AccountExistsConstraint
         Long reportedId,
         @NotNull
         @NotEmpty
