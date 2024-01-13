@@ -8,6 +8,7 @@ import com.lunark.lunark.moderation.dto.HostReportEligibilityDto;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.service.IAccountReportService;
 import com.lunark.lunark.validation.AccountExistsConstraint;
+import com.lunark.lunark.validation.HostExistsConstraint;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -18,18 +19,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/reports/accounts")
+@Validated
 public class AccountReportController {
     @Autowired
     private IAccountReportService accountReportService;
-
     @Autowired
     ModelMapper modelMapper;
     @Autowired
@@ -68,7 +69,6 @@ public class AccountReportController {
     }
 
     @DeleteMapping(value = "/{id}")
-    @AccountExistsConstraint
     public ResponseEntity<AccountReportResponseDto> block(@PathVariable @PositiveOrZero Long id) {
         accountReportService.block(accountReportService.getById(id).get().getReported().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -76,8 +76,7 @@ public class AccountReportController {
 
     @GetMapping(value = "/host-report-eligibility/{hostId}")
     @PreAuthorize("hasAuthority('GUEST')")
-    @AccountExistsConstraint
-    public ResponseEntity<HostReportEligibilityDto> isCurrentGuestEligibleToReport(@PathVariable @PositiveOrZero Long hostId) {
+    public ResponseEntity<HostReportEligibilityDto> isCurrentGuestEligibleToReport(@PathVariable("hostId") @PositiveOrZero Long hostId) {
         Account reporter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             boolean eligible = accountReportService.isGuestEligibleToReport(reporter, hostId);
