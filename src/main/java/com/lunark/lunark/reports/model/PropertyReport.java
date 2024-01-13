@@ -7,8 +7,6 @@ import java.util.Collection;
 
 @Data
 @AllArgsConstructor
-public class GeneralReport {
-    Collection<DailyReport> dailyReports;
-    Double totalProfit;
-    Long totalReservationCount;
+public class PropertyReport {
+    Collection<MonthlyReport> monthlyReports;
 }

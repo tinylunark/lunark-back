@@ -7,7 +7,6 @@ import lombok.Data;
 import java.util.Collection;
 
 @Data
-@AllArgsConstructor
 public class PropertyReportResponseDto {
     Collection<MonthlyReport> monthlyReports;
 }

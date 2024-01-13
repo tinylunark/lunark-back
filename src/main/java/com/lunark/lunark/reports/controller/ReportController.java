@@ -2,17 +2,21 @@ package com.lunark.lunark.reports.controller;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.reports.dto.GeneralReportResponseDto;
-import com.lunark.lunark.reports.dto.PropertyReportRequestDto;
 import com.lunark.lunark.reports.dto.PropertyReportResponseDto;
 import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
+import com.lunark.lunark.reports.model.PropertyReport;
 import com.lunark.lunark.reports.service.IReportService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,10 +25,12 @@ import java.util.Collection;
 @RequestMapping("api/reports")
 public class ReportController {
     private final IReportService reportService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public ReportController(IReportService reportService) {
+    public ReportController(IReportService reportService, ModelMapper modelMapper) {
         this.reportService = reportService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/general")
@@ -37,7 +43,7 @@ public class ReportController {
 
         GeneralReport result = reportService.generateGeneralReport(start, end, account.getId());
 
-        return new ResponseEntity<>(new GeneralReportResponseDto(result.getReservationCount(), result.getProfit()), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(result, GeneralReportResponseDto.class), HttpStatus.OK);
     }
 
     @GetMapping("/property")
@@ -46,8 +52,8 @@ public class ReportController {
             @RequestParam Integer year,
             @RequestParam Long propertyId
     ) {
-        Collection<MonthlyReport> result = reportService.generateMonthlyReports(year, propertyId);
+        PropertyReport result = reportService.generatePropertyReport(year, propertyId);
 
-        return new ResponseEntity<>(new PropertyReportResponseDto(result), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(result, PropertyReportResponseDto.class), HttpStatus.OK);
     }
 }
