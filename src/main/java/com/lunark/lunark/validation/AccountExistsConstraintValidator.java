@@ -4,6 +4,8 @@ import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.service.IAccountService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.constraintvalidation.SupportedValidationTarget;
+import jakarta.validation.constraintvalidation.ValidationTarget;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -13,6 +15,7 @@ import java.util.Optional;
 
 @Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
 @Component
+@SupportedValidationTarget(ValidationTarget.PARAMETERS)
 public class AccountExistsConstraintValidator implements ConstraintValidator<AccountExistsConstraint, Long> {
     @Autowired
     IAccountService accountService;

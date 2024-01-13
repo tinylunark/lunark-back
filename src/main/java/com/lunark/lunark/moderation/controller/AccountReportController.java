@@ -7,8 +7,10 @@ import com.lunark.lunark.moderation.dto.AccountReportResponseDto;
 import com.lunark.lunark.moderation.dto.HostReportEligibilityDto;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.service.IAccountReportService;
+import com.lunark.lunark.validation.AccountExistsConstraint;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,14 +68,16 @@ public class AccountReportController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<AccountReportResponseDto> block(@PathVariable Long id) {
+    @AccountExistsConstraint
+    public ResponseEntity<AccountReportResponseDto> block(@PathVariable @PositiveOrZero Long id) {
         accountReportService.block(accountReportService.getById(id).get().getReported().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(value = "/host-report-eligibility/{hostId}")
     @PreAuthorize("hasAuthority('GUEST')")
-    public ResponseEntity<HostReportEligibilityDto> isCurrentGuestEligibleToReport(@PathVariable Long hostId) {
+    @AccountExistsConstraint
+    public ResponseEntity<HostReportEligibilityDto> isCurrentGuestEligibleToReport(@PathVariable @PositiveOrZero Long hostId) {
         Account reporter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             boolean eligible = accountReportService.isGuestEligibleToReport(reporter, hostId);
