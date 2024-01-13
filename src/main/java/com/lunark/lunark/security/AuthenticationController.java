@@ -33,7 +33,7 @@ public class AuthenticationController {
     private AccountService accountService;
 
     @PostMapping(value="/login", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserTokenState> createAuthenticationToken(@Valid @RequestBody AuthRequest authenticationRequest, HttpServletResponse response) {
+    public ResponseEntity<UserTokenState> createAuthenticationToken(@Valid @RequestBody AuthRequest authenticationRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getEmail(),
                 authenticationRequest.getPassword())
