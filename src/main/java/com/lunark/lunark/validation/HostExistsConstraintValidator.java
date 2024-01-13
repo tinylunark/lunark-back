@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
 @Component
-@SupportedValidationTarget(ValidationTarget.PARAMETERS)
 public class HostExistsConstraintValidator implements ConstraintValidator<HostExistsConstraint, Long> {
     @Autowired
     IAccountService accountService;
