@@ -10,6 +10,10 @@ import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -18,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,14 +52,14 @@ public class PropertyController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PropertyResponseDto>> getAll(
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) Integer guestNumber,
+            @RequestParam(required = false) @Pattern(message = "Location can not contain special characters", regexp = "^[^%<>$]*$") String location,
+            @RequestParam(required = false) @Positive(message = "Guest number must be positive") Integer guestNumber,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
-            @RequestParam(required = false) List<Long> amenityIds,
+            @RequestParam(required = false) List<@PositiveOrZero Long> amenityIds,
             @RequestParam(required = false) Property.PropertyType type,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice
+            @RequestParam(required = false) @Positive(message = "Min price must be positive") Double minPrice,
+            @RequestParam(required = false) @Positive(message = "Max price must be positive") Double maxPrice
     ) {
 
         PropertySearchDto filter = PropertySearchDto.builder()
@@ -87,14 +92,14 @@ public class PropertyController {
 
     @GetMapping(value="/my-properties", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<List<PropertyResponseDto>> getMyProperties(@RequestParam("hostId") Long hostId, SpringDataWebProperties pageable) {
+    public ResponseEntity<List<PropertyResponseDto>> getMyProperties(@RequestParam("hostId") @NotNull @PositiveOrZero Long hostId, SpringDataWebProperties pageable) {
         List<Property> myProperties = propertyService.findAllPropertiesForHost(hostId);
         List<PropertyResponseDto> propertyDtos = myProperties.stream() .map(PropertyDtoMapper::fromPropertyToDto) .toList();
         return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PropertyResponseDto> getProperty(@PathVariable("id") Long id) {
+    public ResponseEntity<PropertyResponseDto> getProperty(@PathVariable("id") @NotNull @PositiveOrZero Long id) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
@@ -106,14 +111,14 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/average/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Double> getAverageGrade(@PathVariable("id") Long id) {
+    public ResponseEntity<Double> getAverageGrade(@PathVariable("id") @NotNull @PositiveOrZero Long id) {
         Double averageGrade = propertyService.getAverageGrade(id);
         if (averageGrade == null ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(averageGrade, HttpStatus.OK);
     }
   
     @GetMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<AvailabilityEntryDto>> getPricesAndAvailability(@PathVariable("id") Long id) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> getPricesAndAvailability(@PathVariable("id") @NotNull @PositiveOrZero Long id) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
@@ -129,7 +134,7 @@ public class PropertyController {
 
     @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") Long id, @RequestBody List<AvailabilityEntryDto> availabilityEntries) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") @NotNull @PositiveOrZero Long id, @RequestBody List<AvailabilityEntryDto> availabilityEntries) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
@@ -169,7 +174,7 @@ public class PropertyController {
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") Long id) {
+    public ResponseEntity<PropertyResponseDto> deleteProperty(@PathVariable("id") @NotNull @PositiveOrZero Long id) {
         // TODO: add service calls
         if (this.propertyService.find(id).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -180,7 +185,7 @@ public class PropertyController {
 
     @PostMapping("/approve/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Property> approveProperty(@PathVariable Long id) {
+    public ResponseEntity<Property> approveProperty(@PathVariable @NotNull @PositiveOrZero Long id) {
         return propertyService.find(id)
                 .map(this::approveAndSaveProperty)
                 .orElse(notFoundResponse());
@@ -197,7 +202,7 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/{propertyId}/images/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable("propertyId") Long propertyId, @PathVariable("imageId") Long imageId) {
+    public ResponseEntity<byte[]> getImage(@PathVariable("propertyId") @NotNull @PositiveOrZero Long propertyId, @PathVariable("imageId") @NotNull @PositiveOrZero Long imageId) {
         Optional<Property> property = propertyService.find(propertyId);
         if (property.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -216,7 +221,7 @@ public class PropertyController {
 
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<?> uploadImage(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
+    public ResponseEntity<?> uploadImage(@PathVariable("id") @NotNull @PositiveOrZero Long id, @RequestParam("image") MultipartFile file) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
