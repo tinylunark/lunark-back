@@ -9,6 +9,7 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/properties")
+@Validated
 public class PropertyController {
     private final IPropertyService propertyService;
     private final ModelMapper modelMapper;
@@ -146,7 +149,7 @@ public class PropertyController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
+    public ResponseEntity<PropertyResponseDto> createProperty(@Valid @RequestBody PropertyRequestDto propertyDto) {
         Property property = propertyService.create(propertyDtoMapper.fromDtoToProperty(propertyDto));
         PropertyResponseDto response = PropertyDtoMapper.fromPropertyToDto(property);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
