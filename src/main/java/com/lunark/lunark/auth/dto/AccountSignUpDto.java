@@ -24,12 +24,15 @@ public class AccountSignUpDto {
     private String password;
     @NotNull
     @NotEmpty
+    @Pattern(message="Name can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String name;
     @NotNull
     @NotEmpty
+    @Pattern(message="Surname can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String surname;
     @NotNull
     @NotEmpty
+    @Pattern(message="Address can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String address;
     @NotNull
     @Pattern(regexp = "[- +()0-9]+")
