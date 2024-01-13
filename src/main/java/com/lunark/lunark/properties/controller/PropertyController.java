@@ -10,10 +10,7 @@ import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -54,8 +51,8 @@ public class PropertyController {
     public ResponseEntity<List<PropertyResponseDto>> getAll(
             @RequestParam(required = false) @Pattern(message = "Location can not contain special characters", regexp = "^[^%<>$]*$") String location,
             @RequestParam(required = false) @Positive(message = "Guest number must be positive") Integer guestNumber,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Future(message = "Start date must be in the future") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Future(message = "End date must be in the future") LocalDate endDate,
             @RequestParam(required = false) List<@PositiveOrZero Long> amenityIds,
             @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) @Positive(message = "Min price must be positive") Double minPrice,
