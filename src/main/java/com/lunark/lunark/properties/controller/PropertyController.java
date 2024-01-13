@@ -134,7 +134,7 @@ public class PropertyController {
 
     @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") @NotNull @PositiveOrZero Long id, @RequestBody List<AvailabilityEntryDto> availabilityEntries) {
+    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") @NotNull @PositiveOrZero Long id, @RequestBody @Valid List<AvailabilityEntryDto> availabilityEntries) {
         Optional<Property> property = propertyService.find(id);
 
         if (property.isEmpty()) {
@@ -162,7 +162,7 @@ public class PropertyController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody PropertyRequestDto propertyDto) {
+    public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody @Valid PropertyRequestDto propertyDto) {
         Property property = propertyDtoMapper.fromDtoToProperty(propertyDto);
         if (this.propertyService.find(property.getId()).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
