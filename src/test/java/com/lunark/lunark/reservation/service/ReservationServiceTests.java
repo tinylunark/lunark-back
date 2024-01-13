@@ -2,6 +2,7 @@ package com.lunark.lunark.reservation.service;
 
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.repository.IAccountRepository;
+import com.lunark.lunark.notifications.service.INotificationService;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
@@ -34,6 +35,8 @@ public class ReservationServiceTests {
 
     @Mock
     private IAccountRepository accountRepository;
+    @Mock
+    private INotificationService notificationService;
 
     @InjectMocks
     private ReservationService service;
