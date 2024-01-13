@@ -37,7 +37,7 @@ public class AccountReportController {
     AccountReportDtoMapper accountReportDtoMapper;
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountReportResponseDto> getAccountReport(@PathVariable("id") Long id) {
+    public ResponseEntity<AccountReportResponseDto> getAccountReport(@PathVariable("id") @PositiveOrZero Long id) {
         return accountReportService.getById(id)
                 .map(accountReport -> ResponseEntity.ok(modelMapper.map(accountReport, AccountReportResponseDto.class)))
                 .orElse(ResponseEntity.notFound().build());
