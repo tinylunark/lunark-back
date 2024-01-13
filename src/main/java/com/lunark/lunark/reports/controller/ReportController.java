@@ -6,6 +6,7 @@ import com.lunark.lunark.reports.dto.PropertyReportResponseDto;
 import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reports.service.IReportService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,12 @@ import java.util.Collection;
 @RequestMapping("api/reports")
 public class ReportController {
     private final IReportService reportService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public ReportController(IReportService reportService) {
+    public ReportController(IReportService reportService, ModelMapper modelMapper) {
         this.reportService = reportService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/general")
@@ -39,7 +42,7 @@ public class ReportController {
 
         GeneralReport result = reportService.generateGeneralReport(start, end, account.getId());
 
-        return new ResponseEntity<>(new GeneralReportResponseDto(result.getReservationCount(), result.getProfit()), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(result, GeneralReportResponseDto.class), HttpStatus.OK);
     }
 
     @GetMapping("/property")

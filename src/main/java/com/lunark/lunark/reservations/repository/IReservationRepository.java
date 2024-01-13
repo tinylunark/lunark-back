@@ -1,6 +1,6 @@
 package com.lunark.lunark.reservations.repository;
 
-import com.lunark.lunark.reports.model.GeneralReport;
+import com.lunark.lunark.reports.model.DailyReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reservations.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,11 +8,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface IReservationRepository extends JpaRepository<Reservation, Long>, JpaSpecificationExecutor<Reservation> {
     @Query("select r from Reservation r where r.guest.id = :guest_id and r.property.id = :property_id and r.status = 1 and r.endDate between :from and CURRENT_DATE")
@@ -33,12 +32,13 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
             "order by extract(month from r.endDate) ")
     Collection<MonthlyReport> generateMonthlyReports(@Param("property_id") Long propertyId, @Param("year") Integer year);
 
-    @Query("select new com.lunark.lunark.reports.model.GeneralReport(count(*), sum(r.price)) " +
+    @Query("select new com.lunark.lunark.reports.model.DailyReport(r.endDate, sum(r.price), count(*)) " +
             "from Reservation r " +
             "where r.property.host.id = :host_id " +
             "and r.endDate >= :start_date " +
             "and r.endDate <= :end_date " +
             "and r.endDate < current_date " +
-            "and r.status = 1")
-    GeneralReport generateGeneralReport(@Param("start_date") LocalDate startDate, @Param("end_date") LocalDate endDate, @Param("host_id") Long hostId);
+            "and r.status = 1 " +
+            "group by r.endDate")
+    Collection<DailyReport> getDailyReports(@Param("start_date") LocalDate startDate, @Param("end_date") LocalDate endDate, @Param("host_id") Long hostId);
 }

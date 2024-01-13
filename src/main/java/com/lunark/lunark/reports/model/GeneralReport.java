@@ -1,6 +1,5 @@
 package com.lunark.lunark.reports.model;
 
-import com.lunark.lunark.reservations.model.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,6 +8,7 @@ import java.util.Collection;
 @Data
 @AllArgsConstructor
 public class GeneralReport {
-    Long reservationCount;
-    Double profit;
+    Collection<DailyReport> dailyReports;
+    Double totalProfit;
+    Long totalReservationCount;
 }

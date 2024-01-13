@@ -1,6 +1,6 @@
 package com.lunark.lunark.reports.service;
 
-import com.lunark.lunark.reports.dto.GeneralReportResponseDto;
+import com.lunark.lunark.reports.model.DailyReport;
 import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
@@ -21,7 +21,11 @@ public class ReportService implements IReportService {
 
     @Override
     public GeneralReport generateGeneralReport(LocalDate start, LocalDate end, Long hostId) {
-        return reservationRepository.generateGeneralReport(start, end, hostId);
+        Collection<DailyReport> dailyReports = reservationRepository.getDailyReports(start, end, hostId);
+        Double totalProfit = dailyReports.stream().mapToDouble(report -> report.getProfit()).sum();
+        Long totalReservationCount = dailyReports.stream().mapToLong(report -> report.getReservationCount()).sum();
+
+        return new GeneralReport(dailyReports, totalProfit, totalReservationCount);
     }
 
     @Override
