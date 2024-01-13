@@ -5,6 +5,7 @@ import com.lunark.lunark.reports.dto.GeneralReportResponseDto;
 import com.lunark.lunark.reports.dto.PropertyReportResponseDto;
 import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
+import com.lunark.lunark.reports.model.PropertyReport;
 import com.lunark.lunark.reports.service.IReportService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,8 @@ public class ReportController {
             @RequestParam Integer year,
             @RequestParam Long propertyId
     ) {
-        Collection<MonthlyReport> result = reportService.generateMonthlyReports(year, propertyId);
+        PropertyReport result = reportService.generatePropertyReport(year, propertyId);
 
-        return new ResponseEntity<>(new PropertyReportResponseDto(result), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(result, PropertyReportResponseDto.class), HttpStatus.OK);
     }
 }

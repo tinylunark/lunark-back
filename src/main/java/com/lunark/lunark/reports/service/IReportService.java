@@ -4,11 +4,12 @@ import com.lunark.lunark.reports.dto.GeneralReportResponseDto;
 import com.lunark.lunark.reports.model.DailyReport;
 import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
+import com.lunark.lunark.reports.model.PropertyReport;
 
 import java.time.LocalDate;
 import java.util.Collection;
 
 public interface IReportService {
     GeneralReport generateGeneralReport(LocalDate start, LocalDate end, Long hostId);
-    Collection<MonthlyReport> generateMonthlyReports(Integer year, Long propertyId);
+    PropertyReport generatePropertyReport(Integer year, Long propertyId);
 }

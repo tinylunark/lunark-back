@@ -1,12 +1,12 @@
-package com.lunark.lunark.reports.dto;
+package com.lunark.lunark.reports.model;
 
-import com.lunark.lunark.reports.model.MonthlyReport;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Collection;
 
 @Data
-public class PropertyReportResponseDto {
+@AllArgsConstructor
+public class PropertyReport {
     Collection<MonthlyReport> monthlyReports;
 }

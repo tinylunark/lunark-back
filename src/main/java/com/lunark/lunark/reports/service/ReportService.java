@@ -3,6 +3,7 @@ package com.lunark.lunark.reports.service;
 import com.lunark.lunark.reports.model.DailyReport;
 import com.lunark.lunark.reports.model.GeneralReport;
 import com.lunark.lunark.reports.model.MonthlyReport;
+import com.lunark.lunark.reports.model.PropertyReport;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,9 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public Collection<MonthlyReport> generateMonthlyReports(Integer year, Long propertyId) {
-        return reservationRepository.generateMonthlyReports(propertyId, year);
+    public PropertyReport generatePropertyReport(Integer year, Long propertyId) {
+        Collection<MonthlyReport> monthlyReports = reservationRepository.getMonthlyReports(propertyId, year);
+
+        return new PropertyReport(monthlyReports);
     }
 }

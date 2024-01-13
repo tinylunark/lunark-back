@@ -30,7 +30,7 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
             "and r.status = 1 " +
             "group by extract(month from r.endDate) " +
             "order by extract(month from r.endDate) ")
-    Collection<MonthlyReport> generateMonthlyReports(@Param("property_id") Long propertyId, @Param("year") Integer year);
+    Collection<MonthlyReport> getMonthlyReports(@Param("property_id") Long propertyId, @Param("year") Integer year);
 
     @Query("select new com.lunark.lunark.reports.model.DailyReport(r.endDate, sum(r.price), count(*)) " +
             "from Reservation r " +
