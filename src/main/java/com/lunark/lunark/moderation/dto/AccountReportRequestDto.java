@@ -1,10 +1,7 @@
 package com.lunark.lunark.moderation.dto;
 
 import com.lunark.lunark.validation.AccountExistsConstraint;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +15,7 @@ public record AccountReportRequestDto(
         Long reportedId,
         @NotNull
         @NotEmpty
+        @Pattern(message="Report reason can contain alphanumeric characters and punctuation marks only", regexp = "[a-zA-Z0-9 \\.!\\?]+")
         String reason
 ) {
 }
