@@ -1,5 +1,6 @@
 package com.lunark.lunark.errorhandling;
 
+import com.lunark.lunark.exceptions.AccountNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
@@ -24,5 +25,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({AccountNotFoundException.class})
+    public ResponseEntity<ErrorMessage> handleAccountNotFound(final AccountNotFoundException e) {
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 }

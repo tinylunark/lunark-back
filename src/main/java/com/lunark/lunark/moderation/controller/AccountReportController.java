@@ -1,14 +1,13 @@
 package com.lunark.lunark.moderation.controller;
 
 import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.exceptions.AccountNotFoundException;
 import com.lunark.lunark.mapper.AccountReportDtoMapper;
 import com.lunark.lunark.moderation.dto.AccountReportRequestDto;
 import com.lunark.lunark.moderation.dto.AccountReportResponseDto;
 import com.lunark.lunark.moderation.dto.HostReportEligibilityDto;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.service.IAccountReportService;
-import com.lunark.lunark.validation.AccountExistsConstraint;
-import com.lunark.lunark.validation.HostExistsConstraint;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -81,8 +80,8 @@ public class AccountReportController {
         try {
             boolean eligible = accountReportService.isGuestEligibleToReport(reporter, hostId);
             return new ResponseEntity<>(new HostReportEligibilityDto(hostId, eligible), HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (AccountNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

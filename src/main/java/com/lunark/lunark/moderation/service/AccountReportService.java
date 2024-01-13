@@ -3,6 +3,7 @@ package com.lunark.lunark.moderation.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.service.IAccountService;
+import com.lunark.lunark.exceptions.AccountNotFoundException;
 import com.lunark.lunark.moderation.model.AccountReport;
 import com.lunark.lunark.moderation.repository.IAccountReportRepository;
 import com.lunark.lunark.reservations.model.Reservation;
@@ -64,7 +65,7 @@ public class AccountReportService implements IAccountReportService {
     @Override
     public boolean isGuestEligibleToReport(Account guest, Long hostId) {
         if (accountService.find(hostId).isEmpty()) {
-            throw new RuntimeException("Could not find host with given id");
+            throw new AccountNotFoundException("Could not find host with given id");
         }
         if (guest.getRole().equals(AccountRole.GUEST) && this.accountReportRepository.canReportEachOther(guest.getId(), hostId)) {
             return true;
