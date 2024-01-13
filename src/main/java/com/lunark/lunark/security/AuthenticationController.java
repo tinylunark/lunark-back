@@ -4,8 +4,8 @@ import com.lunark.lunark.auth.dto.AccountSignUpDto;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.service.AccountService;
 import com.lunark.lunark.util.TokenUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +33,7 @@ public class AuthenticationController {
     private AccountService accountService;
 
     @PostMapping(value="/login", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserTokenState> createAuthenticationToken( @RequestBody AuthRequest authenticationRequest, HttpServletResponse response) {
+    public ResponseEntity<UserTokenState> createAuthenticationToken(@Valid @RequestBody AuthRequest authenticationRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getEmail(),
                 authenticationRequest.getPassword())
