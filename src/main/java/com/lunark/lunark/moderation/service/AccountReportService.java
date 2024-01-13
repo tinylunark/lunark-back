@@ -81,6 +81,8 @@ public class AccountReportService implements IAccountReportService {
             blockAccount(account);
             cancelAllResevations(reservationService.getAllReservationsForUser(account.getId()));
             removeAccountReportsForBlockedAccount(account);
+        } else {
+            throw new AccountNotFoundException("Account with the specified id does not exist");
         }
     }
 

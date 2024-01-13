@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,7 +70,11 @@ public class AccountReportController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<AccountReportResponseDto> block(@PathVariable @PositiveOrZero Long id) {
-        accountReportService.block(accountReportService.getById(id).get().getReported().getId());
+        Optional<AccountReport> report = accountReportService.getById(id);
+        if (report.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        accountReportService.block(report.get().getReported().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
