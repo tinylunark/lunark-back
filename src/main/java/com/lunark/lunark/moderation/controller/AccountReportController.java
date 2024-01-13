@@ -82,11 +82,7 @@ public class AccountReportController {
     @PreAuthorize("hasAuthority('GUEST')")
     public ResponseEntity<HostReportEligibilityDto> isCurrentGuestEligibleToReport(@PathVariable("hostId") @PositiveOrZero Long hostId) {
         Account reporter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        try {
-            boolean eligible = accountReportService.isGuestEligibleToReport(reporter, hostId);
-            return new ResponseEntity<>(new HostReportEligibilityDto(hostId, eligible), HttpStatus.OK);
-        } catch (AccountNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        boolean eligible = accountReportService.isGuestEligibleToReport(reporter, hostId);
+        return new ResponseEntity<>(new HostReportEligibilityDto(hostId, eligible), HttpStatus.OK);
     }
 }
