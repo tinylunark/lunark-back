@@ -192,6 +192,18 @@ public class Property {
         return !newAvailableDates.containsAll(reservedDates);
     }
 
+    private boolean willCloseOnPastDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
+       Set<LocalDate> pastOpenDates = availabilityEntries.stream()
+               .filter(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate().compareTo(LocalDate.now(clock)) <= 0)
+               .map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate())
+               .collect(Collectors.toSet());
+        Set<LocalDate> newAvailableDates = newAvailabilityEntries.stream()
+                .map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate())
+                .collect(Collectors.toSet());
+
+        return !newAvailableDates.containsAll(pastOpenDates);
+    }
+
     private boolean willPriceChangeOnReservedDate(Collection<PropertyAvailabilityEntry> newAvailabilityEntries) {
         for (PropertyAvailabilityEntry newEntry : newAvailabilityEntries) {
             Optional<PropertyAvailabilityEntry> oldEntry = this.getAvailabilityEntry(newEntry.getDate());
@@ -211,7 +223,7 @@ public class Property {
             }
         }
 
-        return false;
+        return willCloseOnPastDate(newAvailabilityEntries) || false;
     }
     public enum PropertyType {
         WHOLE_HOUSE,

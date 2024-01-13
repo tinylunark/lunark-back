@@ -219,6 +219,14 @@ public class PropertyServiceTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
         ));
 
+        List<PropertyAvailabilityEntry> removedDayInThePast = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
+        ));
         return Arrays.asList(
                 Arguments.arguments(0L, addedDaysFromEmpty, true),
                 Arguments.arguments(2L, addedNewDaysBefore, true),
@@ -229,7 +237,8 @@ public class PropertyServiceTests {
                 Arguments.arguments(2L, removedAvailableDays, true),
                 Arguments.arguments(3L, addedNewDaysAfter, false), // Non-existent property
                 Arguments.arguments(2L, madeAvailableInThePast, false),
-                Arguments.arguments(2L, madeAvailableToday, false)
+                Arguments.arguments(2L, madeAvailableToday, false),
+                Arguments.arguments(2L, removedDayInThePast, false)
         );
 
     }
