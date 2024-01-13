@@ -9,9 +9,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD, ElementType.FIELD})    // definise nad cime anotacija moze da se koristi
-@Retention(RetentionPolicy.RUNTIME)     // definise politiku zadrzavanja anotacije
-@Constraint(validatedBy=AccountExistsConstraintValidator.class)       // povezuje anotaciju sa validatorom
+@Target({ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy=AccountExistsConstraintValidator.class)
 public @interface AccountExistsConstraint {
     String message() default "No account with the specified id exists";
 

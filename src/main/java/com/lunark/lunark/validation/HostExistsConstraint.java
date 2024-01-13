@@ -13,9 +13,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD, ElementType.FIELD})    // definise nad cime anotacija moze da se koristi
-@Retention(RetentionPolicy.RUNTIME)     // definise politiku zadrzavanja anotacije
-@Constraint(validatedBy=HostExistsConstraintValidator.class)       // povezuje anotaciju sa validatorom
+@Target({ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy=HostExistsConstraintValidator.class)
 public @interface HostExistsConstraint {
     String message() default "No host with the specified id exists";
 
