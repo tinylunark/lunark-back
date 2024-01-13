@@ -32,7 +32,7 @@ public class PropertyRequestDto {
     int maxGuests;
     @NotNull
     @NotEmpty
-    @Pattern(message="The description of a property can contain only alphanumeric characters and punctuation marks", regexp = "[a-zA-Z0-9 \\.!\\?]+")
+    @Pattern(message="The description of a property can contain only alphanumeric characters and punctuation marks", regexp = "[a-zA-Z0-9 ,\\.!\\?]+")
     String description;
     @NotNull
     @Valid
