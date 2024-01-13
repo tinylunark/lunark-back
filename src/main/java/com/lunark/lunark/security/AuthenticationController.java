@@ -46,13 +46,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
     }
 
-    @PostMapping(value="/signup", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Account> addUser(@RequestBody AccountSignUpDto userRequest, UriComponentsBuilder ucBuilder) {
-        Optional<Account> existUser = this.accountService.find(userRequest.getEmail());
-        Account account = this.accountService.create(userRequest.toAccount());
-        return new ResponseEntity<>(account, HttpStatus.CREATED);
-    }
-
     @GetMapping(
             value = "/logout",
             produces = MediaType.TEXT_PLAIN_VALUE
