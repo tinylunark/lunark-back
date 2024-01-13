@@ -3,6 +3,7 @@ package com.lunark.lunark.auth.dto;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.properties.model.Property;
+import jakarta.validation.constraints.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,13 +13,29 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class AccountSignUpDto {
+    @PositiveOrZero
     private Long id;
+    @NotNull
+    @NotEmpty
+    @Email
     private String email;
+    @NotNull
+    @NotEmpty
     private String password;
+    @NotNull
+    @NotEmpty
     private String name;
+    @NotNull
+    @NotEmpty
     private String surname;
+    @NotNull
+    @NotEmpty
     private String address;
+    @NotNull
+    @Pattern(regexp = "[- +()0-9]+")
     private String phoneNumber;
+    @NotNull
+    @Pattern(regexp = "GUEST|HOST")
     private String role;
 
     public AccountSignUpDto() {

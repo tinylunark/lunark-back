@@ -12,6 +12,7 @@ import com.lunark.lunark.mapper.PropertyDtoMapper;
 import com.lunark.lunark.notifications.dto.NotificationSettingsDto;
 import com.lunark.lunark.properties.dto.PropertyResponseDto;
 import com.lunark.lunark.properties.service.IPropertyService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -63,7 +64,7 @@ public class AccountController {
     }
 
     @PostMapping(path="", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountDto> createAccount(@RequestBody AccountSignUpDto accountDto) {
+    public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody AccountSignUpDto accountDto) {
         Account newAccount = accountDto.toAccount();
         Account account = accountService.create(newAccount);
         verificationService.createVerificationLink(account);
