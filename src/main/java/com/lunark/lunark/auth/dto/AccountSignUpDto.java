@@ -3,6 +3,7 @@ package com.lunark.lunark.auth.dto;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.properties.model.Property;
+import jakarta.validation.constraints.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,13 +13,27 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class AccountSignUpDto {
+    @PositiveOrZero(message = "Ids cannot be negative")
     private Long id;
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "The entered email must be a valid email")
     private String email;
+    @NotBlank(message = "Password cannot be blank")
     private String password;
+    @NotBlank
+    @Pattern(message="Name can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String name;
+    @NotBlank
+    @Pattern(message="Surname can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String surname;
+    @NotBlank
+    @Pattern(message="Address can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String address;
+    @NotBlank(message = "Phone number cannot be blank")
+    @Pattern(message = "Phone numbers can contain only digits, spaces, pluses, and dashes", regexp = "[- +()0-9]+")
     private String phoneNumber;
+    @NotBlank(message = "Role cannot be blank")
+    @Pattern(message = "Role must be either 'GUEST' or 'HOST' (without quotes)", regexp = "GUEST|HOST")
     private String role;
 
     public AccountSignUpDto() {
