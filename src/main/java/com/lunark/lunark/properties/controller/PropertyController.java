@@ -10,6 +10,7 @@ import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import com.lunark.lunark.validation.ValidPropertySearchDates;
+import com.lunark.lunark.validation.ValidPropertySearchPrices;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.modelmapper.ModelMapper;
@@ -49,6 +50,7 @@ public class PropertyController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ValidPropertySearchDates
+    @ValidPropertySearchPrices
     public ResponseEntity<List<PropertyResponseDto>> getAll(
             @RequestParam(required = false) @Pattern(message = "Location can not contain special characters", regexp = "^[^%<>$]*$") String location,
             @RequestParam(required = false) @Positive(message = "Guest number must be positive") Integer guestNumber,
