@@ -166,7 +166,8 @@ public class PropertyController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<PropertyResponseDto> updateProperty(@RequestBody @Valid PropertyRequestDto propertyDto) {
-        Property property = propertyDtoMapper.fromDtoToProperty(propertyDto);
+        Account host = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Property property = propertyDtoMapper.fromDtoToProperty(propertyDto, host.getId());
         if (this.propertyService.find(property.getId()).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
