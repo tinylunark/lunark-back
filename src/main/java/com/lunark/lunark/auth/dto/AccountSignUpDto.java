@@ -15,24 +15,24 @@ import java.util.HashSet;
 public class AccountSignUpDto {
     @PositiveOrZero
     private Long id;
-    @NotEmpty
+    @NotBlank
     @Email
     private String email;
     @NotEmpty(message = "Password can not be blank")
     private String password;
-    @NotEmpty
+    @NotBlank
     @Pattern(message="Name can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String name;
-    @NotEmpty
+    @NotBlank
     @Pattern(message="Surname can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String surname;
-    @NotEmpty
+    @NotBlank
     @Pattern(message="Address can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String address;
-    @NotNull
+    @NotBlank
     @Pattern(regexp = "[- +()0-9]+")
     private String phoneNumber;
-    @NotNull
+    @NotBlank
     @Pattern(regexp = "GUEST|HOST")
     private String role;
 
