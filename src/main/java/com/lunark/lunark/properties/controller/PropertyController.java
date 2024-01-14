@@ -1,5 +1,6 @@
 package com.lunark.lunark.properties.controller;
 
+import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.mapper.PropertyDtoMapper;
 import com.lunark.lunark.properties.dto.AvailabilityEntryDto;
 import com.lunark.lunark.properties.dto.PropertyRequestDto;
@@ -22,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -154,8 +156,9 @@ public class PropertyController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<PropertyResponseDto> createProperty(@Valid @RequestBody PropertyRequestDto propertyDto) {
-        Property property = propertyService.create(propertyDtoMapper.fromDtoToProperty(propertyDto));
+    public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
+        Account host = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Property property = propertyService.create(propertyDtoMapper.fromDtoToProperty(propertyDto, host.getId()));
         PropertyResponseDto response = PropertyDtoMapper.fromPropertyToDto(property);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

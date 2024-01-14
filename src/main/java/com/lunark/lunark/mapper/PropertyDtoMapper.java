@@ -52,6 +52,11 @@ public class PropertyDtoMapper {
         return property;
     }
 
+    public Property fromDtoToProperty(PropertyRequestDto propertyRequestDto, Long hostId) {
+        propertyRequestDto.setHostId(hostId);
+        return this.fromDtoToProperty(propertyRequestDto);
+    }
+
     public static PropertyResponseDto fromPropertyToDto(Property property) {
         PropertyResponseDto propertyResponseDto = modelMapper.map(property, PropertyResponseDto.class);
         List<AvailabilityEntryDto> availabilityEntryDtos = property.getAvailabilityEntries().stream()
