@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class AccountSignUpDto {
-    @PositiveOrZero
+    @PositiveOrZero(message = "Ids cannot be negative")
     private Long id;
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email can not be blank")
+    @Email(message = "The entered email must be a valid email")
     private String email;
     @NotEmpty(message = "Password can not be blank")
     private String password;
@@ -29,11 +29,11 @@ public class AccountSignUpDto {
     @NotBlank
     @Pattern(message="Address can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String address;
-    @NotBlank
-    @Pattern(regexp = "[- +()0-9]+")
+    @NotBlank(message = "Phone number cannot be blank")
+    @Pattern(message = "Phone numbers can contain only digits, spaces, pluses, and dashes", regexp = "[- +()0-9]+")
     private String phoneNumber;
-    @NotBlank
-    @Pattern(regexp = "GUEST|HOST")
+    @NotBlank(message = "Role cannot be blank")
+    @Pattern(message = "Role must be either 'GUEST' or 'HOST' (without quotes)", regexp = "GUEST|HOST")
     private String role;
 
     public AccountSignUpDto() {
