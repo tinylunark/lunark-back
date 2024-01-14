@@ -5,6 +5,7 @@ import com.lunark.lunark.mapper.ReviewDtoMapper;
 import com.lunark.lunark.reviews.dto.*;
 import com.lunark.lunark.reviews.model.Review;
 import com.lunark.lunark.reviews.service.ReviewService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -64,7 +65,7 @@ public class ReviewController {
 
     @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping(value = "/property/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReviewDto> createPropertyReview(@RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
+    public ResponseEntity<ReviewDto> createPropertyReview(@Valid @RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
         Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!this.reviewService.guestEligibleToReviewProperty(guest.getId(), id)) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -76,7 +77,7 @@ public class ReviewController {
 
     @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping(value = "/host/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReviewDto> createHostReview(@RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
+    public ResponseEntity<ReviewDto> createHostReview(@Valid @RequestBody ReviewRequestDto reviewDto, @PathVariable(value = "id") Long id) {
         Account guest = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!this.reviewService.guestEligibleToReviewHost(guest.getId(), id)) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
