@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class AuthRequest {
-    @NotEmpty
+    @NotBlank
     @Email
     private String email;
-    @NotEmpty
+    @NotBlank
     private String password;
 
     public AuthRequest() {
