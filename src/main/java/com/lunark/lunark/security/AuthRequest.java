@@ -1,15 +1,14 @@
 package com.lunark.lunark.security;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class AuthRequest {
-    @NotNull
     @NotEmpty
     @Email
     private String email;
-    @NotNull
     @NotEmpty
     private String password;
 
