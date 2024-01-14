@@ -18,6 +18,9 @@ public class ValidPropertySearchDatesValidator implements ConstraintValidator<Va
     public boolean isValid(Object[] objects, ConstraintValidatorContext constraintValidatorContext) {
         LocalDate startDate = (LocalDate) objects[2];
         LocalDate endDate = (LocalDate) objects[3];
+        if (startDate == null || endDate == null) {
+            return true;
+        }
         return startDate.isBefore(endDate);
     }
 }

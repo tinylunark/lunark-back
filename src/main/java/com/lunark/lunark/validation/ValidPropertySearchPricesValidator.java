@@ -16,6 +16,9 @@ public class ValidPropertySearchPricesValidator implements ConstraintValidator<V
     public boolean isValid(Object[] objects, ConstraintValidatorContext constraintValidatorContext) {
         Double minPrice = (Double) objects[6];
         Double maxPrice = (Double) objects[7];
+        if (minPrice == null || maxPrice == null) {
+            return true;
+        }
         return minPrice < maxPrice;
     }
 }
