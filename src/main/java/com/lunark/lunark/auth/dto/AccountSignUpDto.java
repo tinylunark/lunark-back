@@ -15,10 +15,10 @@ import java.util.HashSet;
 public class AccountSignUpDto {
     @PositiveOrZero(message = "Ids cannot be negative")
     private Long id;
-    @NotBlank(message = "Email can not be blank")
+    @NotBlank(message = "Email cannot be blank")
     @Email(message = "The entered email must be a valid email")
     private String email;
-    @NotBlank(message = "Password can not be blank")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
     @NotBlank
     @Pattern(message="Name can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
