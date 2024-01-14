@@ -9,6 +9,7 @@ import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
+import com.lunark.lunark.validation.ValidPropertySearchDates;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.modelmapper.ModelMapper;
@@ -19,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +48,7 @@ public class PropertyController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ValidPropertySearchDates
     public ResponseEntity<List<PropertyResponseDto>> getAll(
             @RequestParam(required = false) @Pattern(message = "Location can not contain special characters", regexp = "^[^%<>$]*$") String location,
             @RequestParam(required = false) @Positive(message = "Guest number must be positive") Integer guestNumber,
