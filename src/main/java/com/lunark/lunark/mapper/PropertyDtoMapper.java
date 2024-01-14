@@ -34,7 +34,10 @@ public class PropertyDtoMapper {
         List<PropertyAvailabilityEntry> availabilityEntries = propertyRequestDto.getAvailabilityEntries().stream()
                 .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
                 .collect(Collectors.toList());
-        property.setAvailabilityEntries(availabilityEntries);
+        // We need to circumvent availability entry setter checks here
+        // so old unchanged entries can be converted properly
+        property.getAvailabilityEntries().clear();
+        property.getAvailabilityEntries().addAll(availabilityEntries);
 
         List<Amenity> amenities = propertyRequestDto.getAmenityIds().stream()
                 .map(id -> {

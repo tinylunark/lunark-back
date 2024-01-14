@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,8 +43,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         StringBuilder sb = new StringBuilder("Request finished with validation errors: \n");
 
         for (ObjectError error : errorList ) {
-            FieldError fe = (FieldError) error;
-            sb.append(fe.getField() + " - ");
+            if (error instanceof FieldError) {
+                FieldError fe = (FieldError) error;
+                sb.append(fe.getField() + " - ");
+            }
             sb.append(error.getDefaultMessage()+ "\n\n");
         }
 
