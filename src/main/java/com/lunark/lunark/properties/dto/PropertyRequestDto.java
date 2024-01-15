@@ -50,7 +50,6 @@ public class PropertyRequestDto {
     @NotNull
     Property.PropertyType type;
     @PositiveOrZero
-    @HostExistsConstraint
     Long hostId;
     @Min(-90)
     @Max(90)
