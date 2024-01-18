@@ -13,9 +13,6 @@ public class PropertyImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    Property property;
     @Lob
     @JdbcType(VarbinaryJdbcType.class)
     @JsonIgnore
