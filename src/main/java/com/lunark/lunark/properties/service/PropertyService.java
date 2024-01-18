@@ -180,7 +180,6 @@ public class PropertyService implements IPropertyService {
 
         PropertyImage propertyImage = new PropertyImage();
         propertyImage.setImageData(byteObjects);
-        propertyImage.setProperty(property);
         propertyImage.setMimeType(file.getContentType());
 
         property.getImages().add(propertyImage);
@@ -191,7 +190,7 @@ public class PropertyService implements IPropertyService {
 
     @Override
     @Transactional
-    public Optional<PropertyImage> getImage(Long imageId, Long propertyId) {
-        return propertyImageRepository.findByIdAndProperty(imageId, propertyId);
+    public Optional<PropertyImage> getImage(Long imageId) {
+        return propertyImageRepository.findById(imageId);
     }
 }

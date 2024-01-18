@@ -180,8 +180,12 @@ public class AccountController {
         Account currentUser = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Account account = accountService.find(currentUser.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found"));
 
-        byte[] profileImage = account.getProfileImage().getImageData();
-
+        byte[] profileImage;
+        if(account.getProfileImage() != null ) {
+            profileImage = account.getProfileImage().getImageData();
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(profileImage, HttpStatus.OK);
     }
 

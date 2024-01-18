@@ -1,6 +1,7 @@
 package com.lunark.lunark.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
 import lombok.Data;

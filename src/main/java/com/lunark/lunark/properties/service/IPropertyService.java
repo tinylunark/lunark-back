@@ -24,7 +24,7 @@ public interface IPropertyService {
     void delete(Long id);
     Double getAverageGrade(Long id);
     void saveImage(Property property, MultipartFile file) throws IOException;
-    Optional<PropertyImage> getImage(Long imageId, Long propertyId);
+    Optional<PropertyImage> getImage(Long imageId);
     boolean changePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability);
     List<Property> findByFilter(PropertySearchDto filter);
 
