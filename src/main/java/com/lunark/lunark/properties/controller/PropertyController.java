@@ -207,13 +207,6 @@ public class PropertyController {
 
     @GetMapping(value = "/{propertyId}/images/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable("propertyId") @NotNull @PositiveOrZero Long propertyId, @PathVariable("imageId") @NotNull @PositiveOrZero Long imageId) {
-        /*
-        Optional<Property> property = propertyService.find(propertyId);
-        if (property.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-         */
-
         Optional<PropertyImage> image = propertyService.getImage(imageId);
         if (image.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
