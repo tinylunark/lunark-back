@@ -57,9 +57,7 @@ public class Property {
     @NotNull
     @Valid
     private Address address;
-    //TODO: Store images
     @OneToMany(
-            mappedBy = "property",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
