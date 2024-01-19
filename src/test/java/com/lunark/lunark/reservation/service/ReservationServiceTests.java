@@ -72,6 +72,8 @@ public class ReservationServiceTests {
         });
 
         Assertions.assertTrue(exception.getMessage().contains("property"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(2L);
+        Mockito.verifyNoInteractions(accountRepository, notificationService, reservationRepository);
     }
 
     @ParameterizedTest
@@ -84,6 +86,8 @@ public class ReservationServiceTests {
         });
 
         Assertions.assertTrue(exception.getMessage().contains("date"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(param.getPropertyId());
+        Mockito.verifyNoInteractions(accountRepository, notificationService, reservationRepository);
     }
 
     @ParameterizedTest
@@ -96,6 +100,8 @@ public class ReservationServiceTests {
         });
 
         Assertions.assertTrue(exception.getMessage().contains("guest"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(param.getPropertyId());
+        Mockito.verifyNoInteractions(accountRepository, notificationService, reservationRepository);
     }
 
     @Test
@@ -110,6 +116,9 @@ public class ReservationServiceTests {
         });
 
         Assertions.assertTrue(exception.getMessage().contains("user"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(1L);
+        Mockito.verify(accountRepository, Mockito.times(1)).findByEmail("user");
+        Mockito.verifyNoInteractions(notificationService, reservationRepository);
     }
 
     @Test
@@ -131,6 +140,10 @@ public class ReservationServiceTests {
         Assertions.assertEquals("user", reservation.getGuest().getEmail());
         Assertions.assertEquals(1L, reservation.getProperty().getId());
         Assertions.assertEquals(3, reservation.getNumberOfGuests());
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(1L);
+        Mockito.verify(accountRepository, Mockito.times(1)).findByEmail("user");
+        Mockito.verify(notificationService, Mockito.times(1)).createNotification(Mockito.any(Reservation.class));
+        Mockito.verify(reservationRepository, Mockito.times(1)).save(Mockito.any(Reservation.class));
     }
 
     static List<ReservationRequestDto> invalidDatesSource() {
