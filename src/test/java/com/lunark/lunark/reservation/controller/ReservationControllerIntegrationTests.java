@@ -28,7 +28,7 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class)
 @Import(TestConfiguration.class)
 @ActiveProfiles("test")
-@Sql("classpath:test-data-availability.sql")
+@Sql("classpath:reservation-creation-test-data.sql")
 public class ReservationControllerIntegrationTests {
     @Autowired
     private TestRestTemplate testRestTemplate;
