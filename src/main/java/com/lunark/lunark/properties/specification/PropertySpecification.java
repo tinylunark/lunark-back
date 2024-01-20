@@ -5,7 +5,6 @@ import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import jakarta.persistence.criteria.*;
-import org.hibernate.sql.ast.spi.ExpressionReplacementWalker;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
