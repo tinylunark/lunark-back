@@ -5,6 +5,7 @@ import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.properties.model.*;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.PropertyService;
+import com.lunark.lunark.reservations.service.IReservationService;
 import com.lunark.lunark.reviews.model.Review;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ import java.util.List;
 public class PropertyServiceTests {
     @Mock
     private IPropertyRepository propertyRepository;
+    @Mock
+    private IReservationService reservationService;
 
     private PropertyService propertyService;
 
@@ -38,7 +41,7 @@ public class PropertyServiceTests {
         MockitoAnnotations.initMocks(this);
         Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
         Clock testClock = Clock.fixed(testTime, ZoneId.systemDefault());
-        propertyService = new PropertyService(propertyRepository, null, testClock);
+        propertyService = new PropertyService(propertyRepository, null, testClock, reservationService);
         availabilityEntries = new ArrayList<>(Arrays.asList(
                 new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),

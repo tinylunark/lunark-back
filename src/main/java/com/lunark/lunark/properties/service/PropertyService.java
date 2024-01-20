@@ -8,6 +8,7 @@ import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.repostiory.IPropertyImageRepository;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.specification.PropertySpecification;
+import com.lunark.lunark.reservations.service.IReservationService;
 import com.lunark.lunark.reviews.model.Review;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
@@ -21,22 +22,26 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Locale.filter;
 
 @Service
 public class PropertyService implements IPropertyService {
-    // TODO: add logic
     private IPropertyRepository propertyRepository;
     private final IPropertyImageRepository propertyImageRepository;
     private Clock clock;
+    @Autowired
+    private IReservationService reservationService;
 
     @Autowired
-    public PropertyService(IPropertyRepository propertyRepository, IPropertyImageRepository propertyImageRepository, Clock clock) {
+    public PropertyService(IPropertyRepository propertyRepository, IPropertyImageRepository propertyImageRepository, Clock clock, IReservationService reservationService) {
         this.propertyRepository = propertyRepository;
         this.propertyImageRepository = propertyImageRepository;
         this.clock = clock;
+        this.reservationService = reservationService;
     }
 
     @Override
@@ -76,7 +81,9 @@ public class PropertyService implements IPropertyService {
             if (property.isEmpty()) {
                 return this.create(newProperty);
             } else {
+                Set<LocalDate> closedDates = getClosedDates(property.get(), newProperty);
                 property.get().copyFields(newProperty);
+                rejectPendingReservationsOnDates(closedDates, property.get());
                 propertyRepository.save(property.get());
                 propertyRepository.flush();
                 return property.get();
@@ -192,5 +199,18 @@ public class PropertyService implements IPropertyService {
     @Transactional
     public Optional<PropertyImage> getImage(Long imageId) {
         return propertyImageRepository.findById(imageId);
+    }
+
+    private Set<LocalDate> getClosedDates(Property property, Property newProperty) {
+        Set<LocalDate> closedDates = property.getAvailabilityEntries().stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet());
+        Set<LocalDate> newDates = newProperty.getAvailabilityEntries().stream().map(propertyAvailabilityEntry -> propertyAvailabilityEntry.getDate()).collect(Collectors.toSet());
+        closedDates.removeAll(newDates);
+        return closedDates;
+    }
+
+    private void rejectPendingReservationsOnDates(Set<LocalDate> dates, Property property) {
+        for (LocalDate date: dates) {
+            reservationService.rejectAllPendingReservationsAtPropertyThatContainDate(property.getId(), date);
+        }
     }
 }

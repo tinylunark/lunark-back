@@ -12,7 +12,6 @@ import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
 import com.lunark.lunark.reservations.specification.ReservationSpecification;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -236,6 +235,7 @@ public class ReservationService implements IReservationService {
                 .sum();
     }
 
+    @Override
     public void rejectAllPendingReservationsAtPropertyThatContainDate(Long propertyId, LocalDate date) {
         List<Reservation> toCancel = reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
         for (Reservation reservation: toCancel) {
