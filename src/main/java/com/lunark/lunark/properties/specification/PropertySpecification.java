@@ -114,10 +114,14 @@ public class PropertySpecification implements Specification<Property> {
         }
 
         Order order;
+        Subquery<LocalDate> subquery = query.subquery(LocalDate.class);
+        Root<Property> subRoot = subquery.correlate(root);
+        Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
+        subquery.select(entryJoin.get("date"));
         if (filter.getSort() == null || filter.getSort().equals("ASC")) {
-            order = criteriaBuilder.asc(root.get("name"));
+            order = criteriaBuilder.asc(subquery);
         } else {
-            order = criteriaBuilder.desc(root.get("name"));
+            order = criteriaBuilder.desc(subquery);
         }
         query.orderBy(order);
 
