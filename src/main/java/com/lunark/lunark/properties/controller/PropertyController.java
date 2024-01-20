@@ -153,7 +153,11 @@ public class PropertyController {
         if (this.propertyService.find(property.getId()).isEmpty())  {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        property = this.propertyService.update(property, propertyDto.getId());
+        try {
+            property = this.propertyService.update(property, propertyDto.getId());
+        } catch (RuntimeException ex) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
         property = this.propertyService.deleteImages(property.getId());
         return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.OK);
     }
