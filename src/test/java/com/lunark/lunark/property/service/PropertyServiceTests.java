@@ -277,6 +277,7 @@ public class PropertyServiceTests {
                 Arguments.arguments(2L, addedNewDaysAfter, true, noClosedDays),
                 Arguments.arguments(2L, addedNewDaysInMiddle, true, noClosedDays),
                 Arguments.arguments(2L, removedReservedDay, false, noClosedDays),
+                Arguments.arguments(2L, changedPrices, true, noClosedDays),
                 Arguments.arguments(2L, priceChangedOnReservedDay, false, noClosedDays),
                 Arguments.arguments(2L, removedAvailableDays, true, removedDays),
                 Arguments.arguments(2L, madeAvailableInThePast, false, noClosedDays),

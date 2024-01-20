@@ -203,5 +203,20 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
                 new ParameterizedTypeReference<>() {
                 });
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        PropertyResponseDto response = responseEntity.getBody();
+        List<AvailabilityEntryDto> changedAvailabilityEntries = response.getAvailabilityEntries().stream().toList();
+        Assertions.assertEquals(newPropertyAvailabilityEntries.size(), changedAvailabilityEntries.size());
+        for (int i = 0; i < changedAvailabilityEntries.size(); i++) {
+            Assertions.assertEquals(newPropertyAvailabilityEntries.get(i).getPrice(), changedAvailabilityEntries.get(i).getPrice());
+            Assertions.assertEquals(newPropertyAvailabilityEntries.get(i).getDate(), changedAvailabilityEntries.get(i).getDate());
+            Assertions.assertEquals(newPropertyAvailabilityEntries.get(i).isReserved(), changedAvailabilityEntries.get(i).isReserved());
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "getPositiveRequests")
+    @DisplayName("Should not add new dates")
+    public void testAddAvailabilityConfilict(List<PropertyAvailabilityEntry> newPropertyAvailabilityEntries) {
+        // TODO: Negative tests
     }
 }
