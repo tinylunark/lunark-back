@@ -386,7 +386,7 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2024, 6, 29), 1000, null)
         ));
         Assertions.assertEquals(1, reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(1339L, LocalDate.of(2024, 6, 29)).size());
-        HttpEntity<PropertyRequestDto> httpEntity = getHttpEntityWithoutHeaders(newPropertyAvailabilityEntries);
+        HttpEntity<PropertyRequestDto> httpEntity = getHttpEntity(newPropertyAvailabilityEntries);
         ResponseEntity<String> responseEntity = testRestTemplate.exchange("/api/properties",
                 HttpMethod.PUT,
                 httpEntity,
@@ -394,5 +394,26 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
                 });
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertEquals(0, reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(1339L, LocalDate.of(2024, 6, 29)).size());
+    }
+    @Test
+    @DisplayName("Will change cancellation deadline and pricing mode")
+    public void testChangeCancellationDeadlineAndPricingMode() {
+        property.setId(1339L);
+        List<PropertyAvailabilityEntry> newPropertyAvailabilityEntries = new ArrayList<>(List.of(
+                new PropertyAvailabilityEntry(LocalDate.of(2024, 6, 28), 7000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2024, 6, 29), 1000, null)
+        ));
+        property.setPricingMode(PricingMode.PER_PERSON);
+        property.setCancellationDeadline(88);
+        HttpEntity<PropertyRequestDto> httpEntity = getHttpEntity(newPropertyAvailabilityEntries);
+        ResponseEntity<PropertyResponseDto> responseEntity = testRestTemplate.exchange("/api/properties",
+                HttpMethod.PUT,
+                httpEntity,
+                new ParameterizedTypeReference<>() {
+                });
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        PropertyResponseDto responseDto = responseEntity.getBody();
+        Assertions.assertEquals(PricingMode.PER_PERSON, responseDto.getPricingMode());
+        Assertions.assertEquals(88, responseDto.getCancellationDeadline());
     }
 }
