@@ -136,26 +136,6 @@ public class PropertyController {
         return new ResponseEntity<>(availabilityEntryDtos, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{id}/pricesAndAvailability", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<Collection<AvailabilityEntryDto>> changePricesAndAvailability(@PathVariable("id") @NotNull @PositiveOrZero Long id, @RequestBody @Valid List<AvailabilityEntryDto> availabilityEntries) {
-        Optional<Property> property = propertyService.find(id);
-
-        if (property.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        List<PropertyAvailabilityEntry> propertyAvailabilityEntries = availabilityEntries.stream()
-                .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
-                .collect(Collectors.toList());
-
-        if(!this.propertyService.changePricesAndAvailability(id, propertyAvailabilityEntries)) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
-        return new ResponseEntity<>(availabilityEntries, HttpStatus.OK);
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('HOST')")
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyDto) {
@@ -175,7 +155,7 @@ public class PropertyController {
         }
         property = this.propertyService.update(property, propertyDto.getId());
         property = this.propertyService.deleteImages(property.getId());
-        return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.CREATED);
+        return new ResponseEntity<>(PropertyDtoMapper.fromPropertyToDto(property), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")

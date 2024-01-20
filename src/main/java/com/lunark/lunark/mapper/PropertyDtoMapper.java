@@ -77,4 +77,19 @@ public class PropertyDtoMapper {
 
         return propertyResponseDto;
     }
+
+    public static PropertyRequestDto fromPropertyToRequestDto(Property property) {
+        PropertyRequestDto propertyRequestDto = modelMapper.map(property, PropertyRequestDto.class);
+        List<AvailabilityEntryDto> availabilityEntryDtos = property.getAvailabilityEntries().stream()
+                .map(propertyAvailabilityEntry -> modelMapper.map(propertyAvailabilityEntry, AvailabilityEntryDto.class))
+                .collect(Collectors.toList());
+        propertyRequestDto.setAvailabilityEntries(availabilityEntryDtos);
+
+        List<Long> amenities = property.getAmenities().stream()
+                .map(Amenity::getId)
+                .toList();
+        propertyRequestDto.setAmenityIds(amenities);
+
+        return propertyRequestDto;
+    }
 }

@@ -81,6 +81,7 @@ public class PropertyService implements IPropertyService {
             if (property.isEmpty()) {
                 return this.create(newProperty);
             } else {
+                property.get().setClock(clock);
                 Set<LocalDate> closedDates = getClosedDates(property.get(), newProperty);
                 property.get().copyFields(newProperty);
                 rejectPendingReservationsOnDates(closedDates, property.get());
