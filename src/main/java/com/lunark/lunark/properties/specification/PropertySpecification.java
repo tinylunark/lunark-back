@@ -5,6 +5,7 @@ import com.lunark.lunark.properties.dto.PropertySearchDto;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import jakarta.persistence.criteria.*;
+import org.hibernate.sql.ast.spi.ExpressionReplacementWalker;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -117,7 +118,9 @@ public class PropertySpecification implements Specification<Property> {
         Subquery<LocalDate> subquery = query.subquery(LocalDate.class);
         Root<Property> subRoot = subquery.correlate(root);
         Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
-        subquery.select(entryJoin.get("date"));
+        subquery.select(criteriaBuilder.min(entryJoin.get("date")).as(LocalDate.class));
+        subquery.groupBy(entryJoin.getParent().get("id"));
+        subquery.having(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.min(entryJoin.get("date")).as(LocalDate.class), LocalDate.now()));
         if (filter.getSort() == null || filter.getSort().equals("ASC")) {
             order = criteriaBuilder.asc(subquery);
         } else {
