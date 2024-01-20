@@ -19,4 +19,5 @@ public class PropertySearchDto {
     Property.PropertyType type;
     Double minPrice;
     Double maxPrice;
+    String sort;
 }

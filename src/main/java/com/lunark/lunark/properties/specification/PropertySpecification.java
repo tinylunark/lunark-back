@@ -113,6 +113,14 @@ public class PropertySpecification implements Specification<Property> {
             predicate = criteriaBuilder.and(predicate, typePredicate);
         }
 
+        Order order;
+        if (filter.getSort() == null || filter.getSort().equals("ASC")) {
+            order = criteriaBuilder.asc(root.get("name"));
+        } else {
+            order = criteriaBuilder.desc(root.get("name"));
+        }
+        query.orderBy(order);
+
         return predicate;
     }
 
