@@ -7,6 +7,7 @@ import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.PropertyService;
 import com.lunark.lunark.reservations.service.IReservationService;
 import com.lunark.lunark.reviews.model.Review;
+import net.bytebuddy.implementation.auxiliary.MethodCallProxy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -203,6 +204,11 @@ public class PropertyServiceTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
         ));
+        List<LocalDate> removedDays = new ArrayList<>(Arrays.asList(
+                LocalDate.of(2023, 12, 3),
+                LocalDate.of(2023, 12, 9),
+                LocalDate.of(2023, 12, 10)
+        ));
 
         List<PropertyAvailabilityEntry> madeAvailableInThePast = new ArrayList<>(Arrays.asList(
                 new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),
@@ -256,28 +262,27 @@ public class PropertyServiceTests {
         List<PropertyAvailabilityEntry> changedPriceToday =
                 new ArrayList<>(List.of(new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 28), 7000, null)));
         List<PropertyAvailabilityEntry> removedToday = new ArrayList<>();
+        List<LocalDate> noClosedDays = new ArrayList<>();
         return Arrays.asList(
-                Arguments.arguments(0L, addedDaysFromEmpty, true),
-                Arguments.arguments(2L, addedNewDaysBefore, true),
-                Arguments.arguments(2L, addedNewDaysAfter, true),
-                Arguments.arguments(2L, addedNewDaysInMiddle, true),
-                Arguments.arguments(2L, removedReservedDay, false),
-                Arguments.arguments(2L, priceChangedOnReservedDay, false),
-                Arguments.arguments(2L, removedAvailableDays, true),
-                Arguments.arguments(3L, addedNewDaysAfter, false), // Non-existent property
-                Arguments.arguments(2L, madeAvailableInThePast, false),
-                Arguments.arguments(2L, madeAvailableToday, false),
-                Arguments.arguments(2L, removedDayInThePast, false),
-                Arguments.arguments(2L, duplicateDates, false),
-                Arguments.arguments(2L, changedPriceInThePast, false),
-                Arguments.arguments(1L, changedPriceToday, false),
-                Arguments.arguments(1L, removedToday, false)
+                Arguments.arguments(0L, addedDaysFromEmpty, true, noClosedDays),
+                Arguments.arguments(2L, addedNewDaysBefore, true, noClosedDays),
+                Arguments.arguments(2L, addedNewDaysAfter, true, noClosedDays),
+                Arguments.arguments(2L, addedNewDaysInMiddle, true, noClosedDays),
+                Arguments.arguments(2L, removedReservedDay, false, noClosedDays),
+                Arguments.arguments(2L, priceChangedOnReservedDay, false, noClosedDays),
+                Arguments.arguments(2L, removedAvailableDays, true, removedDays),
+                Arguments.arguments(2L, madeAvailableInThePast, false, noClosedDays),
+                Arguments.arguments(2L, madeAvailableToday, false, noClosedDays),
+                Arguments.arguments(2L, removedDayInThePast, false, noClosedDays),
+                Arguments.arguments(2L, duplicateDates, false, noClosedDays),
+                Arguments.arguments(2L, changedPriceInThePast, false, noClosedDays),
+                Arguments.arguments(1L, changedPriceToday, false, noClosedDays),
+                Arguments.arguments(1L, removedToday, false, noClosedDays)
         );
-
     }
     @ParameterizedTest
     @MethodSource(value = "returnParamsForTestChangePricesAndAvailability")
-    public void testChangePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability, boolean shouldWork) {
+    public void testChangePricesAndAvailability(Long id, Collection<PropertyAvailabilityEntry> newPricesAndAvailability, boolean shouldWork, List<LocalDate> closedDays) {
         if (id < this.properties.size()){
             Mockito.when(propertyRepository.findById(id)).thenReturn(Optional.ofNullable(properties.get(id.intValue())));
         } else {
@@ -288,13 +293,29 @@ public class PropertyServiceTests {
             Mockito.when(propertyRepository.save(properties.get(id.intValue()))).thenReturn(properties.get(id.intValue()));
         }
 
-        Assertions.assertEquals(shouldWork, propertyService.changePricesAndAvailability(id, newPricesAndAvailability));
-        Mockito.verify(propertyRepository, Mockito.atLeastOnce()).findById(id);
-        if(shouldWork) {
-            for(PropertyAvailabilityEntry propertyAvailabilityEntry: newPricesAndAvailability) {
-                Assertions.assertEquals(properties.get(id.intValue()), propertyAvailabilityEntry.getProperty());
-            }
-            Mockito.verify(propertyRepository).save(properties.get(id.intValue()));
+        Property propertyWithChangedAvailability = new Property();
+        propertyWithChangedAvailability.setId(id);
+        propertyWithChangedAvailability.getAvailabilityEntries().addAll(newPricesAndAvailability);
+
+        if (!shouldWork) {
+            Assertions.assertThrowsExactly(RuntimeException.class, () -> propertyService.update(propertyWithChangedAvailability, id), "Conflict between new and old availability entries");
+            Assertions.assertNotEquals(newPricesAndAvailability, properties.get(id.intValue()).getAvailabilityEntries());
+            Mockito.verify(propertyRepository, Mockito.only()).findById(id);
+            Mockito.verifyNoMoreInteractions(propertyRepository);
+            Mockito.verifyNoInteractions(reservationService);
+            return;
         }
+
+        propertyService.update(propertyWithChangedAvailability, id);
+        Assertions.assertEquals(newPricesAndAvailability, properties.get(id.intValue()).getAvailabilityEntries());
+        Mockito.verify(propertyRepository, Mockito.atMostOnce()).findById(id);
+        Mockito.verify(propertyRepository).save(properties.get(id.intValue()));
+        Mockito.verify(propertyRepository).flush();
+        Mockito.verifyNoMoreInteractions(propertyRepository);
+        for (LocalDate closedDay: closedDays) {
+            Mockito.verify(reservationService).rejectAllPendingReservationsAtPropertyThatContainDate(Mockito.eq(id), Mockito.eq(closedDay));
+            System.out.println(closedDay);
+        }
+        Mockito.verifyNoMoreInteractions(reservationService);
     }
 }
