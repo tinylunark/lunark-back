@@ -35,4 +35,6 @@ public interface IReservationService {
     void deleteReservation(Long reservationId, Long accountId);
 
     void rejectAllPendingReservationsAtPropertyThatContainDate(Long propertyId, LocalDate date);
+
+    Reservation saveOrUpdate(Reservation reservation);
 }

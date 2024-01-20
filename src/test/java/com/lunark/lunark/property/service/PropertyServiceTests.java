@@ -7,7 +7,6 @@ import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.PropertyService;
 import com.lunark.lunark.reservations.service.IReservationService;
 import com.lunark.lunark.reviews.model.Review;
-import net.bytebuddy.implementation.auxiliary.MethodCallProxy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,22 +14,29 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
-import java.util.List;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class PropertyServiceTests {
-    @Mock
+    @MockBean
     private IPropertyRepository propertyRepository;
-    @Mock
+    @MockBean
     private IReservationService reservationService;
 
+    @InjectMocks
     private PropertyService propertyService;
 
     private List<Property> properties;
@@ -39,10 +45,8 @@ public class PropertyServiceTests {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
         Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
         Clock testClock = Clock.fixed(testTime, ZoneId.systemDefault());
-        propertyService = new PropertyService(propertyRepository, null, testClock, reservationService);
         availabilityEntries = new ArrayList<>(Arrays.asList(
                 new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
