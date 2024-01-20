@@ -2,6 +2,7 @@ package com.lunark.lunark.property.service;
 
 import com.lunark.lunark.amenities.model.Amenity;
 import com.lunark.lunark.auth.model.Account;
+import com.lunark.lunark.configuration.TestConfiguration;
 import com.lunark.lunark.properties.model.*;
 import com.lunark.lunark.properties.repostiory.IPropertyRepository;
 import com.lunark.lunark.properties.service.PropertyService;
@@ -17,9 +18,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -27,16 +31,16 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = TestConfiguration.class)
+@ExtendWith(SpringExtension.class)
+@Import(TestConfiguration.class)
 @ActiveProfiles("test")
 public class PropertyServiceTests {
     @MockBean
     private IPropertyRepository propertyRepository;
     @MockBean
     private IReservationService reservationService;
-
-    @InjectMocks
+    @Autowired
     private PropertyService propertyService;
 
     private List<Property> properties;
