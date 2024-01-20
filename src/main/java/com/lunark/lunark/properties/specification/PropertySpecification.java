@@ -113,6 +113,20 @@ public class PropertySpecification implements Specification<Property> {
             predicate = criteriaBuilder.and(predicate, typePredicate);
         }
 
+        Order order;
+        Subquery<LocalDate> subquery = query.subquery(LocalDate.class);
+        Root<Property> subRoot = subquery.correlate(root);
+        Join<Property, PropertyAvailabilityEntry> entryJoin = subRoot.join("availabilityEntries");
+        subquery.select(criteriaBuilder.min(entryJoin.get("date")).as(LocalDate.class));
+        subquery.groupBy(entryJoin.getParent().get("id"));
+        subquery.having(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.min(entryJoin.get("date")).as(LocalDate.class), LocalDate.now()));
+        if (filter.getSort() == null || filter.getSort().equals("ASC")) {
+            order = criteriaBuilder.asc(subquery);
+        } else {
+            order = criteriaBuilder.desc(subquery);
+        }
+        query.orderBy(order);
+
         return predicate;
     }
 

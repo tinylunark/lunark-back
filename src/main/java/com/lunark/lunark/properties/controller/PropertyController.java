@@ -61,7 +61,8 @@ public class PropertyController {
             @RequestParam(required = false) List<@PositiveOrZero Long> amenityIds,
             @RequestParam(required = false) Property.PropertyType type,
             @RequestParam(required = false) @Positive(message = "Min price must be positive") Double minPrice,
-            @RequestParam(required = false) @Positive(message = "Max price must be positive") Double maxPrice
+            @RequestParam(required = false) @Positive(message = "Max price must be positive") Double maxPrice,
+            @RequestParam(required = false) @Pattern(message = "Must be ASC or DESC", regexp = "^ASC$|^DESC$") String sort
     ) {
 
         PropertySearchDto filter = PropertySearchDto.builder()
@@ -74,6 +75,7 @@ public class PropertyController {
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
                 .amenityIds(amenityIds)
+                .sort(sort)
                 .build();
 
         List<Property> properties = propertyService.findByFilter(filter);
