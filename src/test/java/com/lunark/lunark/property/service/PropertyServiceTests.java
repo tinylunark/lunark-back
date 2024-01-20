@@ -81,7 +81,7 @@ public class PropertyServiceTests {
                         24,
                         true,
                         new ArrayList<Review>(),
-                        new ArrayList<>(),
+                        new ArrayList<>(List.of(new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 28), 1000, null))),
                         new ArrayList<>(List.of(new Amenity(1L, "Wi-Fi", null))),
                         testClock,
                         Property.PropertyType.ROOM,
@@ -227,6 +227,32 @@ public class PropertyServiceTests {
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
                 new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
         ));
+        List<PropertyAvailabilityEntry> duplicateDates = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 6000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 6000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true)
+        ));
+        List<PropertyAvailabilityEntry> changedPriceInThePast = new ArrayList<>(Arrays.asList(
+                new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 7000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 10), 2000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 11), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 12), 2000, null, true),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 30), 1000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 29), 1000, null)
+        ));
+        List<PropertyAvailabilityEntry> changedPriceToday =
+                new ArrayList<>(List.of(new PropertyAvailabilityEntry(LocalDate.of(2023, 11, 28), 7000, null)));
+        List<PropertyAvailabilityEntry> removedToday = new ArrayList<>();
         return Arrays.asList(
                 Arguments.arguments(0L, addedDaysFromEmpty, true),
                 Arguments.arguments(2L, addedNewDaysBefore, true),
@@ -238,7 +264,11 @@ public class PropertyServiceTests {
                 Arguments.arguments(3L, addedNewDaysAfter, false), // Non-existent property
                 Arguments.arguments(2L, madeAvailableInThePast, false),
                 Arguments.arguments(2L, madeAvailableToday, false),
-                Arguments.arguments(2L, removedDayInThePast, false)
+                Arguments.arguments(2L, removedDayInThePast, false),
+                Arguments.arguments(2L, duplicateDates, false),
+                Arguments.arguments(2L, changedPriceInThePast, false),
+                Arguments.arguments(1L, changedPriceToday, false),
+                Arguments.arguments(1L, removedToday, false)
         );
 
     }
