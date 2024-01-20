@@ -236,4 +236,11 @@ public class ReservationService implements IReservationService {
                 .sum();
     }
 
+    public void rejectAllPendingReservationsAtPropertyThatContainDate(Long propertyId, LocalDate date) {
+        List<Reservation> toCancel = reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
+        for (Reservation reservation: toCancel) {
+            this.acceptOrRejectReservation(reservation, ReservationStatus.REJECTED);
+        }
+    }
 }
+
