@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -158,5 +159,31 @@ public class ReservationServiceTests {
                 new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 2),
                 new ReservationRequestDto(1L, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), 7)
         );
+    }
+
+    @Test
+    public void testRejectAllPendingReservationsAtPropertyThatContainDate() {
+        Long propertyId = 4L;
+        LocalDate date = LocalDate.of(2023, 4, 21);
+        Account account = new Account();
+        account.setId(1L);
+        Property property = new Property();
+        property.setId(1L);
+        property.setName("Test property");
+        Reservation reservation = new Reservation(1L, LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 24), 1, ReservationStatus.PENDING, 1000.0, property, account);
+        Mockito.when(reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(propertyId, date)).thenReturn(
+                new ArrayList<>(List.of(reservation))
+        );
+        Mockito.when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+
+        service.rejectAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
+        Assertions.assertEquals(ReservationStatus.REJECTED, reservation.getStatus());
+
+        Mockito.verify(reservationRepository).findAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
+        Mockito.verify(reservationRepository).findById(reservation.getId());
+        Mockito.verify(reservationRepository).saveAndFlush(reservation);
+        Mockito.verifyNoMoreInteractions(reservationRepository);
+        Mockito.verify(notificationService).createNotification(reservation);
+        Mockito.verifyNoMoreInteractions(notificationService);
     }
 }

@@ -3,15 +3,14 @@ package com.lunark.lunark.auth.service;
 import com.lunark.lunark.auth.model.Account;
 import com.lunark.lunark.auth.model.AccountRole;
 import com.lunark.lunark.auth.model.ProfileImage;
+import com.lunark.lunark.auth.repository.IAccountRepository;
 import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.properties.model.Property;
-import com.lunark.lunark.properties.model.PropertyImage;
 import com.lunark.lunark.properties.service.IPropertyService;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
-import com.lunark.lunark.reservations.service.ReservationService;
+import com.lunark.lunark.reservations.service.IReservationService;
 import com.lunark.lunark.reviews.model.Review;
-import com.lunark.lunark.auth.repository.IAccountRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountService implements IAccountService {
@@ -29,7 +31,7 @@ public class AccountService implements IAccountService {
     IAccountRepository accountRepository;
 
     @Autowired
-    ReservationService reservationService;
+    IReservationService reservationService;
 
     @Autowired
     IPropertyService propertyService;
