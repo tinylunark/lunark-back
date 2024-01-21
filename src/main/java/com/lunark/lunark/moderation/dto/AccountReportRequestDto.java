@@ -15,7 +15,7 @@ public record AccountReportRequestDto(
         Long reportedId,
         @NotNull
         @NotEmpty
-        @Pattern(message="Report reason can contain alphanumeric characters and punctuation marks only", regexp = "[a-zA-Z0-9 \\.!\\?]+")
+        @Pattern(message="Report reason can contain alphanumeric characters and punctuation marks only", regexp = "[a-zA-Z0-9 \\.!\\?\'\"]+")
         String reason
 ) {
 }
