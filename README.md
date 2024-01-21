@@ -1,6 +1,6 @@
 # Lunark
 
-![Build Status](https://github.com/weaviate/weaviate/actions/workflows/.github/workflows/pull_requests.yaml)
+![Build Status](https://github.com/tinylunark/lunark-back/actions/workflows/maven.yml/badge.svg?branch=develop)
 
 Lunark is a rental accommodation booking application.
 
