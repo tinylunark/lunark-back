@@ -8,7 +8,7 @@ This repo contains the backend of the application.
 
 ## Prerequisites
 
-- Java 19
+- Java 17
 - [Maven](https://maven.apache.org/download.cgi)
 - [Docker](https://www.docker.com/community-edition#/download)
 - [Docker Compose](https://docs.docker.com/compose/install/) (already included with some Docker installations)
