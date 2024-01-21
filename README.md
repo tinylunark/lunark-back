@@ -1,4 +1,45 @@
-# lunark-back
+# Lunark
+
+![Build Status](https://github.com/weaviate/weaviate/actions/workflows/.github/workflows/pull_requests.yaml)
+
+Lunark is a rental accommodation booking application.
+
+This repo contains the backend of the application.
+
+## Prerequisites
+
+- Java 19
+- Maven
+- [Docker](https://www.docker.com/community-edition#/download)
+- [Docker Compose](https://docs.docker.com/compose/install/) (already included with some Docker installations)
+
+## Getting started
+
+To start the app run:
+```
+mvn spring-boot:run
+```
+
+## Features
+
+- Email verification
+- Accommodation reviews
+- Host reviews
+- Notifications
+- Moderation
+    - Hosts can report inappropriate comments
+    - Hosts can report their guests for bad behaviour
+    - Guests can report hosts of properties they have stayed at
+    - Reviews are approved by an admin before they are shown
+- Revenue reports for hosts
+
+## Built with
+
+- Spring Boot
+- PostgresSQL (primary database)
+- H2 (Testing database)
+- WebSocket
+
 ## Team members
 | Role | Name | Id 
 ---|---|---
