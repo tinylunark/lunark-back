@@ -416,4 +416,21 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
         Assertions.assertEquals(PricingMode.PER_PERSON, responseDto.getPricingMode());
         Assertions.assertEquals(88, responseDto.getCancellationDeadline());
     }
+
+    @Test
+    @DisplayName("Negative prices are not allowed")
+    public void testNegativePrice() {
+        property.setId(1339L);
+        List<PropertyAvailabilityEntry> newPropertyAvailabilityEntries = new ArrayList<>(List.of(
+                new PropertyAvailabilityEntry(LocalDate.of(2024, 6, 28), -7000, null),
+                new PropertyAvailabilityEntry(LocalDate.of(2024, 6, 29), 1000, null)
+        ));
+        HttpEntity<PropertyRequestDto> httpEntity = getHttpEntity(newPropertyAvailabilityEntries);
+        ResponseEntity<String> responseEntity = testRestTemplate.exchange("/api/properties",
+                HttpMethod.PUT,
+                httpEntity,
+                new ParameterizedTypeReference<>() {
+                });
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
 }
