@@ -22,6 +22,7 @@ mvn spring-boot:run
 
 ## Features
 
+- JWT-based authentication
 - Email verification
 - Accommodation reviews
 - Host reviews
