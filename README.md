@@ -38,7 +38,7 @@ mvn spring-boot:run
 
 - Spring Boot
 - PostgresSQL (primary database)
-- H2 (Testing database)
+- H2 (testing database)
 - WebSocket
 
 ## Team members
