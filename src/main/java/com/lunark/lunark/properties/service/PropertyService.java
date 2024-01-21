@@ -81,10 +81,14 @@ public class PropertyService implements IPropertyService {
             if (property.isEmpty()) {
                 return this.create(newProperty);
             } else {
+                boolean shouldRemoveApproval = this.shouldRemoveApproval(property.get(), newProperty);
                 property.get().setClock(clock);
                 Set<LocalDate> closedDates = getClosedDates(property.get(), newProperty);
                 property.get().copyFields(newProperty);
                 rejectPendingReservationsOnDates(closedDates, property.get());
+                if (shouldRemoveApproval) {
+                    property.get().setApproved(false);
+                }
                 propertyRepository.save(property.get());
                 propertyRepository.flush();
                 return property.get();
@@ -213,5 +217,17 @@ public class PropertyService implements IPropertyService {
         for (LocalDate date: dates) {
             reservationService.rejectAllPendingReservationsAtPropertyThatContainDate(property.getId(), date);
         }
+    }
+
+    private boolean shouldRemoveApproval(Property oldProperty, Property changedProperty) {
+        return !oldProperty.getName().equals(changedProperty.getName()) ||
+                oldProperty.getLatitude() != changedProperty.getLatitude() ||
+                oldProperty.getLongitude() != changedProperty.getLongitude() ||
+                !(oldProperty.getAmenities().containsAll(changedProperty.getAmenities()) && changedProperty.getAmenities().containsAll(oldProperty.getAmenities())) ||
+                oldProperty.getMinGuests() != changedProperty.getMinGuests() ||
+                oldProperty.getMaxGuests() != changedProperty.getMaxGuests() ||
+                !oldProperty.getDescription().equals(changedProperty.getDescription()) ||
+                !oldProperty.getType().equals(changedProperty.getType()) ||
+                !oldProperty.getAddress().equals(changedProperty.getAddress());
     }
 }
