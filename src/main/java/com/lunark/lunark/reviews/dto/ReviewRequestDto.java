@@ -14,6 +14,6 @@ public class ReviewRequestDto {
     @Max(value = 5, message = "Rating must be between 1 and 5, inclusive")
     private int rating;
     @NotBlank
-    @Pattern(message="Reviews can only contain alphanumeric characters and punctuation marks", regexp = "[a-zA-Z0-9 \\.!\\?]+")
+    @Pattern(message="Reviews can only contain alphanumeric characters and punctuation marks", regexp = "[a-zA-Z0-9 \\.!\\?\'\"]+")
     private String description;
 }
