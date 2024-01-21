@@ -81,6 +81,10 @@ public class AccountService implements IAccountService {
         if (oldAccount.getProfileImage() != null) {
             account.setProfileImage(oldAccount.getProfileImage());
         }
+        if (account.getHostNotificationSettings() == null && account.getGuestNotificationSettings() == null) {
+            account.setGuestNotificationSettings(oldAccount.getGuestNotificationSettings());
+            account.setHostNotificationSettings(oldAccount.getHostNotificationSettings());
+        }
         return accountRepository.saveAndFlush(account);
     }
 
