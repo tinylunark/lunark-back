@@ -28,8 +28,11 @@ public class ReservationTest extends TestBase {
 
         int currentSize = reservationsPage.getCards().size();
         reservationsPage.cancelUncancellableReservation();
+
+        reservationsPage.selectAcceptedReservations();
         int sizeAfterCancellation = reservationsPage.getCards().size();
         Assertions.assertEquals(currentSize, sizeAfterCancellation);
+        driver.quit();
     }
 
     @Test
@@ -57,5 +60,6 @@ public class ReservationTest extends TestBase {
 
         int sizeAfterCancellation = reservationsPage.getCards().size();
         Assertions.assertNotEquals(currentSize, sizeAfterCancellation);
+        driver.quit();
     }
 }

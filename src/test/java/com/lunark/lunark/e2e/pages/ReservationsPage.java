@@ -99,6 +99,7 @@ public class ReservationsPage {
                 if (secondDate.before(currentDate)) {
                     WebElement button = element.findElement(By.cssSelector(".approve-button"));
                     button.click();
+                    return;
                 }
             }
         }
