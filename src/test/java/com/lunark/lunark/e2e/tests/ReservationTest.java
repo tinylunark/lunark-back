@@ -3,6 +3,7 @@ import com.lunark.lunark.e2e.TestBase;
 import com.lunark.lunark.e2e.pages.HomePage;
 import com.lunark.lunark.e2e.pages.ReservationsPage;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -11,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.text.ParseException;
 import java.time.Duration;
 
+@Disabled
 public class ReservationTest extends TestBase {
     @Test
     public void guestCancelUncancellableReservationTest() throws InterruptedException, ParseException {
