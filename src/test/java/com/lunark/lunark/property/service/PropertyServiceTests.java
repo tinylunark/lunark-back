@@ -50,6 +50,7 @@ public class PropertyServiceTests {
     @BeforeEach
     void setUp() {
         Instant testTime = LocalDate.of(2023, 11, 28).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        System.out.println(testTime.getEpochSecond() * 1000);
         Clock testClock = Clock.fixed(testTime, ZoneId.systemDefault());
         availabilityEntries = new ArrayList<>(Arrays.asList(
                 new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),

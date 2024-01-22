@@ -11,6 +11,7 @@ import jakarta.persistence.CascadeType;
 import lombok.Data;
 import jakarta.persistence.CascadeType;
 import lombok.Getter;
+import lombok.ToString;
 import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -60,6 +61,7 @@ public class Account implements UserDetails {
     @ManyToMany
     private Set<Property> favoriteProperties;
     @OneToMany(mappedBy = "guest")
+    @ToString.Exclude
     private Set<Reservation> reservations;
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
