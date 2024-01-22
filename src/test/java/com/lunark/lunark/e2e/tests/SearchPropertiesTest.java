@@ -16,7 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class)
 @ActiveProfiles("test")
-@Sql("property-search-test-data.sql")
+@Sql("classpath:property-search-test-data.sql")
 public class SearchPropertiesTest extends TestBase {
 
     @Test
