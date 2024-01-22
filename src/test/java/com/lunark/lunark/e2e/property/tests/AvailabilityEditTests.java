@@ -31,6 +31,7 @@ import java.util.Scanner;
 @Import(TestConfiguration.class)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Disabled // So it does not run on Github actions, where there is no frontend running
 public class AvailabilityEditTests extends TestBase {
     private final String URL = "http://localhost:4200";
     private static final List<PropertyAvailabilityEntry> originalAvailabilityEntries =

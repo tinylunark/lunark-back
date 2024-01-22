@@ -5,10 +5,7 @@ import com.lunark.lunark.e2e.TestBase;
 import com.lunark.lunark.e2e.pages.HomePage;
 import com.lunark.lunark.e2e.pages.PropertyPage;
 import com.lunark.lunark.properties.model.Property;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestConfiguration.class)
 @ActiveProfiles("test")
 @Sql("classpath:property-search-test-data.sql")
+@Disabled // So it does not run on Github actions, where there is no frontend running
 public class SearchPropertiesTest extends TestBase {
 
     @Test
