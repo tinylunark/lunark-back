@@ -22,6 +22,9 @@ public class ReservationsPage {
     @FindBy(xpath = "//h1[normalize-space()='your reservations']")
     private WebElement header;
 
+    @FindBy(xpath = "//h1[normalize-space()='incoming reservations']")
+    private WebElement hostHeader;
+
     @FindBy(xpath = "//mat-card")
     private List<WebElement> cards;
 
@@ -30,6 +33,9 @@ public class ReservationsPage {
 
     @FindBy(xpath = "//span[normalize-space()='ACCEPTED']")
     private WebElement acceptedStatusOption;
+
+    @FindBy(xpath = "//span[normalize-space()='PENDING']")
+    private WebElement pendingStatusOption;
 
     @FindBy(xpath = "//*[@id=\"container\"]/app-reservation-search/form/button")
     private WebElement submitButton;
@@ -42,6 +48,11 @@ public class ReservationsPage {
     public boolean isPageOpened() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         return wait.until(ExpectedConditions.textToBePresentInElement(header, "your reservations"));
+    }
+
+    public boolean isHostPageOpened() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        return wait.until(ExpectedConditions.textToBePresentInElement(hostHeader, "incoming reservations"));
     }
 
 
@@ -65,11 +76,23 @@ public class ReservationsPage {
         return cards;
     }
 
+    public WebElement getHostHeader() {
+        return hostHeader;
+    }
+
     public void selectAcceptedReservations() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.navigate().refresh();
         wait.until(ExpectedConditions.elementToBeClickable(statusDropDown)).click();
         wait.until(ExpectedConditions.elementToBeClickable(acceptedStatusOption)).click();
+        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+    }
+
+    public void selectPendingReservations() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.navigate().refresh();
+        wait.until(ExpectedConditions.elementToBeClickable(statusDropDown)).click();
+        wait.until(ExpectedConditions.elementToBeClickable(pendingStatusOption)).click();
         wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
     }
 
@@ -136,5 +159,31 @@ public class ReservationsPage {
         }
     }
 
+    public void acceptReservation() throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date currentDate = new Date(); // Get today's date
 
+        for (WebElement element : cards) {
+            List<WebElement> dateElements = element.findElements(By.cssSelector("p.date-range"));
+            String dateText = "";
+            for (WebElement dateElement : dateElements) {
+                if (dateElement.getText().contains("/")) {
+                    dateText = dateElement.getText();
+                    break;
+                }
+            }
+
+            System.out.println(dateText);
+            String[] dateRange = dateText.split(" - ");
+
+            String secondDateTxt = dateRange[1].trim();
+            System.out.println(secondDateTxt);
+            WebElement button = element.findElement(By.cssSelector(".approve-button"));
+            if(button != null) {
+                System.out.println("PRIHVACENA!");
+                button.click();
+                return;
+            }
+        }
+    }
 }

@@ -62,4 +62,32 @@ public class ReservationTest extends TestBase {
         Assertions.assertNotEquals(currentSize, sizeAfterCancellation);
         driver.quit();
     }
+
+    @Test
+    public void hostAcceptReservationTest() throws InterruptedException, ParseException {
+        HomePage homePage = new HomePage(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        homePage.loginWithCredentials("user2@example.com", "password2");
+        homePage.clickReservations();
+
+        ReservationsPage reservationsPage = new ReservationsPage(driver);
+        wait.until(ExpectedConditions.textToBePresentInElement(reservationsPage.getHostHeader(), "incoming reservations"));
+
+        Assertions.assertTrue(reservationsPage.isHostPageOpened());
+        reservationsPage.selectPendingReservations();
+
+        int currentSize = reservationsPage.getCards().size();
+        reservationsPage.acceptReservation();
+        Thread.sleep(1000);
+
+        reservationsPage.selectPendingReservations();
+        Thread.sleep(1000);
+
+        int sizeAfterCancellation = reservationsPage.getCards().size();
+        System.out.println(currentSize);
+        System.out.println(sizeAfterCancellation);
+        Assertions.assertNotEquals(currentSize, sizeAfterCancellation);
+        driver.quit();
+    }
 }
