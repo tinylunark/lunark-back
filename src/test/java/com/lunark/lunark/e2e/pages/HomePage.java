@@ -130,6 +130,7 @@ public class HomePage {
         return card.isDisplayed();
     }
 
+
     public void loginWithCredentials(String email, String password) {
         WebDriverWait wait = getWait();
 
@@ -156,4 +157,5 @@ public class HomePage {
     public String getCardTitle() {
         return cardTitle.getText();
     }
+
 }
