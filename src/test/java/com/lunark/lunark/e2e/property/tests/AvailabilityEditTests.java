@@ -2,15 +2,16 @@ package com.lunark.lunark.e2e.property.tests;
 
 import com.lunark.lunark.configuration.TestConfiguration;
 import com.lunark.lunark.e2e.TestBase;
-import com.lunark.lunark.e2e.property.pages.CalendarPage;
-import com.lunark.lunark.e2e.property.pages.EditPropertyPage;
-import com.lunark.lunark.e2e.property.pages.MainPage;
-import com.lunark.lunark.e2e.property.pages.MyPropertiesPage;
-import org.checkerframework.checker.units.qual.C;
+import com.lunark.lunark.e2e.property.pages.*;
+import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
+import com.lunark.lunark.property.controller.PropertyControllerPricesAndAvailabilityIntegrationTests;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.JavascriptExecutor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -23,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = TestConfiguration.class)
@@ -30,10 +33,7 @@ import java.util.Scanner;
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AvailabilityEditTests extends TestBase {
-    private final String email = "user2@example.com";
-    private final String password = "password2";
     private final String URL = "http://localhost:4200";
-    private final String propertyName = "Test1";
 
     @BeforeEach
     public void setUp() throws FileNotFoundException {
@@ -56,35 +56,38 @@ public class AvailabilityEditTests extends TestBase {
         mainPage.logOut();
     }
 
-    public void logIn() {
+    public void logIn(String email, String password) {
         MainPage mainPage = new MainPage(driver);
         mainPage.openHome();
         mainPage.openLoginDialog();
         mainPage.logIn(email, password);
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource("user2@example.com,password2")
     @Sql("classpath:test-data-availability.sql")
-    public void testLogIn() {
+    public void testLogIn(String email, String password) {
         MainPage mainPage = new MainPage(driver);
-        logIn();
+        logIn(email, password);
         Assertions.assertTrue(mainPage.isLoggedInAsHost());
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource("user2@example.com,password2")
     @Sql("classpath:test-data-availability.sql")
-    public void testOpenMyProperties() {
+    public void testOpenMyProperties(String email, String password) {
         MainPage mainPage = new MainPage(driver);
-        logIn();
+        logIn(email, password);
         mainPage.openMyProperties();
         MyPropertiesPage myPropertiesPage = new MyPropertiesPage(driver);
         Assertions.assertTrue(myPropertiesPage.isLoaded());
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource("user2@example.com,password2,Test1")
     @Sql("classpath:test-data-availability.sql")
-    public void testOpenEditProperty() {
-        testOpenMyProperties();
+    public void testOpenEditProperty(String email, String password, String propertyName) {
+        testOpenMyProperties(email, password);
         MyPropertiesPage myPropertiesPage = new MyPropertiesPage(driver);
         myPropertiesPage.editProperty(propertyName);
         EditPropertyPage editPropertyPage = new EditPropertyPage(driver);
@@ -93,10 +96,11 @@ public class AvailabilityEditTests extends TestBase {
         editPropertyPage.openPriceTable();
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource("user2@example.com,password2,Test1")
     @Sql("classpath:test-data-availability.sql")
-    public void testDeleteAll() throws InterruptedException {
-        testOpenMyProperties();
+    public void testDeleteAllFrontendOnly(String email, String password, String propertyName) throws InterruptedException {
+        testOpenMyProperties(email, password);
         MyPropertiesPage myPropertiesPage = new MyPropertiesPage(driver);
         myPropertiesPage.editProperty(propertyName);
         EditPropertyPage editPropertyPage = new EditPropertyPage(driver);
@@ -104,6 +108,59 @@ public class AvailabilityEditTests extends TestBase {
         CalendarPage calendarPage = new CalendarPage(driver);
         calendarPage.deleteRange(LocalDate.of(2023, 11, 29), LocalDate.of(2024, 1, 23));
         editPropertyPage.openPriceTable();
-        Thread.sleep(10000);
+        PriceTablePage priceTablePage = new PriceTablePage(driver);
+        Assertions.assertEquals(1, priceTablePage.getCurrentlyDisplayedRows().size());
+    }
+
+    public void clearCalendar(String email, String password, String propertyName) {
+        testOpenMyProperties(email, password);
+        MyPropertiesPage myPropertiesPage = new MyPropertiesPage(driver);
+        myPropertiesPage.editProperty(propertyName);
+        EditPropertyPage editPropertyPage = new EditPropertyPage(driver);
+        editPropertyPage.openCalendar();
+        CalendarPage calendarPage = new CalendarPage(driver);
+        calendarPage.deleteRange(LocalDate.of(2023, 11, 29), LocalDate.of(2024, 1, 23));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParamsForPositiveCases")
+    @Sql("classpath:test-data-availability.sql")
+    public void testPositiveCases(String email, String password, String propertyName, List<PropertyAvailabilityEntry> availabilityEntries) {
+        clearCalendar(email, password, propertyName);
+        CalendarPage calendarPage = new CalendarPage(driver);
+        calendarPage.addEntries(availabilityEntries);
+        calendarPage.save();
+        MyPropertiesPage myPropertiesPage = new MyPropertiesPage(driver);
+        myPropertiesPage.editProperty(propertyName);
+        EditPropertyPage editPropertyPage = new EditPropertyPage(driver);
+        editPropertyPage.openPriceTable();
+        PriceTablePage priceTablePage = new PriceTablePage(driver);
+        List<PriceTablePage.AvailabilityTableRow> expectedRows = priceTablePage.convertAvailabilityEntriesToRows(availabilityEntries);
+        List<PriceTablePage.AvailabilityTableRow> actualRows = priceTablePage.getCurrentlyDisplayedRows();
+        Assertions.assertEquals(expectedRows.size(), actualRows.size());
+        for (int i = 0; i < expectedRows.size(); i++) {
+            Assertions.assertEquals(expectedRows.get(i), actualRows.get(i));
+        }
+    }
+
+    private static List<List<PropertyAvailabilityEntry>> extractFromArgumentsLists(List<Arguments> argumentsLists) {
+        List<List<PropertyAvailabilityEntry>> result = new ArrayList<>();
+        for (Arguments arguments: argumentsLists) {
+            result.add((List<PropertyAvailabilityEntry>)arguments.get()[0]);
+        }
+        return result;
+    }
+    private static List<Arguments> provideParamsForPositiveCases() {
+        List<List<PropertyAvailabilityEntry>> positiveCases = extractFromArgumentsLists(PropertyControllerPricesAndAvailabilityIntegrationTests.getPositiveRequests());
+        String username = "user2@example.com";
+        String password = "password2";
+        String propertyName = "Test one";
+        List<Arguments> params = new ArrayList<>();
+
+        for (List<PropertyAvailabilityEntry> positiveCase: positiveCases) {
+            params.add(Arguments.arguments(username, password, propertyName, positiveCase));
+        }
+
+        return params;
     }
 }

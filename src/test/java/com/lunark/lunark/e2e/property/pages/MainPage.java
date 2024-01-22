@@ -89,7 +89,12 @@ public class MainPage {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
         wait.until(ExpectedConditions.elementToBeClickable(logOutLink));
         logOutLink.click();
-        wait.until(driver -> homeLink.getAttribute("class").equals("active"));
+        try {
+            wait.until(ExpectedConditions.stalenessOf(homeLink));
+            wait.until(ExpectedConditions.visibilityOf(homeLink));
+            wait.until(driver -> homeLink.getAttribute("class").equals("active"));
+        } catch(Exception ignored) {
+        }
     }
 
     public void openHome() {

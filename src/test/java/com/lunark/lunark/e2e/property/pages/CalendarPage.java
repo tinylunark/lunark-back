@@ -1,6 +1,8 @@
 package com.lunark.lunark.e2e.property.pages;
 
+import com.lunark.lunark.properties.model.PropertyAvailabilityEntry;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
 
 public class CalendarPage {
@@ -33,6 +36,18 @@ public class CalendarPage {
 
     @FindBy(css = "tbody.mat-calendar-body")
     private WebElement calendarBody;
+
+    @FindBy(css = "input[name='price']")
+    private WebElement priceInput;
+
+    @FindBy(css = "button.btn-save")
+    private WebElement saveButton;
+
+    @FindBy(css = "mat-dialog-container")
+    private WebElement successDialogContainer;
+
+    @FindBy(css = "mat-dialog-container button")
+    private WebElement dialogOkButton;
 
     public CalendarPage(WebDriver driver) {
         this.driver = driver;
@@ -84,7 +99,46 @@ public class CalendarPage {
         wait.until(driver1 -> isDateSelectionClear());
     }
 
+    public void addEntry(PropertyAvailabilityEntry entry) {
+        pickDate(entry.getDate());
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(priceInput));
+        priceInput.sendKeys(Double.toString(entry.getPrice()));
+        wait.until(ExpectedConditions.textToBePresentInElementValue(priceInput, Double.toString(entry.getPrice())));
+        wait.until(ExpectedConditions.elementToBeClickable(changeAvailabilityButton));
+        changeAvailabilityButton.click();
+        wait.until(driver1 -> isDateSelectionClear());
+    }
+
+    public void addEntries(List<PropertyAvailabilityEntry> entries) {
+        for (PropertyAvailabilityEntry entry: entries) {
+            this.addEntry(entry);
+        }
+    }
+
     private boolean isDateSelectionClear() {
         return calendarBody.getAttribute("ng-reflect-start-value") == null && calendarBody.getAttribute("ng-reflect-end-value") == null;
+    }
+
+    public void save() {
+        waitAndClick(saveButton);
+        waitUntilVisible(successDialogContainer);
+        waitAndClick(dialogOkButton);
+    }
+
+    public String causeSaveError() {
+        waitAndClick(saveButton);
+        return "";
+    }
+
+    private void waitAndClick(WebElement button) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.elementToBeClickable(button));
+        button.click();
+    }
+
+    private void waitUntilVisible(WebElement element) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(element));
     }
 }
