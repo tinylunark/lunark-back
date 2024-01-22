@@ -49,6 +49,12 @@ public class CalendarPage {
     @FindBy(css = "mat-dialog-container button")
     private WebElement dialogOkButton;
 
+    @FindBy(css = "div.mdc-snackbar__label")
+    private WebElement snackMessage;
+
+    @FindBy(css = "simple-snack-bar button")
+    private WebElement snackButton;
+
     public CalendarPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
@@ -110,6 +116,25 @@ public class CalendarPage {
         wait.until(driver1 -> isDateSelectionClear());
     }
 
+    public String addInvalidEntry(PropertyAvailabilityEntry entry) {
+        pickDate(entry.getDate());
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(priceInput));
+        priceInput.sendKeys(Double.toString(entry.getPrice()));
+        wait.until(ExpectedConditions.textToBePresentInElementValue(priceInput, Double.toString(entry.getPrice())));
+        wait.until(ExpectedConditions.elementToBeClickable(changeAvailabilityButton));
+        changeAvailabilityButton.click();
+        return getSnackBarMessage();
+    }
+
+    public String invalidRemove(PropertyAvailabilityEntry entry) {
+        pickDate(entry.getDate());
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.elementToBeClickable(deleteAvailabilityButton));
+        deleteAvailabilityButton.click();
+        return getSnackBarMessage();
+    }
+
     public void addEntries(List<PropertyAvailabilityEntry> entries) {
         for (PropertyAvailabilityEntry entry: entries) {
             this.addEntry(entry);
@@ -128,7 +153,16 @@ public class CalendarPage {
 
     public String causeSaveError() {
         waitAndClick(saveButton);
-        return "";
+        return getSnackBarMessage();
+    }
+
+    public String getSnackBarMessage() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(snackMessage));
+        String message = snackMessage.getText();
+        waitAndClick(snackButton);
+        wait.until(ExpectedConditions.invisibilityOf(snackMessage));
+        return message;
     }
 
     private void waitAndClick(WebElement button) {

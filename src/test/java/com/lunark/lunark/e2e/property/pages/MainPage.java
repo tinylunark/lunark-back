@@ -37,6 +37,9 @@ public class MainPage {
     @FindBy(css = "h1")
     WebElement currentPageHeader;
 
+    @FindBy(css = "a:has(i.cil-check)")
+    WebElement reservationsLink;
+
 
     public MainPage(WebDriver driver) {
        this.driver = driver;
@@ -82,6 +85,16 @@ public class MainPage {
         wait.until(ExpectedConditions.and(
                ExpectedConditions.visibilityOf(currentPageHeader),
                ExpectedConditions.textToBePresentInElement(currentPageHeader, MyPropertiesPage.heading)
+        ));
+    }
+
+    public void openReservations() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        wait.until(ExpectedConditions.elementToBeClickable(reservationsLink));
+        reservationsLink.click();
+        wait.until(ExpectedConditions.and(
+                ExpectedConditions.visibilityOf(currentPageHeader),
+                ExpectedConditions.textToBePresentInElement(currentPageHeader, GuestReservationsPage.HEADING)
         ));
     }
 

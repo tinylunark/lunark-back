@@ -21,4 +21,5 @@ insert into property_availability_entry(date, price, is_reserved, property_id) v
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2024-06-29', 2000, false, 1339);
 insert into property_availability_entry(date, price, is_reserved, property_id) values ('2024-06-30', 2000, false, 1339);
 
+insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2023-12-11', '2023-12-12', 3, 10000, 1, 1, 1337);
 insert into reservation(start_date, end_date, number_of_guests, price, status, guest_id, property_id) values ('2024-06-10', '2024-06-30', 3, 10000, 0, 1, 1339);

@@ -52,6 +52,7 @@ public class PropertyControllerPricesAndAvailabilityIntegrationTests {
     private List<PropertyAvailabilityEntry> originalAvailabilityEntries =
             new ArrayList<>(Arrays.asList(
                     new PropertyAvailabilityEntry(LocalDate.of(2022, 12, 1), 1000, null),
+                    new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 1), 1000, null),
                     new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 2), 2000, null),
                     new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 3), 2000, null),
                     new PropertyAvailabilityEntry(LocalDate.of(2023, 12, 9), 2000, null),
