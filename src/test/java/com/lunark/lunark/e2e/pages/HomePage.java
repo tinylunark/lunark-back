@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HomePage {
     private final WebDriver driver;
@@ -22,6 +23,21 @@ public class HomePage {
 
     @FindBy(xpath = "//input[@name=\"location\"]")
     private WebElement locationInput;
+
+    @FindBy(xpath = "//i[@class=\'at-account\']")
+    private WebElement loginButton;
+
+    @FindBy(name = "email")
+    private WebElement emailInput;
+
+    @FindBy(xpath = "//span[normalize-space()=\'Sign in\']" )
+    private WebElement buttonSignIn;
+
+    @FindBy(xpath = "//i[@class='cil-check']")
+    private WebElement reservationsButton;
+
+    @FindBy(name = "password")
+    private WebElement passwordInput;
 
     @FindBy(xpath = "//input[@name=\"guestNumber\"]")
     private WebElement guestNumberInput;
@@ -114,6 +130,26 @@ public class HomePage {
         return card.isDisplayed();
     }
 
+
+    public void loginWithCredentials(String email, String password) {
+        WebDriverWait wait = getWait();
+
+        wait.until(ExpectedConditions.visibilityOf(loginButton)).click();
+        wait.until(ExpectedConditions.visibilityOf(emailInput)).sendKeys(email);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        wait.until(ExpectedConditions.visibilityOf(passwordInput)).sendKeys(password);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        wait.until(ExpectedConditions.visibilityOf(buttonSignIn)).click();
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    }
+
+    public void clickReservations() {
+        Actions actions = new Actions(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement check = wait.until(ExpectedConditions.visibilityOf(reservationsButton));
+        check.click();
+    }
+
     public boolean areCardsEmpty() {
         return cards.isEmpty();
     }
@@ -121,4 +157,5 @@ public class HomePage {
     public String getCardTitle() {
         return cardTitle.getText();
     }
+
 }
