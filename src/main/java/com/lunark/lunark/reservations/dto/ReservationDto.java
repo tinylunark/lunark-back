@@ -16,6 +16,10 @@ public class ReservationDto {
     private String status;
     private int guestCancellationCount;
 
+    public ReservationDto() {
+
+    }
+
     public ReservationDto(Long id, Long propertyId, String propertyName, LocalDate startDate, LocalDate endDate, double price, Long guestId, int numberOfGuests, String status, int guestCancellationCount) {
         this.id = id;
         this.propertyId = propertyId;
