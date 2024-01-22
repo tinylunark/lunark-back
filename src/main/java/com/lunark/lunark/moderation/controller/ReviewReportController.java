@@ -45,7 +45,7 @@ public class ReviewReportController {
                 .map(report -> new ReviewReportResponseDto(report.getId(), report.getDate(), report.getReporter().getId(), report.getReview().getId()))
                 .collect(Collectors.toList());
 
-        return reviewReports.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(reportDtos, HttpStatus.OK);
+        return new ResponseEntity<>(reportDtos, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

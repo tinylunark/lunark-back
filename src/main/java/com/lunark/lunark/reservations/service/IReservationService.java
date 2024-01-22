@@ -8,6 +8,7 @@ import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,9 @@ public interface IReservationService {
     void acceptOrRejectReservation(Reservation reservation, ReservationStatus isAccepted);
 
     boolean cancelReservation(Reservation reservation);
+    void deleteReservation(Long reservationId, Long accountId);
+
+    void rejectAllPendingReservationsAtPropertyThatContainDate(Long propertyId, LocalDate date);
+
+    Reservation saveOrUpdate(Reservation reservation);
 }

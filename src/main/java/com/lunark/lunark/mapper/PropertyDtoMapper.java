@@ -34,7 +34,10 @@ public class PropertyDtoMapper {
         List<PropertyAvailabilityEntry> availabilityEntries = propertyRequestDto.getAvailabilityEntries().stream()
                 .map(availabilityEntryDto -> modelMapper.map(availabilityEntryDto, PropertyAvailabilityEntry.class))
                 .collect(Collectors.toList());
-        property.setAvailabilityEntries(availabilityEntries);
+        // We need to circumvent availability entry setter checks here
+        // so old unchanged entries can be converted properly
+        property.getAvailabilityEntries().clear();
+        property.getAvailabilityEntries().addAll(availabilityEntries);
 
         List<Amenity> amenities = propertyRequestDto.getAmenityIds().stream()
                 .map(id -> {
@@ -47,6 +50,11 @@ public class PropertyDtoMapper {
         property.setHost(accountRepository.getReferenceById(propertyRequestDto.getHostId()));
 
         return property;
+    }
+
+    public Property fromDtoToProperty(PropertyRequestDto propertyRequestDto, Long hostId) {
+        propertyRequestDto.setHostId(hostId);
+        return this.fromDtoToProperty(propertyRequestDto);
     }
 
     public static PropertyResponseDto fromPropertyToDto(Property property) {
@@ -68,5 +76,20 @@ public class PropertyDtoMapper {
         propertyResponseDto.setHost(AccountDtoMapper.fromAccountToDTO(property.getHost()));
 
         return propertyResponseDto;
+    }
+
+    public static PropertyRequestDto fromPropertyToRequestDto(Property property) {
+        PropertyRequestDto propertyRequestDto = modelMapper.map(property, PropertyRequestDto.class);
+        List<AvailabilityEntryDto> availabilityEntryDtos = property.getAvailabilityEntries().stream()
+                .map(propertyAvailabilityEntry -> modelMapper.map(propertyAvailabilityEntry, AvailabilityEntryDto.class))
+                .collect(Collectors.toList());
+        propertyRequestDto.setAvailabilityEntries(availabilityEntryDtos);
+
+        List<Long> amenities = property.getAmenities().stream()
+                .map(Amenity::getId)
+                .toList();
+        propertyRequestDto.setAmenityIds(amenities);
+
+        return propertyRequestDto;
     }
 }

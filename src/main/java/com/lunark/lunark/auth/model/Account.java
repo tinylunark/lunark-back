@@ -1,5 +1,8 @@
 package com.lunark.lunark.auth.model;
 
+import com.lunark.lunark.notifications.model.GuestNotificationSettings;
+import com.lunark.lunark.notifications.model.HostNotificationSettings;
+import com.lunark.lunark.notifications.model.NotificationType;
 import com.lunark.lunark.properties.model.Property;
 import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reviews.model.Review;
@@ -61,6 +64,9 @@ public class Account implements UserDetails {
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    private GuestNotificationSettings guestNotificationSettings;
+    private HostNotificationSettings hostNotificationSettings;
 
     @Formula("(select count(*) from reservation r where r.status = 3 and r.guest_id = id)")
     private int cancelCount;
@@ -249,5 +255,15 @@ public class Account implements UserDetails {
 
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void toggleNotifications(NotificationType type) {
+        switch (type) {
+            case HOST_REVIEW -> hostNotificationSettings.setNotifyOnHostReview(!hostNotificationSettings.isNotifyOnHostReview());
+            case PROPERTY_REVIEW -> hostNotificationSettings.setNotifyOnPropertyReview(!hostNotificationSettings.isNotifyOnPropertyReview());
+            case RESERVATION_ACCEPTED, RESERVATION_REJECTED -> guestNotificationSettings.setNotifyOnReservationRequestResponse(!guestNotificationSettings.isNotifyOnReservationRequestResponse());
+            case RESERVATION_CREATED -> hostNotificationSettings.setNotifyOnReservationCreation(!hostNotificationSettings.isNotifyOnReservationCreation());
+            case RESERVATION_CANCELED -> hostNotificationSettings.setNotifyOnReservationCancellation(!hostNotificationSettings.isNotifyOnReservationCancellation());
+        }
     }
 }

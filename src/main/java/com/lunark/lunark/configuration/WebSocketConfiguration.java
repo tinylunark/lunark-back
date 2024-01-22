@@ -40,6 +40,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         registry.addEndpoint("/api/socket")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
+        registry.addEndpoint("/api/non-sockjs-socket")
+                .setAllowedOriginPatterns("*");
     }
 
     @Override

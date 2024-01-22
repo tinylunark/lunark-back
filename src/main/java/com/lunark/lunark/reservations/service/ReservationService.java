@@ -12,7 +12,6 @@ import com.lunark.lunark.reservations.model.Reservation;
 import com.lunark.lunark.reservations.model.ReservationStatus;
 import com.lunark.lunark.reservations.repository.IReservationRepository;
 import com.lunark.lunark.reservations.specification.ReservationSpecification;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -72,13 +71,20 @@ public class ReservationService implements IReservationService {
                 .price(totalPrice)
                 .guest(guest.get())
                 .property(property.get())
-                .status(property.get().isAutoApproveEnabled() ? ReservationStatus.ACCEPTED : ReservationStatus.PENDING)
+                .status(ReservationStatus.PENDING)
                 .numberOfGuests(reservationDto.getNumberOfGuests())
                 .startDate(reservationDto.getStartDate())
                 .endDate(reservationDto.getEndDate())
                 .build();
 
-        return this.reservationRepository.save(reservation);
+        Reservation savedReservation = this.reservationRepository.save(reservation);
+        notificationService.createNotification(savedReservation);
+
+        if (property.get().isAutoApproveEnabled()) {
+            acceptOrRejectReservation(savedReservation, ReservationStatus.ACCEPTED);
+        }
+
+        return savedReservation;
     }
 
     @Override
@@ -172,6 +178,15 @@ public class ReservationService implements IReservationService {
         return true;
     }
 
+    @Override
+    public void deleteReservation(Long reservationId, Long accountId) {
+        Reservation reservation = findById(reservationId)
+                .filter(r -> r.getStatus() != ReservationStatus.ACCEPTED && Objects.equals(r.getGuest().getId(), accountId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation does not exist or it is accepted."));
+
+        reservationRepository.delete(reservation);
+    }
+
     private boolean isPastCancellationDeadline(Reservation reservation) {
         Property property = reservation.getProperty();
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
@@ -186,7 +201,7 @@ public class ReservationService implements IReservationService {
 
         for(PropertyAvailabilityEntry entry: property.getAvailabilityEntries())  {
             LocalDate entryDate = entry.getDate();
-            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(entryDate)) {
+            if(!entryDate.isBefore(startDate) && !entryDate.isAfter(endDate)) {
                 entry.setReserved(isrReserved);
             }
 
@@ -207,6 +222,7 @@ public class ReservationService implements IReservationService {
         return reservationRepository.findAll(specification);
     }
 
+    @Override
     public Reservation saveOrUpdate(Reservation reservation) {
         return reservationRepository.save(reservation);
     }
@@ -220,4 +236,12 @@ public class ReservationService implements IReservationService {
                 .sum();
     }
 
+    @Override
+    public void rejectAllPendingReservationsAtPropertyThatContainDate(Long propertyId, LocalDate date) {
+        List<Reservation> toCancel = reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
+        for (Reservation reservation: toCancel) {
+            this.acceptOrRejectReservation(reservation, ReservationStatus.REJECTED);
+        }
+    }
 }
+

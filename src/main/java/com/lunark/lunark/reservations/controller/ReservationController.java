@@ -59,8 +59,12 @@ public class ReservationController {
         return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/{reservation_id}")
-    public ResponseEntity<ReservationDto> deleteReservation(@RequestHeader("x-access-token") String guestToken, @PathVariable("reservation_id") Long Id) {
+    @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('GUEST')")
+    public ResponseEntity<ReservationDto> deleteReservation(@PathVariable("id") Long id) {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        reservationService.deleteReservation(id, account.getId());
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

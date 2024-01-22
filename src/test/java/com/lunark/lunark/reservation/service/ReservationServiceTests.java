@@ -27,6 +27,10 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class ReservationServiceTests {
@@ -38,9 +42,9 @@ public class ReservationServiceTests {
 
     @Mock
     private IAccountRepository accountRepository;
-
     @Mock
     private INotificationService notificationService;
+
     @Mock
     private Clock clock;
 
@@ -74,7 +78,9 @@ public class ReservationServiceTests {
         Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
             service.create(dto, "user");
         });
-        assertTrue(exception.getMessage().contains("property"));
+        Assertions.assertTrue(exception.getMessage().contains("property"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(2L);
+        Mockito.verifyNoInteractions(accountRepository, notificationService, reservationRepository);
     }
 
     @ParameterizedTest
@@ -86,6 +92,9 @@ public class ReservationServiceTests {
             service.create(param, "user");
         });
 
+        Assertions.assertTrue(exception.getMessage().contains("date"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(param.getPropertyId());
+        Mockito.verifyNoInteractions(accountRepository, notificationService, reservationRepository);
         assertTrue(exception.getMessage().contains("date"));
     }
 
@@ -105,6 +114,9 @@ public class ReservationServiceTests {
             service.create(param, "user");
         });
         assertTrue(exception.getMessage().contains("guest"));
+        Assertions.assertTrue(exception.getMessage().contains("guest"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(param.getPropertyId());
+        Mockito.verifyNoInteractions(accountRepository, notificationService, reservationRepository);
     }
 
     static List<ReservationRequestDto> invalidGuestsSource() {
@@ -125,7 +137,10 @@ public class ReservationServiceTests {
             service.create(dto, "user");
         });
 
-        assertTrue(exception.getMessage().contains("user"));
+        Assertions.assertTrue(exception.getMessage().contains("user"));
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(1L);
+        Mockito.verify(accountRepository, Mockito.times(1)).findByEmail("user");
+        Mockito.verifyNoInteractions(notificationService, reservationRepository);
     }
 
     @Test
@@ -147,6 +162,10 @@ public class ReservationServiceTests {
         Assertions.assertEquals("user", reservation.getGuest().getEmail());
         Assertions.assertEquals(1L, reservation.getProperty().getId());
         Assertions.assertEquals(3, reservation.getNumberOfGuests());
+        Mockito.verify(propertyRepository, Mockito.times(1)).findById(1L);
+        Mockito.verify(accountRepository, Mockito.times(1)).findByEmail("user");
+        Mockito.verify(notificationService, Mockito.times(1)).createNotification(Mockito.any(Reservation.class));
+        Mockito.verify(reservationRepository, Mockito.times(1)).save(Mockito.any(Reservation.class));
     }
 
     @Test
@@ -572,5 +591,31 @@ public class ReservationServiceTests {
                 Arguments.of(pastDeadlineReservation, false),
                 Arguments.of(withinDeadlineReservation, true)
         );
+    }
+
+    @Test
+    public void testRejectAllPendingReservationsAtPropertyThatContainDate() {
+        Long propertyId = 4L;
+        LocalDate date = LocalDate.of(2023, 4, 21);
+        Account account = new Account();
+        account.setId(1L);
+        Property property = new Property();
+        property.setId(1L);
+        property.setName("Test property");
+        Reservation reservation = new Reservation(1L, LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 24), 1, ReservationStatus.PENDING, 1000.0, property, account);
+        Mockito.when(reservationRepository.findAllPendingReservationsAtPropertyThatContainDate(propertyId, date)).thenReturn(
+                new ArrayList<>(List.of(reservation))
+        );
+        Mockito.when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+
+        service.rejectAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
+        Assertions.assertEquals(ReservationStatus.REJECTED, reservation.getStatus());
+
+        Mockito.verify(reservationRepository).findAllPendingReservationsAtPropertyThatContainDate(propertyId, date);
+        Mockito.verify(reservationRepository).findById(reservation.getId());
+        Mockito.verify(reservationRepository).saveAndFlush(reservation);
+        Mockito.verifyNoMoreInteractions(reservationRepository);
+        Mockito.verify(notificationService).createNotification(reservation);
+        Mockito.verifyNoMoreInteractions(notificationService);
     }
 }
