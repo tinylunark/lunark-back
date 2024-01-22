@@ -11,12 +11,16 @@ import java.time.Duration;
 
 public class MainPage {
     private WebDriver driver;
+    @FindBy(css="a[href='/home']")
+    WebElement homeLink;
 
     @FindBy(css="a:has(i.at-account)")
     WebElement loginLink;
 
     @FindBy(css="a:has(i.cil-folder)")
     WebElement myPropertiesLink;
+    @FindBy(css = "a:has(i.cil-account-logout)")
+    WebElement logOutLink;
 
     @FindBy(css="div.cdk-overlay-container")
     WebElement loginDialog;
@@ -29,6 +33,9 @@ public class MainPage {
 
     @FindBy(id = "sign-in")
     WebElement signInButton;
+
+    @FindBy(css = "h1")
+    WebElement currentPageHeader;
 
 
     public MainPage(WebDriver driver) {
@@ -66,5 +73,29 @@ public class MainPage {
         catch(Exception e) {
             return false;
         }
+    }
+
+    public void openMyProperties() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        wait.until(ExpectedConditions.elementToBeClickable(myPropertiesLink));
+        myPropertiesLink.click();
+        wait.until(ExpectedConditions.and(
+               ExpectedConditions.visibilityOf(currentPageHeader),
+               ExpectedConditions.textToBePresentInElement(currentPageHeader, MyPropertiesPage.heading)
+        ));
+    }
+
+    public void logOut() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        wait.until(ExpectedConditions.elementToBeClickable(logOutLink));
+        logOutLink.click();
+        wait.until(driver -> homeLink.getAttribute("class").equals("active"));
+    }
+
+    public void openHome() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        wait.until(ExpectedConditions.elementToBeClickable(homeLink));
+        homeLink.click();
+        wait.until(driver -> homeLink.getAttribute("class").equals("active"));
     }
 }
